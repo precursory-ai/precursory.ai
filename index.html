@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Precursory — Freight Risk Insurance</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;1,9..144,300;1,9..144,500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            –black: #080808;
+            –white: #F5F3EE;
+            –acid:  #C8F135;
+            –mid:   #111111;
+            –mid2:  #181818;
+            –grey:  #555555;
+            –lgrey: #ADADAD;
+            –rule:  #1E1E1E;
+        }
+
+        html { scroll-behavior: smooth; }
+        body { background: var(–black); color: var(–white); font-family: ‘DM Mono’, monospace; overflow-x: hidden; }
+
+        /* ── NAV ── */
+        nav {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 52px; height: 58px;
+            background: var(–black); border-bottom: 1px solid var(–rule);
+        }
+        .logo { font-family: ‘Bebas Neue’, sans-serif; font-size: 22px; letter-spacing: 0.08em; color: var(–white); text-decoration: none; }
+        .logo span { color: var(–acid); }
+        .nav-links { display: flex; gap: 36px; }
+        .nav-links a { font-size: 9.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(–grey); text-decoration: none; transition: color 0.2s; }
+        .nav-links a:hover { color: var(–white); }
+        .nav-cta {
+            font-size: 9.5px; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase;
+            color: var(–black); background: var(–acid); padding: 8px 18px; text-decoration: none;
+            transition: opacity 0.15s;
+        }
+        .nav-cta:hover { opacity: 0.85; }
+
+        /* ── SHARED ── */
+        .sec-eyebrow {
+            font-size: 9px; font-weight: 500; letter-spacing: 0.24em; text-transform: uppercase;
+            color: var(–acid); display: flex; align-items: center; gap: 12px; margin-bottom: 24px;
+        }
+        .sec-eyebrow::before { content: ‘’; width: 24px; height: 1px; background: var(–acid); display: block; }
+
+        .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.65s ease, transform 0.65s ease; }
+        .reveal.on { opacity: 1; transform: none; }
+
+        /* ── 1. HERO ── */
+        .hero {
+            min-height: 100vh; padding: 100px 52px 0;
+            display: grid; grid-template-rows: 1fr auto;
+            border-bottom: 1px solid var(–rule);
+            position: relative; overflow: hidden;
+        }
+        .hero-lines {
+            position: absolute; inset: 0; pointer-events: none;
+            background-image: repeating-linear-gradient(0deg, transparent, transparent calc(10vh - 1px), rgba(255,255,255,0.022) calc(10vh - 1px), rgba(255,255,255,0.022) 10vh);
+        }
+        .hero-body { display: flex; flex-direction: column; justify-content: center; position: relative; }
+
+        .hero-kicker {
+            font-size: 9.5px; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase;
+            color: var(–lgrey); margin-bottom: 28px;
+            display: flex; align-items: center; gap: 14px;
+            animation: up 0.6s ease both;
+        }
+        .hero-kicker::before { content: ‘’; width: 28px; height: 1px; background: var(–acid); display: block; }
+        .blink { width: 5px; height: 5px; border-radius: 50%; background: var(–acid); animation: blink 2s infinite; }
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.15} }
+
+        h1 {
+            font-family: ‘Bebas Neue’, sans-serif;
+            font-size: clamp(72px, 10.5vw, 148px);
+            line-height: 0.92; letter-spacing: 0.01em; color: var(–white);
+            animation: up 0.6s 0.07s ease both;
+        }
+        h1 .acid { color: var(–acid); }
+        h1 .serif { font-family: ‘Fraunces’, serif; font-style: italic; font-weight: 300; font-size: 0.88em; }
+
+        .hero-sub {
+            font-size: 14px; font-weight: 300; line-height: 1.8; color: var(–lgrey);
+            max-width: 560px; margin-top: 32px;
+            animation: up 0.6s 0.14s ease both;
+        }
+        .hero-sub strong { color: var(–white); font-weight: 400; }
+
+        .hero-actions {
+            margin-top: 44px; display: flex; align-items: center; gap: 20px;
+            animation: up 0.6s 0.2s ease both;
+        }
+        .btn-acid {
+            font-family: ‘DM Mono’, monospace; font-size: 11px; font-weight: 500;
+            letter-spacing: 0.14em; text-transform: uppercase;
+            background: var(–acid); color: var(–black); border: none;
+            padding: 14px 36px; cursor: pointer; text-decoration: none; display: inline-block;
+            transition: opacity 0.15s, transform 0.15s;
+        }
+        .btn-acid:hover { opacity: 0.88; transform: translateY(-2px); }
+        .btn-line {
+            font-family: ‘DM Mono’, monospace; font-size: 11px; font-weight: 400;
+            letter-spacing: 0.12em; text-transform: uppercase;
+            color: var(–lgrey); border: 1px solid var(–rule); padding: 14px 28px;
+            text-decoration: none; display: inline-block; transition: border-color 0.2s, color 0.2s;
+        }
+        .btn-line:hover { border-color: var(–lgrey); color: var(–white); }
+
+        .hero-bar {
+            display: grid; grid-template-columns: repeat(3,1fr);
+            border-top: 1px solid var(–rule); margin: 64px -52px 0;
+            animation: up 0.6s 0.26s ease both;
+        }
+        .hbar-cell { padding: 24px 36px; border-right: 1px solid var(–rule); }
+        .hbar-cell:last-child { border-right: none; }
+        .hbar-val { font-family: ‘Bebas Neue’, sans-serif; font-size: 32px; letter-spacing: 0.04em; color: var(–acid); display: block; line-height: 1; }
+        .hbar-key { font-size: 8.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(–grey); display: block; margin-top: 5px; }
+
+        @keyframes up { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+
+        /* ── 2. WHAT IS PRECURSORY ── */
+        .what { border-bottom: 1px solid var(–rule); }
+
+        /* Intro row */
+        .what-intro {
+            display: flex; flex-direction: column;
+            border-bottom: 1px solid var(–rule);
+        }
+        .wi-top {
+            padding: 88px 52px 64px;
+            border-bottom: 1px solid var(–rule);
+            display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: end;
+        }
+        .wi-bottom {
+            padding: 52px 52px 64px;
+            background: var(–mid);
+            display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 48px; align-items: start;
+        }
+        .wi-pov-label {
+            grid-column: 1 / -1;
+            margin-bottom: 0;
+        }
+
+        .big-headline {
+            font-family: ‘Fraunces’, serif; font-weight: 300;
+            font-size: clamp(28px, 3vw, 46px); line-height: 1.15; color: var(–white);
+        }
+        .big-headline em { font-style: italic; }
+
+        .challenge-text {
+            font-family: ‘Fraunces’, serif; font-style: italic; font-weight: 300;
+            font-size: clamp(20px, 2.2vw, 30px); line-height: 1.25; color: var(–white);
+            border-left: 2px solid var(–acid); padding-left: 20px;
+        }
+
+        .what-desc { font-size: 12.5px; font-weight: 300; line-height: 1.9; color: var(–lgrey); }
+        .what-desc + .what-desc { margin-top: 20px; }
+
+        /* Problem size */
+        .problem-num {
+            font-family: ‘Bebas Neue’, sans-serif; font-size: 110px;
+            color: rgba(200,241,53,0.1); line-height: 1; letter-spacing: 0.02em;
+            margin: 32px 0 8px;
+        }
+        .problem-caption { font-size: 12.5px; font-weight: 300; color: var(–lgrey); line-height: 1.8; }
+        .problem-caption strong { color: var(–white); font-weight: 400; }
+
+        /* Shipper / Carrier impact */
+        .impact-row {
+            display: grid; grid-template-columns: 1fr 1fr;
+            border-bottom: 1px solid var(–rule);
+        }
+        .impact-col { padding: 64px 52px; border-right: 1px solid var(–rule); }
+        .impact-col:last-child { border-right: none; background: var(–mid); }
+
+        .impact-label {
+            font-size: 9px; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase;
+            color: var(–acid); margin-bottom: 20px; display: block;
+        }
+        .impact-title {
+            font-family: ‘Bebas Neue’, sans-serif; font-size: 36px; letter-spacing: 0.04em;
+            color: var(–white); margin-bottom: 24px; line-height: 1;
+        }
+        .impact-points { display: flex; flex-direction: column; gap: 0; }
+        .impact-point {
+            padding: 13px 0; border-top: 1px solid var(–rule);
+            font-size: 12px; font-weight: 300; line-height: 1.65; color: var(–lgrey);
+            display: flex; gap: 10px;
+        }
+        .impact-point:last-child { border-bottom: 1px solid var(–rule); }
+        .ip-mark { color: var(–acid); flex-shrink: 0; }
+
+        /* Challenge statement */
+        .challenge {
+            padding: 64px 52px;
+            background: var(–mid2);
+            display: flex; align-items: flex-start; gap: 64px;
+        }
+        .challenge-left { flex-shrink: 0; }
+        .challenge-label { font-size: 9px; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase; color: var(–acid); display: block; margin-bottom: 12px; }
+        .challenge-size {
+            font-family: ‘Bebas Neue’, sans-serif; font-size: 56px;
+            letter-spacing: 0.02em; color: var(–white); line-height: 1;
+        }
+        .challenge-right { flex: 1; }
+        .challenge-text {
+            font-family: ‘Fraunces’, serif; font-size: 22px; font-weight: 300;
+            font-style: italic; line-height: 1.5; color: var(–white); margin-bottom: 16px;
+        }
+        .challenge-sub { font-size: 12px; font-weight: 300; line-height: 1.8; color: var(–lgrey); }
+
+        /* ── 3. HOW WE PRICE ── */
+        .pricing {
+            border-bottom: 1px solid var(–rule);
+            display: grid; grid-template-columns: 1fr 1fr;
+        }
+        .pricing-left { padding: 88px 52px; border-right: 1px solid var(–rule); }
+        .pricing-right { padding: 88px 52px; background: var(–mid); }
+
+        .pricing-title {
+            font-family: ‘Bebas Neue’, sans-serif; font-size: clamp(48px, 5.5vw, 80px);
+            line-height: 0.92; letter-spacing: 0.02em; color: var(–white); margin-bottom: 28px;
+        }
+        .pricing-title .acid { color: var(–acid); }
+        .pricing-intro { font-size: 13px; font-weight: 300; line-height: 1.85; color: var(–lgrey); }
+
+        .price-steps { display: flex; flex-direction: column; gap: 0; }
+        .price-step {
+            padding: 28px 0; border-top: 1px solid var(–rule);
+            display: flex; gap: 20px; align-items: flex-start;
+        }
+        .price-step:last-child { border-bottom: 1px solid var(–rule); }
+        .ps-num {
+            font-family: ‘Bebas Neue’, sans-serif; font-size: 28px;
+            color: rgba(200,241,53,0.18); flex-shrink: 0; line-height: 1; width: 36px;
+        }
+        .ps-body {}
+        .ps-title { font-size: 13px; font-weight: 500; color: var(–white); margin-bottom: 6px; letter-spacing: 0.02em; }
+        .ps-desc { font-size: 11.5px; font-weight: 300; line-height: 1.75; color: var(–lgrey); }
+        .ps-systems {
+            margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .sys-tag {
+            font-size: 8px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase;
+            border: 1px solid var(–rule); color: var(–lgrey); padding: 3px 9px;
+        }
+
+        /* Risk profile widget */
+        .risk-widget {
+            background: var(–black); border: 1px solid var(–rule); padding: 28px;
+            margin-top: 0;
+        }
+        .rw-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .rw-title { font-size: 8.5px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: var(–grey); }
+        .rw-live { font-size: 8.5px; color: var(–acid); display: flex; align-items: center; gap: 6px; }
+        .rw-live::before { content: ‘’; width: 5px; height: 5px; border-radius: 50%; background: var(–acid); display: block; animation: blink 1.5s infinite; }
+
+        .rw-load { font-family: ‘Bebas Neue’, sans-serif; font-size: 13px; letter-spacing: 0.08em; color: var(–lgrey); margin-bottom: 20px; }
+
+        .score-display { display: flex; align-items: baseline; gap: 12px; margin-bottom: 16px; }
+        .score-big { font-family: ‘Bebas Neue’, sans-serif; font-size: 80px; line-height: 1; letter-spacing: 0.02em; color: var(–acid); }
+        .score-info { display: flex; flex-direction: column; gap: 4px; }
+        .score-status { font-size: 10px; font-weight: 500; color: var(–white); letter-spacing: 0.1em; text-transform: uppercase; }
+        .score-detail { font-size: 9.5px; font-weight: 300; color: var(–grey); }
+
+        .bar-track { height: 3px; background: var(–rule); margin-bottom: 20px; overflow: hidden; }
+        .bar-fill { height: 100%; background: linear-gradient(90deg, var(–acid), rgba(200,241,53,0.4)); width: 74%; animation: barFill 1.4s 0.4s ease both; }
+        @keyframes barFill { from{width:0} to{width:74%} }
+
+        .fee-rows { display: flex; flex-direction: column; }
+        .fee-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-top: 1px solid var(–rule); }
+        .fee-row:last-child { border-bottom: 1px solid var(–rule); }
+        .fr-name { font-size: 11px; font-weight: 300; color: var(–lgrey); }
+        .fr-risk { font-size: 9px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; }
+        .fr-risk.hi  { color: var(–acid); }
+        .fr-risk.med { color: #F0A030; }
+        .fr-risk.lo  { color: var(–grey); }
+
+        .rw-footer { margin-top: 16px; display: flex; justify-content: space-between; }
+        .rw-foot-item {}
+        .rw-foot-label { font-size: 8px; letter-spacing: 0.14em; text-transform: uppercase; color: var(–grey); display: block; margin-bottom: 3px; }
+        .rw-foot-val { font-family: ‘Bebas Neue’, sans-serif; font-size: 20px; letter-spacing: 0.04em; color: var(–white); }
+        .rw-foot-val.hi { color: var(–acid); }
+
+        /* ── 4. TECHNOLOGY ── */
+        .tech { padding: 100px 52px; border-bottom: 1px solid var(–rule); }
+        .tech-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 72px; }
+        .tech-headline { font-family: ‘Bebas Neue’, sans-serif; font-size: clamp(52px, 7vw, 100px); line-height: 0.92; letter-spacing: 0.02em; color: var(–white); }
+        .tech-headline .acid { color: var(–acid); }
+        .tech-intro { font-size: 12px; font-weight: 300; line-height: 1.8; color: var(–lgrey); max-width: 320px; text-align: right; }
+        .tech-layout { display: grid; grid-template-columns: 1fr 380px; gap: 72px; align-items: start; }
+        .diagram-wrap { width: 100%; }
+        .diagram-wrap svg { width: 100%; height: auto; display: block; }
+
+        /* Legend */
+        .stack-legend { display: flex; flex-direction: column; }
+        .sl-row { padding: 22px 0; border-top: 1px solid var(–rule); display: flex; gap: 14px; align-items: flex-start; }
+        .sl-row:last-child { border-bottom: 1px solid var(–rule); }
+        .sl-tag { font-size: 8px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; padding: 3px 8px; border-radius: 1px; white-space: nowrap; flex-shrink: 0; margin-top: 2px; width: 80px; text-align: center; display: inline-block; }
+        .t-outcomes { background: rgba(200,241,53,0.12); color: var(–acid); }
+        .t-agentic  { background: rgba(56,196,180,0.1);  color: #38C4B4; }
+        .t-algo     { background: rgba(144,136,240,0.12); color: #9088F0; }
+        .t-data     { background: rgba(200,241,53,0.06);  color: rgba(200,241,53,0.45); }
+        .sl-title { font-size: 12.5px; font-weight: 500; color: var(–white); margin-bottom: 4px; }
+        .sl-desc { font-size: 11px; font-weight: 300; line-height: 1.65; color: var(–lgrey); }
+
+        /* ── 5. DESIGN PARTNER CTA ── */
+        .cta-section {
+            display: grid; grid-template-columns: 1fr 1fr;
+            background: var(–rule);
+            gap: 2px;
+        }
+        .cta-left { background: var(–black); padding: 96px 52px; }
+        .cta-right { background: var(–mid); padding: 96px 52px; }
+
+        .cta-title {
+            font-family: ‘Bebas Neue’, sans-serif;
+            font-size: clamp(58px, 7vw, 96px);
+            line-height: 0.9; letter-spacing: 0.02em; color: var(–white); margin-bottom: 24px;
+        }
+        .cta-title .acid { color: var(–acid); }
+        .cta-sub { font-size: 13px; font-weight: 300; line-height: 1.8; color: var(–lgrey); max-width: 400px; margin-bottom: 40px; }
+
+        .cta-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; background: var(–rule); border: 1px solid var(–rule); margin-bottom: 36px; }
+        .cstat { background: var(–black); padding: 18px 20px; }
+        .cstat-val { font-family: ‘Bebas Neue’, sans-serif; font-size: 26px; letter-spacing: 0.04em; color: var(–white); display: block; line-height: 1; }
+        .cstat-key { font-size: 8px; letter-spacing: 0.12em; text-transform: uppercase; color: var(–grey); margin-top: 4px; display: block; }
+
+        .form-wrap { display: flex; flex-direction: column; gap: 10px; }
+        .form-row { display: flex; gap: 0; }
+        .email-in {
+            flex: 1; font-family: ‘DM Mono’, monospace; font-size: 12px; font-weight: 300;
+            background: var(–black); border: 1px solid #2A2A2A; border-right: none;
+            color: var(–white); padding: 14px 18px; outline: none; transition: border-color 0.2s;
+        }
+        .email-in::placeholder { color: var(–grey); }
+        .email-in:focus { border-color: var(–acid); }
+        .form-btn {
+            font-family: ‘DM Mono’, monospace; font-size: 11px; font-weight: 500;
+            letter-spacing: 0.12em; text-transform: uppercase;
+            background: var(–acid); color: var(–black); border: none;
+            padding: 14px 24px; cursor: pointer; white-space: nowrap; transition: opacity 0.15s;
+        }
+        .form-btn:hover { opacity: 0.88; }
+        .form-note { font-size: 10px; font-weight: 300; color: var(–grey); }
+        .success { display: none; font-family: ‘Fraunces’, serif; font-style: italic; font-size: 18px; color: var(–acid); margin-top: 4px; }
+
+        /* What you get */
+        .get-label { font-size: 9px; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase; color: var(–acid); display: block; margin-bottom: 24px; }
+        .get-list { display: flex; flex-direction: column; }
+        .get-item {
+            padding: 14px 0; border-top: 1px solid var(–rule);
+            font-size: 12px; font-weight: 300; line-height: 1.65; color: var(–lgrey);
+            display: flex; gap: 12px;
+        }
+        .get-item:last-child { border-bottom: 1px solid var(–rule); }
+        .gm { color: var(–acid); flex-shrink: 0; font-weight: 500; }
+
+        .partners-bar { margin-top: 32px; padding: 20px 24px; border: 1px solid var(–rule); background: var(–black); }
+        .pb-label { font-size: 8.5px; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; color: var(–grey); margin-bottom: 12px; display: block; }
+        .pb-names { display: flex; gap: 24px; flex-wrap: wrap; }
+        .pb-name { font-size: 12px; font-weight: 400; color: var(–lgrey); }
+        .pb-name span { color: var(–acid); margin-right: 4px; }
+
+        /* ── FOOTER ── */
+        footer { padding: 28px 52px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(–rule); }
+        .f-logo { font-family: ‘Bebas Neue’, sans-serif; font-size: 18px; letter-spacing: 0.06em; color: var(–white); }
+        .f-logo span { color: var(–acid); }
+        .f-tagline { font-family: ‘Fraunces’, serif; font-style: italic; font-size: 12px; color: var(–grey); }
+        .f-copy { font-size: 9.5px; color: var(–grey); letter-spacing: 0.06em; }
+    </style>
+
+</head>
+<body>
+
+<!-- NAV -->
+
+<nav>
+    <a class="logo" href="#">PRECURSORY<span>.</span></a>
+    <div class="nav-links">
+        <a href="#what">The Problem</a>
+        <a href="#pricing">How It Works</a>
+        <a href="#tech">Technology</a>
+        <a href="#partner">Design Partners</a>
+    </div>
+    <a class="nav-cta" href="#partner">Apply Now</a>
+</nav>
+
+<!-- ── 1. HERO ── -->
+
+<section class="hero">
+    <div class="hero-lines"></div>
+    <div class="hero-body">
+        <div class="hero-kicker"><span class="blink"></span>Accessorial Risk Coverage</div>
+        <h1>
+            <span style="font-size:0.32em;letter-spacing:0.18em;color:var(--acid);font-family:'DM Mono',monospace;font-weight:500;display:block;margin-bottom:16px;">01</span>
+            WE REDUCE<br>THE <span class="acid">RISK.</span>
+            <span style="font-size:0.32em;letter-spacing:0.18em;color:var(--acid);font-family:'DM Mono',monospace;font-weight:500;display:block;margin-top:28px;margin-bottom:16px;">02</span>
+            WE COVER<br>THE <span class="acid">REST.</span>
+        </h1>
+        <p class="hero-sub">
+            Shippers have been absorbing accessorial fees that were avoidable.
+        </p>
+        <p class="hero-sub" style="margin-top: 16px;">
+            Precursory reduces your accessorial exposure — connecting to your systems, reducing the preventable risk, and giving your carriers the signals they need to perform.
+        </p>
+        <p class="hero-sub" style="margin-top: 16px;">
+            Precursory then covers what remains. <strong>Once your losses exceed your threshold, Precursory absorbs the difference.</strong>
+        </p>
+        <div class="hero-actions">
+            <a href="#partner" class="btn-acid">Become a Design Partner</a>
+            <a href="#what" class="btn-line">See How It Works</a>
+        </div>
+    </div>
+    <div class="hero-bar">
+        <div class="hbar-cell">
+            <span class="hbar-val">$17.8B</span>
+            <span class="hbar-key">Annual Accessorial Loss</span>
+        </div>
+        <div class="hbar-cell">
+            <span class="hbar-val">4</span>
+            <span class="hbar-key">Fee Categories Tracked</span>
+        </div>
+        <div class="hbar-cell">
+            <span class="hbar-val">$0</span>
+            <span class="hbar-key">Out-of-Pocket Once Your Threshold Is Met</span>
+        </div>
+
+    </div>
+</section>
+
+<!-- ── 2. WHAT IS PRECURSORY ── -->
+
+<section class="what" id="what">
+
+    <!-- Intro -->
+
+    <div class="what-intro reveal">
+
+        ```
+        <!-- Top: Full-width problem headline + stat -->
+        <div class="wi-top">
+            <div>
+                <div class="sec-eyebrow">The Problem</div>
+                <div class="big-headline">
+                    Risk and disruption will always exist in shipper & carrier operations.<br><em>Accessorial fees exist because shippers and carriers had no shared warning.</em>
+                </div>
+            </div>
+            <div>
+                <div class="problem-num">$17.8B</div>
+                <div class="problem-caption">in annual accessorial fees. The signals of disruption existed in shipper systems — and were never shared before the planning windows closed for carriers. <strong>Leading to the fees.</strong></div>
+            </div>
+        </div>
+
+        <!-- Bottom: POV subordinate block -->
+        <div class="wi-bottom">
+            <div class="wi-pov-label">
+                <div class="sec-eyebrow">Our Point of View</div>
+            </div>
+            <div>
+                <div class="challenge-text">
+                    Shared early warning signals change the status quo in freight operations — disruption gets absorbed, not billed.
+                </div>
+            </div>
+            <div>
+                <p class="what-desc">Precursory reads your operational signals and shares early warnings with your carriers — so your carriers can act before the fee clock starts. What can't be prevented, we cover. You go from absorbing unpredictable costs to paying a known premium.</p>
+            </div>
+            <div>
+                <p class="what-desc">FM Global didn't transform property insurance by paying claims faster. They did it by preventing losses before they happened. That's the model we're bringing to freight.</p>
+            </div>
+        </div>
+        ```
+
+    </div>
+
+    <!-- Impact -->
+
+    <div class="impact-row reveal">
+        <div class="impact-col">
+            <span class="impact-label">For Shippers</span>
+            <div class="impact-title">You've been paying fees your own systems could have prevented.</div>
+            <div class="impact-points">
+                <div class="impact-point"><span class="ip-mark">→</span>Your ERP flagged the production delay days earlier. The TONU charged anyway</div>
+                <div class="impact-point"><span class="ip-mark">→</span>Detention fees accruing at docks you control but can't see in real time</div>
+                <div class="impact-point"><span class="ip-mark">→</span>Trailer per-diem on equipment sitting idle in your own yards</div>
+                <div class="impact-point"><span class="ip-mark">→</span>Fuel surcharge overages calculated on a static 6 MPG assumption nobody challenges</div>
+                <div class="impact-point"><span class="ip-mark">→</span>No one was connecting your systems to your carriers before the fee clock started</div>
+            </div>
+        </div>
+        <div class="impact-col">
+            <span class="impact-label">For Carriers</span>
+            <div class="impact-title">You absorb 3× the cost shippers ever see.</div>
+            <div class="impact-points">
+                <div class="impact-point"><span class="ip-mark">→</span>A $250 TONU fee is $750+ in true cost — deadhead miles, lost drive time, the next load you can't take</div>
+                <div class="impact-point"><span class="ip-mark">→</span>Every detention hour burns drive time your driver can never recover</div>
+                <div class="impact-point"><span class="ip-mark">→</span>Stranded trailers tie up capital and quietly inflate your fleet requirements</div>
+                <div class="impact-point"><span class="ip-mark">→</span>Loads that cancel without warning drive driver turnover — at $8–12K per replacement</div>
+                <div class="impact-point"><span class="ip-mark">→</span>Efficient fleets pay the same surcharge rate as inefficient ones — because nobody has the consumption data to prove otherwise</div>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<!-- ── 3. HOW WE PRICE ── -->
+
+<section class="pricing reveal" id="pricing">
+    <div class="pricing-left">
+        <div class="sec-eyebrow">How It Works</div>
+        <div class="pricing-title">WE REDUCE.<br>THEN WE<br><span class="acid">COVER THE REST.</span></div>
+        <p class="pricing-intro">
+            Precursory starts with what can be avoided. We connect to your systems, identify the signals that predict every fee, and give your carriers the lead time to act. For the risk that remains, Precursory prices a coverage premium — built on your actual history, not an industry average that doesn't know your lanes.
+        </p>
+    </div>
+    <div class="pricing-right">
+        <div class="price-steps">
+            <div class="price-step">
+                <span class="ps-num">01</span>
+                <div class="ps-body">
+                    <div class="ps-title">Precursory audits your operational history</div>
+                    <div class="ps-desc">Precursory analyzes your historical accessorial exposure — lane patterns, carrier behavior, facility performance, and fee history — to establish <strong>your baseline risk profile.</strong></div>
+                </div>
+            </div>
+            <div class="price-step">
+                <span class="ps-num">02</span>
+                <div class="ps-body">
+                    <div class="ps-title">Precursory integrates with your systems</div>
+                    <div class="ps-desc">Precursory connects to the systems that already hold the signals. No new data entry. No new workflows. Everything Precursory needs is already there.</div>
+                    <div class="ps-systems">
+                        <span class="sys-tag">ERP</span>
+                        <span class="sys-tag">TMS</span>
+                        <span class="sys-tag">WMS</span>
+                        <span class="sys-tag">WES</span>
+                        <span class="sys-tag">ELD</span>
+                        <span class="sys-tag">OEM Telematics</span>
+                    </div>
+                </div>
+            </div>
+            <div class="price-step">
+                <span class="ps-num">03</span>
+                <div class="ps-body">
+                    <div class="ps-title">Precursory finds ways to avoid the risk</div>
+                    <div class="ps-desc">Precursory generates signals early enough to act. For TONU, that means canceling a tender <strong>before contract deadlines pass.</strong> For detention, it means alerting the carrier <strong>before their planning horizon</strong> — so the load gets replanned, not just apologized for.</div>
+                </div>
+            </div>
+            <div class="price-step">
+                <span class="ps-num">04</span>
+                <div class="ps-body">
+                    <div class="ps-title">Precursory covers the residual risk</div>
+                    <div class="ps-desc">For the risk we can't eliminate, Precursory prices a coverage premium against your actual exposure. Once your losses exceed your threshold, <strong>Precursory absorbs the difference.</strong> As your operations improve, your premium goes down.</div>
+                </div>
+            </div>
+        </div>
+
+        ```
+        <!-- Risk widget -->
+        <div class="risk-widget" style="margin-top:32px;">
+            <div class="rw-header">
+                <span class="rw-title">Risk Profile · Load #TXL-2291</span>
+                <span class="rw-live">Live · Signal Active</span>
+            </div>
+            <div class="score-display">
+                <div class="score-big">74</div>
+                <div class="score-info">
+                    <span class="score-status">Elevated Risk</span>
+                    <span class="score-detail">2 signals sent to carrier</span>
+                </div>
+            </div>
+            <div class="bar-track"><div class="bar-fill"></div></div>
+            <div class="fee-rows">
+                <div class="fee-row"><span class="fr-name">TONU</span><span class="fr-risk hi">High · Preventable</span></div>
+                <div class="fee-row"><span class="fr-name">Detention</span><span class="fr-risk med">Medium · Monitor</span></div>
+                <div class="fee-row"><span class="fr-name">Trailer Per-Diem</span><span class="fr-risk lo">Low · Covered</span></div>
+                <div class="fee-row"><span class="fr-name">Fuel Surcharge</span><span class="fr-risk med">Medium · Covered</span></div>
+            </div>
+            <div class="rw-footer">
+                <div class="rw-foot-item">
+                    <span class="rw-foot-label">Total Exposure</span>
+                    <span class="rw-foot-val">$770</span>
+                </div>
+                <div class="rw-foot-item">
+                    <span class="rw-foot-label">Preventable</span>
+                    <span class="rw-foot-val">$520</span>
+                </div>
+                <div class="rw-foot-item">
+                    <span class="rw-foot-label">Residual (Covered)</span>
+                    <span class="rw-foot-val hi">$250</span>
+                </div>
+            </div>
+        </div>
+        ```
+
+    </div>
+</section>
+
+<!-- ── 4. TECHNOLOGY ── -->
+
+<section class="tech reveal" id="tech">
+    <div class="tech-header">
+        <div>
+            <div class="sec-eyebrow">Technology</div>
+            <div class="tech-headline">THE<br><span class="acid">ENGINE.</span></div>
+        </div>
+        <p class="tech-intro">Four layers working in sequence — from the signals in your systems to the actions that prevent the fee. Built entirely around freight accessorial risk.</p>
+    </div>
+
+    <div class="tech-layout">
+        <div class="diagram-wrap">
+            <svg viewBox="0 0 700 860" xmlns="http://www.w3.org/2000/svg" font-family="'DM Mono', monospace">
+                <defs>
+                    <filter id="glow-teal">
+                        <feGaussianBlur stdDeviation="3" result="blur"/>
+                        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                    </filter>
+                    <filter id="glow-acid">
+                        <feGaussianBlur stdDeviation="4" result="blur"/>
+                        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                    </filter>
+                    <linearGradient id="spine" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#C8F135" stop-opacity="0.8"/>
+                        <stop offset="100%" stop-color="#38C4B4" stop-opacity="0.3"/>
+                    </linearGradient>
+                </defs>
+
+                ```
+                <!-- ═══ VERTICAL SPINE ═══ -->
+                <line x1="350" y1="20" x2="350" y2="840" stroke="url(#spine)" stroke-width="1" stroke-dasharray="4,4" opacity="0.4"/>
+
+                <!-- spine dots -->
+                <circle cx="350" cy="60"  r="3" fill="#C8F135" opacity="0.6"/>
+                <circle cx="350" cy="100" r="3" fill="#C8F135" opacity="0.5"/>
+                <circle cx="350" cy="140" r="2" fill="#C8F135" opacity="0.3"/>
+                <circle cx="350" cy="240" r="3" fill="#38C4B4" opacity="0.6"/>
+                <circle cx="350" cy="270" r="2" fill="#38C4B4" opacity="0.4"/>
+                <circle cx="350" cy="430" r="3" fill="#9088F0" opacity="0.6"/>
+                <circle cx="350" cy="460" r="2" fill="#9088F0" opacity="0.4"/>
+                <circle cx="350" cy="630" r="3" fill="#C8F135" opacity="0.5"/>
+                <circle cx="350" cy="660" r="2" fill="#C8F135" opacity="0.3"/>
+
+                <!-- ═══ LAYER 1: OUTCOMES / DELIVER ═══ -->
+                <!-- Diamond shape -->
+                <polygon points="350,20 620,170 350,200 80,170" fill="rgba(200,241,53,0.04)" stroke="#C8F135" stroke-width="1" opacity="0.8"/>
+                <polygon points="350,200 620,170 620,200 350,230" fill="rgba(200,241,53,0.02)" stroke="#C8F135" stroke-width="0.5" opacity="0.4"/>
+                <polygon points="350,200 80,170 80,200 350,230" fill="rgba(200,241,53,0.02)" stroke="#C8F135" stroke-width="0.5" opacity="0.4"/>
+
+                <!-- Left action label -->
+                <text x="72" y="188" fill="#C8F135" font-size="9" letter-spacing="0.18em" text-anchor="end" opacity="0.7">DELIVER</text>
+
+                <!-- Node labels inside -->
+                <text x="440" y="158" fill="#C8F135" font-size="8.5" opacity="0.8">ROI</text>
+                <text x="490" y="178" fill="#C8F135" font-size="8.5" opacity="0.7">Risk Priced</text>
+                <text x="560" y="168" fill="#C8F135" font-size="8.5" opacity="0.7">Revenue</text>
+                <text x="556" y="183" fill="#C8F135" font-size="8.5" opacity="0.7">Reduction</text>
+                <text x="390" y="178" fill="#C8F135" font-size="8.5" opacity="0.8">Avoidance</text>
+                <text x="440" y="193" fill="#C8F135" font-size="8.5" opacity="0.7">Analytics</text>
+                <text x="390" y="193" fill="#C8F135" font-size="8.5" opacity="0.8">Prevention</text>
+                <text x="530" y="152" fill="#C8F135" font-size="8.5" opacity="0.6">Savings</text>
+
+                <!-- Node dots -->
+                <circle cx="437" cy="152" r="2.5" fill="#C8F135" opacity="0.7" filter="url(#glow-acid)"/>
+                <circle cx="556" cy="146" r="2.5" fill="#C8F135" opacity="0.6"/>
+                <circle cx="528" cy="166" r="2.5" fill="#C8F135" opacity="0.5"/>
+                <circle cx="385" cy="170" r="2.5" fill="#C8F135" opacity="0.7"/>
+                <circle cx="432" cy="168" r="2" fill="#C8F135" opacity="0.5"/>
+
+                <!-- ═══ LAYER 2: AGENTS / ACT ═══ -->
+                <polygon points="350,230 620,380 350,410 80,380" fill="rgba(56,196,180,0.04)" stroke="#38C4B4" stroke-width="1" opacity="0.8"/>
+                <polygon points="350,410 620,380 620,410 350,440" fill="rgba(56,196,180,0.02)" stroke="#38C4B4" stroke-width="0.5" opacity="0.4"/>
+                <polygon points="350,410 80,380 80,410 350,440" fill="rgba(56,196,180,0.02)" stroke="#38C4B4" stroke-width="0.5" opacity="0.4"/>
+
+                <text x="72" y="398" fill="#38C4B4" font-size="9" letter-spacing="0.18em" text-anchor="end" opacity="0.7">ACT</text>
+
+                <text x="430" y="352" fill="#38C4B4" font-size="8.5" opacity="0.8">Escalation</text>
+                <text x="490" y="368" fill="#38C4B4" font-size="8.5" opacity="0.7">Auto-Fix</text>
+                <text x="555" y="375" fill="#38C4B4" font-size="8.5" opacity="0.7">Per Diem</text>
+                <text x="390" y="372" fill="#38C4B4" font-size="8.5" opacity="0.8">TONU Alert</text>
+                <text x="448" y="388" fill="#38C4B4" font-size="8.5" opacity="0.7">Notify</text>
+                <text x="510" y="393" fill="#38C4B4" font-size="8.5" opacity="0.7">Detention</text>
+                <text x="390" y="404" fill="#38C4B4" font-size="8.5" opacity="0.7">Reroute</text>
+                <text x="450" y="410" fill="#38C4B4" font-size="8.5" opacity="0.6">Dashboard</text>
+
+                <circle cx="428" cy="346" r="2.5" fill="#38C4B4" opacity="0.7" filter="url(#glow-teal)"/>
+                <circle cx="555" cy="362" r="2.5" fill="#38C4B4" opacity="0.6"/>
+                <circle cx="389" cy="366" r="2.5" fill="#38C4B4" opacity="0.7"/>
+                <circle cx="446" cy="382" r="2" fill="#38C4B4" opacity="0.5"/>
+                <circle cx="506" cy="387" r="2" fill="#38C4B4" opacity="0.5"/>
+
+                <!-- ═══ LAYER 3: ALGORITHMS / PROCESS ═══ -->
+                <polygon points="350,440 620,590 350,620 80,590" fill="rgba(144,136,240,0.04)" stroke="#9088F0" stroke-width="1" opacity="0.8"/>
+                <polygon points="350,620 620,590 620,620 350,650" fill="rgba(144,136,240,0.02)" stroke="#9088F0" stroke-width="0.5" opacity="0.4"/>
+                <polygon points="350,620 80,590 80,620 350,650" fill="rgba(144,136,240,0.02)" stroke="#9088F0" stroke-width="0.5" opacity="0.4"/>
+
+                <text x="72" y="608" fill="#9088F0" font-size="9" letter-spacing="0.18em" text-anchor="end" opacity="0.7">PROCESS</text>
+
+                <text x="440" y="562" fill="#9088F0" font-size="8.5" opacity="0.8">Correlation</text>
+                <text x="490" y="578" fill="#9088F0" font-size="8.5" opacity="0.7">TONU Model</text>
+                <text x="556" y="575" fill="#9088F0" font-size="8.5" opacity="0.7">Anomaly</text>
+                <text x="390" y="578" fill="#9088F0" font-size="8.5" opacity="0.8">Clustering</text>
+                <text x="448" y="595" fill="#9088F0" font-size="8.5" opacity="0.7">Ensemble</text>
+                <text x="510" y="585" fill="#9088F0" font-size="8.5" opacity="0.7">Forecasting</text>
+                <text x="388" y="595" fill="#9088F0" font-size="8.5" opacity="0.7">Risk Score</text>
+                <text x="448" y="612" fill="#9088F0" font-size="8.5" opacity="0.6">Decision Tree</text>
+
+                <circle cx="438" cy="556" r="2.5" fill="#9088F0" opacity="0.7"/>
+                <circle cx="554" cy="568" r="2.5" fill="#9088F0" opacity="0.6"/>
+                <circle cx="388" cy="572" r="2.5" fill="#9088F0" opacity="0.7"/>
+                <circle cx="446" cy="588" r="2" fill="#9088F0" opacity="0.5"/>
+                <circle cx="506" cy="578" r="2" fill="#9088F0" opacity="0.5"/>
+
+                <!-- ═══ LAYER 4: DATA / INGEST ═══ -->
+                <polygon points="350,650 620,800 350,830 80,800" fill="rgba(200,241,53,0.03)" stroke="rgba(200,241,53,0.45)" stroke-width="1" opacity="0.7"/>
+                <polygon points="350,830 620,800 620,830 350,860" fill="rgba(200,241,53,0.01)" stroke="rgba(200,241,53,0.2)" stroke-width="0.5" opacity="0.4"/>
+                <polygon points="350,830 80,800 80,830 350,860" fill="rgba(200,241,53,0.01)" stroke="rgba(200,241,53,0.2)" stroke-width="0.5" opacity="0.4"/>
+
+                <text x="72" y="818" fill="rgba(200,241,53,0.55)" font-size="9" letter-spacing="0.18em" text-anchor="end" opacity="0.7">INGEST</text>
+
+                <text x="456" y="772" fill="rgba(200,241,53,0.6)" font-size="8.5" opacity="0.8">IoT</text>
+                <text x="500" y="772" fill="rgba(200,241,53,0.6)" font-size="8.5" opacity="0.7">EDI</text>
+                <text x="555" y="778" fill="rgba(200,241,53,0.6)" font-size="8.5" opacity="0.7">Dwell Time</text>
+                <text x="555" y="792" fill="rgba(200,241,53,0.6)" font-size="8.5" opacity="0.7">Telematics</text>
+                <text x="388" y="782" fill="rgba(200,241,53,0.6)" font-size="8.5" opacity="0.8">ERP</text>
+                <text x="386" y="798" fill="rgba(200,241,53,0.6)" font-size="8.5" opacity="0.7">TMS</text>
+                <text x="490" y="800" fill="rgba(200,241,53,0.6)" font-size="8.5" opacity="0.6">ELD</text>
+                <text x="540" y="808" fill="rgba(200,241,53,0.6)" font-size="8.5" opacity="0.6">GPS</text>
+
+                <circle cx="453" cy="766" r="2.5" fill="rgba(200,241,53,0.6)" opacity="0.7"/>
+                <circle cx="554" cy="771" r="2.5" fill="rgba(200,241,53,0.5)" opacity="0.6"/>
+                <circle cx="386" cy="776" r="2.5" fill="rgba(200,241,53,0.6)" opacity="0.7"/>
+                <circle cx="488" cy="793" r="2" fill="rgba(200,241,53,0.5)" opacity="0.5"/>
+
+                <!-- Precursory wordmark bottom right -->
+                <text x="690" y="850" fill="rgba(200,241,53,0.25)" font-size="8" letter-spacing="0.2em" text-anchor="end">PRECURSORY</text>
+                <text x="690" y="862" fill="rgba(200,241,53,0.15)" font-size="7" letter-spacing="0.12em" text-anchor="end">The Signal Layer for Freight</text>
+            </svg>
+        </div>
+
+        <div class="stack-legend">
+            <div class="sl-row">
+                <span class="sl-tag t-outcomes">Outcomes</span>
+                <div>
+                    <div class="sl-title">Prevention & coverage at execution time</div>
+                    <div class="sl-desc">Automated interventions — load rescheduling, dock alerts, carrier escalations — triggered before the fee clock starts. What can't be prevented, Precursory covers.</div>
+                </div>
+            </div>
+            <div class="sl-row">
+                <span class="sl-tag t-agentic">Agentic</span>
+                <div>
+                    <div class="sl-title">Signals coordinated without manual intervention</div>
+                    <div class="sl-desc">AI agents reason across signals from multiple participants, coordinate the right intervention, and see it through — without waiting for a human to act.</div>
+                </div>
+            </div>
+            <div class="sl-row">
+                <span class="sl-tag t-algo">Algorithms</span>
+                <div>
+                    <div class="sl-title">Risk scoring across all four fee categories</div>
+                    <div class="sl-desc">Purpose-built models for TONU, detention, per-diem, and fuel surcharge — trained on your lane, carrier, and facility history.</div>
+                </div>
+            </div>
+            <div class="sl-row">
+                <span class="sl-tag t-data">Data</span>
+                <div>
+                    <div class="sl-title">Historical + real-time signal ingestion</div>
+                    <div class="sl-desc">ERP order flow, ELD telemetry, OEM engine data, and WMS dock signals — your full operational history and live feeds, unified in one place.</div>
+                </div>
+            </div>
+        </div>
+        ```
+
+    </div>
+</section>
+
+<!-- ── 5. DESIGN PARTNER CTA ── -->
+
+<section class="cta-section reveal" id="partner">
+    <div class="cta-left">
+        <div class="sec-eyebrow">Design Partner Program</div>
+        <div class="cta-title">LET US<br><span class="acid">COVER IT.</span></div>
+        <p class="cta-sub">We're working with a select group of shippers and carriers to deploy Precursory across their real freight operations. No cost. Every fee we help you avoid goes directly to your bottom line.</p>
+        <div class="cta-stats">
+            <div class="cstat"><span class="cstat-val">$0</span><span class="cstat-key">Cost to Partners</span></div>
+            <div class="cstat"><span class="cstat-val">Top 250</span><span class="cstat-key">Shippers Targeted</span></div>
+            <div class="cstat"><span class="cstat-val">Live</span><span class="cstat-key">Slots Available</span></div>
+        </div>
+        <div class="form-wrap">
+            <div class="form-row">
+                <input class="email-in" id="emailIn" type="email" placeholder="your@company.com" />
+                <button class="form-btn" onclick="handleSubmit()">Apply Now</button>
+            </div>
+            <span class="form-note" id="formNote">Carriers and shippers welcome.</span>
+            <div class="success" id="successMsg">We'll be in touch shortly.</div>
+        </div>
+        <div class="partners-bar">
+            <span class="pb-label">Current Design Partners</span>
+            <div class="pb-names">
+                <span class="pb-name"><span>—</span>Covenant Transport</span>
+                <span class="pb-name"><span>—</span>DM Bowman</span>
+                <span class="pb-name"><span>—</span>Sonoco</span>
+            </div>
+        </div>
+    </div>
+    <div class="cta-right">
+        <span class="get-label">What Design Partners Get</span>
+        <div class="get-list">
+            <div class="get-item"><span class="gm">→</span>Full system integration — ERP, TMS, WMS, WES, ELD — at no cost</div>
+            <div class="get-item"><span class="gm">→</span>Early warning signals routed into your existing ops workflow</div>
+            <div class="get-item"><span class="gm">→</span>Every avoided fee documented and attributed — your proof of value</div>
+            <div class="get-item"><span class="gm">→</span>A risk model trained on your lanes, carriers, and facilities</div>
+            <div class="get-item"><span class="gm">→</span>Shape how Precursory develops the product — your operations inform the roadmap</div>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+
+<footer>
+    <div class="f-logo">PRECURSORY<span>.</span></div>
+    <div class="f-tagline">Reduce the risk. Cover the rest. Own the outcome.</div>
+    <div class="f-copy">© 2026 Precursory Technologies Inc.</div>
+</footer>
+
+<script>
+    const obs = new IntersectionObserver(entries => {
+        entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); obs.unobserve(e.target); } });
+    }, { threshold: 0.06 });
+    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+    function handleSubmit() {
+        const v = document.getElementById('emailIn').value.trim();
+        if (!v || !v.includes('@')) { document.getElementById('emailIn').style.borderColor = 'var(--acid)'; return; }
+        document.querySelector('.form-row').style.display = 'none';
+        document.getElementById('formNote').style.display = 'none';
+        document.getElementById('successMsg').style.display = 'block';
+    }
+    document.getElementById('emailIn').addEventListener('keydown', e => { if (e.key === 'Enter') handleSubmit(); });
+</script>
+
+</body>
+</html>
