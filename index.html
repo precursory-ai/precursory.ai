@@ -865,6 +865,12 @@
     function handleSubmit() {
         const v = document.getElementById('emailIn').value.trim();
         if (!v || !v.includes('@')) { document.getElementById('emailIn').style.borderColor = 'var(--acid)'; return; }
+
+        // Trigger mailto action
+        const subject = encodeURIComponent("Design Partner Program Application");
+        const body = encodeURIComponent("Applying for Design Partner Program.\n\nEmail: " + v);
+        window.location.href = `mailto:info@precursory.ai?subject=${subject}&body=${body}`;
+
         document.querySelector('.form-row').style.display = 'none';
         document.getElementById('formNote').style.display = 'none';
         document.getElementById('successMsg').style.display = 'block';
