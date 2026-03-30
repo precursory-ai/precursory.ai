@@ -6,818 +6,1556 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Precursory — Freight Risk Intelligence</title>
     <style>
-        :root {
-            --acid: #BEFF0A;
-            --acid-dim: rgba(190,255,10,0.07);
-            --acid-border: rgba(190,255,10,0.18);
-            --bg: #080808;
-            --bg2: #0d0d0d;
-            --bg3: #111111;
-            --bg4: #161616;
-            --border: #1a1a1a;
-            --border2: #242424;
-            --text: #e2e2e2;
-            --muted: #484848;
-            --muted2: #707070;
-            --muted3: #949494;
-            --mono: 'SF Mono','SFMono-Regular','Menlo','Monaco','Consolas',monospace;
-            --red: #FF5C5C;
-            --blue: #6CB4FF;
-            --amber: #FFB547;
+        :root{
+            --acid:#BEFF0A;
+            --acid-dim:rgba(190,255,10,0.07);
+            --acid-border:rgba(190,255,10,0.18);
+            --bg:#080808;
+            --bg2:#0d0d0d;
+            --bg3:#111111;--bg4:#161616;
+            --border:#1a1a1a;--border2:#242424;
+            --text:#e2e2e2;--muted:#484848;--muted2:#707070;--muted3:#949494;
+            --mono:'SF Mono','SFMono-Regular','Menlo','Monaco','Consolas',monospace;
+            --red:#FF5C5C;--blue:#6CB4FF;--amber:#FFB547;
         }
         *{margin:0;padding:0;box-sizing:border-box;}
         html{scroll-behavior:smooth;}
         body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:13px;line-height:1.6;overflow-x:hidden;}
+        body::before{content:"";position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9000;opacity:0.45;}
 
-        /* noise */
-        body::before{content:"";position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox=‘0 0 200 200’ xmlns=‘http://www.w3.org/2000/svg’%3E%3Cfilter id=‘n’%3E%3CfeTurbulence type=‘fractalNoise’ baseFrequency=‘0.85’ numOctaves=‘4’ stitchTiles=‘stitch’/%3E%3C/filter%3E%3Crect width=‘100%25’ height=‘100%25’ filter=‘url(%23n)’ opacity=‘0.04’/%3E%3C/svg%3E");pointer-events:none;z-index:9000;opacity:0.45;}
-
-        /* scanline */
-        .scanline{position:fixed;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent 0%,var(--acid) 30%,var(--acid) 70%,transparent 100%);opacity:.1;animation:scan 13.5s linear infinite;z-index:9001;pointer-events:none;}
-        @keyframes scan{0%{top:-2px}100%{top:100vh}}
-
+        .radar-canvas{position:absolute;top:0;left:0;bottom:0;right:0;width:100%;height:100%;pointer-events:none;z-index:0;display:block;}
         @keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}
         .blink{animation:blink 1s step-end infinite;}
         @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
         .pulse{animation:pulse 2.2s ease-in-out infinite;}
-
-        /* scroll offset for fixed nav */
         [id]{scroll-margin-top:80px;}
 
-        /* ── NAV ── */
-        nav{position:fixed;top:0;left:0;right:0;z-index:500;display:flex;align-items:center;justify-content:space-between;padding:18px 48px;background:rgba(8,8,8,.95);border-bottom:1px solid var(--border);backdrop-filter:blur(16px);}
+        /* PAGE GRID + GLOW */
+        .page-grid{position:fixed;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:60px 60px;opacity:.18;pointer-events:none;z-index:0;}
+        .page-glow{position:fixed;top:0;left:50%;transform:translateX(-50%);width:900px;height:900px;background:radial-gradient(ellipse,rgba(190,255,10,.04) 0%,transparent 65%);pointer-events:none;z-index:0;animation:glowpulse 8s ease-in-out infinite;}
+        @keyframes glowpulse{0%,100%{opacity:1;transform:translateX(-50%) scale(1);}50%{opacity:.6;transform:translateX(-50%) scale(1.08);}}
+
+        /* NAV */
+        nav{position:fixed;top:0;left:0;right:0;z-index:500;display:flex;align-items:center;justify-content:space-between;padding:18px 48px;background:rgba(8,8,8,.94);border-bottom:1px solid var(--border);backdrop-filter:blur(16px);}
         .nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
         .logo-mark{font-family:var(--mono);font-size:17px;font-weight:600;letter-spacing:-1px;display:flex;align-items:center;}
-        .logo-mark .lm-gt{color:var(--muted2);}
-        .logo-mark .lm-us{color:var(--acid);animation:blink 1s step-end infinite;}
+        .lm-gt{color:var(--muted2);}
+        .lm-us{color:var(--acid);animation:blink 1s step-end infinite;}
         .nav-word{font-size:13px;font-weight:500;letter-spacing:5px;text-transform:uppercase;color:var(--text);}
         .nav-links{display:flex;align-items:center;gap:28px;list-style:none;}
         .nav-links a{color:var(--muted2);text-decoration:none;font-size:10px;letter-spacing:2px;text-transform:uppercase;transition:color .2s;}
         .nav-links a:hover{color:var(--acid);}
-        .nav-cta{background:var(--acid)!important;color:#080808!important;padding:8px 20px;border-radius:3px;font-weight:700!important;transition:background .2s!important;}
+        .nav-cta{background:var(--acid)!important;color:#080808!important;padding:8px 20px;border-radius:3px;font-weight:700!important;}
         .nav-cta:hover{background:#d4ff2a!important;}
 
-        /* ── HERO ── */
-        .hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:160px 48px 100px;position:relative;overflow:hidden;}
-        .hero-grid{position:absolute;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:60px 60px;opacity:.3;mask-image:radial-gradient(ellipse 80% 65% at 50% 35%,black 20%,transparent 100%);}
-        .hero-glow{position:absolute;top:5%;left:50%;transform:translateX(-50%);width:700px;height:350px;background:radial-gradient(ellipse,rgba(190,255,10,.05) 0%,transparent 70%);pointer-events:none;}
-        .hero-inner{position:relative;z-index:1;max-width:1100px;margin:0 auto;width:100%;}
-        .hero-badge{display:inline-flex;align-items:center;gap:8px;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--acid);border:1px solid var(--acid-border);background:var(--acid-dim);padding:5px 14px;border-radius:2px;margin-bottom:40px;}
-        .hero-badge .bd{width:5px;height:5px;border-radius:50%;background:var(--acid);animation:pulse 2s infinite;}
-        .hero h1{font-size:clamp(36px,5.5vw,72px);font-weight:500;line-height:1.06;letter-spacing:-1.5px;color:#fff;margin-bottom:28px;max-width:820px;}
-        .hero h1 .ac{color:var(--acid);}
-        .hero h1 .dm{color:var(--muted2);}
-        .hero-sub{font-size:14px;line-height:1.8;color:var(--muted3);max-width:500px;margin-bottom:48px;}
-        .hero-btns{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:56px;}
+        /* BUTTONS */
         .btn-p{background:var(--acid);color:#080808;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;padding:14px 32px;border-radius:3px;border:none;cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s;}
         .btn-p:hover{background:#d4ff2a;transform:translateY(-1px);}
         .btn-g{background:none;color:var(--muted2);font-family:var(--mono);font-size:11px;letter-spacing:2px;text-transform:uppercase;padding:14px 28px;border-radius:3px;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s;}
         .btn-g:hover{border-color:var(--muted2);color:var(--text);}
 
-        /* risk card */
-        .rc{background:var(--bg3);border:1px solid var(--border2);border-radius:4px;overflow:hidden;max-width:540px;}
-        .rc-bar{height:3px;background:linear-gradient(90deg,var(--acid),rgba(190,255,10,.15));}
-        .rc-hd{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid var(--border);background:var(--bg2);}
-        .rc-tl{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted2);}
-        .rc-lv{display:flex;align-items:center;gap:5px;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--acid);}
-        .rc-lv-d{width:5px;height:5px;border-radius:50%;background:var(--acid);animation:pulse 2s infinite;}
-        .rc-rows{padding:14px 18px;display:flex;flex-direction:column;gap:8px;}
-        .rc-row{display:flex;align-items:center;justify-content:space-between;padding:9px 13px;background:var(--bg);border:1px solid var(--border);border-radius:2px;}
-        .rc-fn{font-size:11px;color:var(--muted3);}
-        .bdg{font-size:8px;letter-spacing:2px;text-transform:uppercase;padding:3px 9px;border-radius:2px;}
-        .bh{background:rgba(255,92,92,.1);color:var(--red);border:1px solid rgba(255,92,92,.18);}
-        .bm{background:rgba(255,181,71,.08);color:var(--amber);border:1px solid rgba(255,181,71,.15);}
-        .bl{background:var(--acid-dim);color:var(--acid);border:1px solid var(--acid-border);}
-        .rc-ft{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--border);}
-        .rc-fc{text-align:center;padding:13px 0;border-right:1px solid var(--border);}
-        .rc-fc:last-child{border-right:none;}
-        .rc-fv{font-size:18px;font-weight:500;color:#fff;display:block;letter-spacing:-.5px;}
-        .rc-fv.g{color:var(--acid);}
-        .rc-fl{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);}
-
-        /* ── STATS ── */
-        .stats{border-top:1px solid var(--border);border-bottom:1px solid var(--border);display:flex;}
-        .sc{flex:1;padding:28px 36px;border-right:1px solid var(--border);}
-        .sc:last-child{border-right:none;}
-        .sn{font-size:30px;font-weight:500;color:var(--acid);letter-spacing:-1px;display:block;margin-bottom:3px;}
-        .sl{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
-
-        /* ── SHARED SECTION ── */
+        /* SHARED */
         .sec{padding:96px 48px;max-width:1100px;margin:0 auto;}
         .sec-lbl{font-size:9px;letter-spacing:4px;text-transform:uppercase;color:var(--muted);margin-bottom:52px;display:flex;align-items:center;gap:12px;}
-        .sec-lbl::after{content:"";flex:1;height:1px;background:var(--border);max-width:56px;}
+        .sec-lbl::after{content:'';flex:1;height:1px;background:var(--border);max-width:56px;}
+        .wrap{border-top:1px solid var(--border);position:relative;z-index:1;overflow:hidden;}
+        .wrap2{border-top:1px solid var(--border);background:rgba(13,13,13,.88);position:relative;z-index:1;overflow:hidden;}
+        .hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:160px 48px 80px;position:relative;z-index:1;overflow:hidden;}
+        .contrast-wrap{border-top:1px solid var(--border);position:relative;z-index:1;overflow:hidden;}
+        .cta-wrap{border-top:1px solid var(--border);position:relative;overflow:hidden;z-index:1;}
+        footer{border-top:1px solid var(--border);padding:32px 48px;display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1;overflow:hidden;}
 
-        /* ── PROBLEM ── */
-        .prob-wrap{background:var(--bg);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
-        .prob-grid{border:1px solid var(--border);}
-        .prob-intro{padding:52px 52px 44px;border-bottom:1px solid var(--border);}
-        .prob-intro h2{font-size:clamp(24px,3.5vw,44px);font-weight:500;color:#fff;line-height:1.14;letter-spacing:-.5px;max-width:620px;margin-bottom:14px;}
-        .prob-intro p{font-size:13px;line-height:1.8;color:var(--muted3);max-width:480px;}
-        .prob-cards{display:grid;grid-template-columns:1fr 1fr;}
-        .prob-card{padding:38px 42px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);transition:background .22s;}
-        .prob-card:hover{background:rgba(190,255,10,.016);}
-        .prob-card:nth-child(even){border-right:none;}
-        .prob-card:nth-last-child(-n+2){border-bottom:none;}
-        .ptag{font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--acid);margin-bottom:12px;}
-        .prob-card h3{font-size:15px;font-weight:500;color:#fff;margin-bottom:9px;letter-spacing:-.2px;}
-        .prob-card p{font-size:11px;line-height:1.75;color:var(--muted3);margin-bottom:14px;}
-        .pamt{font-size:26px;font-weight:500;color:var(--muted2);letter-spacing:-.7px;display:block;}
+        /* HERO */
+        .hero-inner{position:relative;z-index:1;max-width:1100px;margin:0 auto;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;}
+        .hero-badge{display:inline-flex;align-items:center;gap:8px;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--acid);border:1px solid var(--acid-border);background:var(--acid-dim);padding:5px 14px;border-radius:2px;margin-bottom:40px;}
+        .hero-badge .bd{width:5px;height:5px;border-radius:50%;background:var(--acid);animation:pulse 2s infinite;}
+        .hero h1{font-size:clamp(34px,4.5vw,62px);font-weight:500;line-height:1.06;letter-spacing:-1.5px;color:#fff;margin-bottom:20px;}
+        .hero h1 .ac{color:var(--acid);}
+        .hero-sub{font-size:14px;line-height:1.7;color:var(--muted3);margin-bottom:40px;max-width:420px;}
+        .hero-btns{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+        .hero-visual{position:relative;z-index:1;}
 
-        /* ── AUDIENCE ── */
-        .aud-wrap{border-top:1px solid var(--border);}
-        .aud-grid{display:grid;grid-template-columns:1fr 1fr;}
-        .aud-card{padding:60px 50px;border-right:1px solid var(--border);}
-        .aud-card:last-child{border-right:none;}
-        .aud-ey{display:flex;align-items:center;gap:7px;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:24px;}
-        .aud-dot{width:5px;height:5px;border-radius:50%;background:var(--acid);}
-        .aud-card h3{font-size:19px;font-weight:500;color:#fff;margin-bottom:8px;letter-spacing:-.2px;}
-        .aud-lead{font-size:12px;color:var(--muted3);margin-bottom:28px;line-height:1.65;}
-        .symp{list-style:none;display:flex;flex-direction:column;gap:12px;}
-        .symp li{display:flex;gap:11px;font-size:12px;line-height:1.65;color:var(--muted3);}
-        .symp li::before{content:"→";color:var(--muted);flex-shrink:0;margin-top:1px;}
+        /* SIGNAL FLOW DIAGRAM in hero */
+        .signal-flow{width:100%;max-width:420px;}
+        .sf-node{display:flex;flex-direction:column;align-items:center;}
+        .sf-node-box{border:1px solid var(--border2);background:var(--bg3);padding:12px 20px;border-radius:3px;text-align:center;width:100%;}
+        .sf-node-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+        .sf-node-name{font-size:12px;font-weight:500;color:var(--text);}
+        .sf-node-subs{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;justify-content:center;}
+        .sf-sub{font-size:8px;letter-spacing:1px;padding:2px 6px;border:1px solid var(--border);border-radius:2px;color:var(--muted);}
+        .sf-connector{display:flex;flex-direction:column;align-items:center;padding:8px 0;position:relative;}
+        .sf-line{width:1px;background:var(--border);flex:1;}
+        .sf-line.broken{background:repeating-linear-gradient(to bottom,var(--border) 0px,var(--border) 4px,transparent 4px,transparent 8px);}
+        .sf-line.active{background:var(--acid);box-shadow:0 0 6px rgba(190,255,10,.3);}
+        .sf-arrow{font-size:10px;color:var(--muted);}
+        .sf-arrow.active{color:var(--acid);}
+        .sf-gap-label{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--red);background:rgba(255,92,92,.06);border:1px solid rgba(255,92,92,.15);padding:3px 10px;border-radius:2px;white-space:nowrap;}
+        .sf-intercept{border-color:var(--acid-border)!important;background:rgba(190,255,10,.04)!important;}
+        .sf-intercept .sf-node-label{color:var(--acid);}
+        .sf-intercept .sf-node-name{color:var(--acid);}
+        .sf-carrier-box{border-color:var(--blue)!important;background:rgba(108,180,255,.04)!important;}
+        .sf-carrier-box .sf-node-label{color:var(--blue);}
 
-        /* ── SOLUTION ── */
-        .sol-wrap{background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+        /* pulse animation on active line */
+        @keyframes flowpulse{
+            0%{opacity:.3;} 50%{opacity:1;} 100%{opacity:.3;}
+        }
+        .sf-line.active{animation:flowpulse 2s ease-in-out infinite;}
+
+        /* PROBLEM */
+        .fee-grid{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--border);}
+        .fee-card{padding:32px 28px;border-right:1px solid var(--border);position:relative;overflow:hidden;}
+        .fee-card:last-child{border-right:none;}
+        .fee-tag{font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--acid);margin-bottom:14px;}
+        .fee-card h3{font-size:13px;font-weight:500;color:#fff;margin-bottom:20px;letter-spacing:-.2px;line-height:1.35;}
+
+        /* upgraded SVG timeline */
+        .fee-svgtl{width:100%;margin-top:4px;}
+
+        /* SIGNAL GAP DIAGRAM */
+        .signal-gap-diagram{max-width:1100px;margin:0 auto 0;padding:40px 48px 0;}
+        .sgd-inner{display:grid;grid-template-columns:1fr auto 1fr;gap:0;align-items:center;border:1px solid var(--border);background:var(--bg2);}
+        .sgd-side{padding:28px 32px;}
+        .sgd-side-label{font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+        .sgd-side-name{font-size:14px;font-weight:500;color:var(--text);margin-bottom:10px;}
+        .sgd-sources{display:flex;flex-wrap:wrap;gap:5px;}
+        .sgd-src{font-size:8px;letter-spacing:1px;padding:2px 7px;border:1px solid var(--border2);border-radius:2px;color:var(--muted2);}
+        .sgd-bridge{display:flex;flex-direction:column;align-items:center;padding:28px 0;border-left:1px solid var(--border);border-right:1px solid var(--border);min-width:180px;}
+        .sgd-bridge-broken{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+        .sgd-dash{width:28px;height:1px;background:repeating-linear-gradient(to right,var(--red) 0,var(--red) 4px,transparent 4px,transparent 8px);}
+        .sgd-break{font-size:14px;color:var(--red);}
+        .sgd-bridge-label{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--red);margin-bottom:16px;}
+        .sgd-intercept-label{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--acid);background:var(--acid-dim);border:1px solid var(--acid-border);padding:4px 10px;border-radius:2px;}
+        .sgd-right{border-left:1px solid var(--border);}
+
+        /* CONTRAST TABLE */
+        .contrast-hd{padding:48px 48px 0;max-width:1100px;margin:0 auto;}
+        .contrast-hd h2{font-size:clamp(22px,3vw,36px);font-weight:500;color:#fff;letter-spacing:-.3px;margin-bottom:8px;}
+        .contrast-hd p{font-size:13px;color:var(--muted3);max-width:480px;}
+        .contrast-grid{display:grid;grid-template-columns:1fr 1fr;max-width:1100px;margin:0 auto;border-left:1px solid var(--border);border-right:1px solid var(--border);border-top:1px solid var(--border);}
+        .contrast-col-hd{padding:16px 32px;border-bottom:1px solid var(--border);border-right:1px solid var(--border);display:flex;align-items:center;gap:8px;}
+        .contrast-col-hd:last-child{border-right:none;}
+        .col-tag{font-size:8px;letter-spacing:3px;text-transform:uppercase;padding:3px 8px;border-radius:2px;}
+        .col-now{background:rgba(255,92,92,.08);color:var(--red);border:1px solid rgba(255,92,92,.15);}
+        .col-pre{background:var(--acid-dim);color:var(--acid);border:1px solid var(--acid-border);}
+        .col-title{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted2);}
+        .ct-cell{padding:14px 32px;border-bottom:1px solid var(--border);border-right:1px solid var(--border);display:flex;align-items:center;gap:12px;}
+        .ct-cell:nth-child(even){border-right:none;}
+        .ct-icon{width:20px;height:20px;flex-shrink:0;}
+        .ct-text{font-size:11px;line-height:1.5;color:var(--muted3);}
+        .ct-text.bad{color:rgba(255,92,92,.8);}
+        .ct-text.good{color:var(--text);}
+        .audience-tab-bar{display:flex;border-bottom:1px solid var(--border);max-width:1100px;margin:0 auto;}
+        .aud-tab{padding:16px 32px;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;background:none;border-top:none;border-left:none;border-right:none;font-family:var(--mono);}
+        .aud-tab.active{color:var(--acid);border-bottom-color:var(--acid);}
+        .aud-panel{display:none;max-width:1100px;margin:0 auto;}
+        .aud-panel.active{display:block;}
+
+        /* SOLUTION */
         .sol-grid{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:start;}
-        .sol-left h2{font-size:clamp(24px,3.5vw,44px);font-weight:500;color:#fff;line-height:1.12;letter-spacing:-.5px;margin-bottom:18px;}
+        .sol-left h2{font-size:clamp(24px,3vw,40px);font-weight:500;color:#fff;line-height:1.12;letter-spacing:-.5px;margin-bottom:16px;}
         .sol-left h2 em{font-style:normal;color:var(--acid);}
-        .sol-left p{font-size:13px;line-height:1.8;color:var(--muted3);margin-bottom:16px;}
-        .fm-cite{background:var(--bg3);border:1px solid var(--border2);border-left:2px solid var(--acid);padding:18px 22px;margin-top:28px;border-radius:0 3px 3px 0;}
-        .fm-cite p{font-size:11px;line-height:1.7;color:var(--muted3);margin-bottom:7px;}
+        .sol-left p{font-size:13px;line-height:1.8;color:var(--muted3);margin-bottom:14px;}
+        .fm-cite{background:var(--bg3);border:1px solid var(--border2);border-left:2px solid var(--acid);padding:16px 20px;margin-top:24px;}
+        .fm-cite p{font-size:11px;line-height:1.7;color:var(--muted3);margin-bottom:6px;}
         .fm-src{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
-        .sol-steps{border:1px solid var(--border);}
-        .sol-step{padding:24px 28px;border-bottom:1px solid var(--border);display:grid;grid-template-columns:32px 1fr;gap:18px;transition:background .2s;}
-        .sol-step:last-child{border-bottom:none;}
-        .sol-step:hover{background:rgba(190,255,10,.016);}
-        .sol-n{font-size:11px;font-weight:500;color:var(--acid);width:26px;height:26px;border:1px solid var(--acid-border);border-radius:3px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
-        .sol-step h4{font-size:13px;font-weight:500;color:#fff;margin-bottom:5px;}
-        .sol-step p{font-size:11px;line-height:1.7;color:var(--muted3);}
 
-        /* ── HOW IT WORKS ── */
-        .how-wrap{border-top:1px solid var(--border);}
-        .how-hd{display:grid;grid-template-columns:1fr 1fr;gap:72px;margin-bottom:56px;align-items:end;}
-        .how-hd h2{font-size:clamp(24px,3.5vw,44px);font-weight:500;color:#fff;line-height:1.12;letter-spacing:-.5px;}
-        .how-hd p{font-size:13px;line-height:1.8;color:var(--muted3);padding-top:6px;}
-        .steps{border:1px solid var(--border);display:grid;grid-template-columns:repeat(4,1fr);}
-        .step{padding:32px 28px;border-right:1px solid var(--border);position:relative;}
-        .step:last-child{border-right:none;}
-        .step-n{font-size:9px;letter-spacing:3px;color:var(--muted);margin-bottom:16px;}
-        .step-n span{color:var(--acid);}
-        .step h3{font-size:13px;font-weight:500;color:#fff;margin-bottom:9px;letter-spacing:-.2px;}
-        .step p{font-size:11px;line-height:1.75;color:var(--muted3);}
-        .step-dot{position:absolute;top:32px;right:-7px;width:12px;height:12px;border-radius:50%;background:var(--acid);border:2px solid var(--bg);z-index:2;}
-        .step:last-child .step-dot{display:none;}
-        .int-row{grid-column:1/-1;border-top:1px solid var(--border);padding:16px 28px;background:var(--bg2);display:flex;flex-wrap:wrap;gap:7px;align-items:center;}
-        .int-lbl{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-right:4px;}
-        .itag{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);padding:3px 8px;border:1px solid var(--border);border-radius:2px;}
+        /* SOLUTION FLOW — horizontal state machine */
+        .sol-flow{display:flex;flex-direction:column;gap:0;border:1px solid var(--border);}
+        .sol-flow-step{padding:20px 24px;border-bottom:1px solid var(--border);display:grid;grid-template-columns:28px 1fr auto;gap:14px;align-items:start;transition:background .2s;}
+        .sol-flow-step:last-child{border-bottom:none;}
+        .sol-flow-step:hover{background:rgba(190,255,10,.012);}
+        .sf-n{font-size:10px;font-weight:500;color:var(--acid);width:24px;height:24px;border:1px solid var(--acid-border);border-radius:3px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+        .sf-content h4{font-size:12px;font-weight:500;color:var(--text);margin-bottom:3px;}
+        .sf-content p{font-size:11px;line-height:1.6;color:var(--muted3);}
+        .sf-state{display:flex;flex-direction:column;gap:4px;align-items:flex-end;flex-shrink:0;}
+        .sf-before{font-size:8px;letter-spacing:1px;padding:2px 6px;border-radius:2px;background:rgba(255,92,92,.08);color:var(--red);border:1px solid rgba(255,92,92,.15);}
+        .sf-after{font-size:8px;letter-spacing:1px;padding:2px 6px;border-radius:2px;background:var(--acid-dim);color:var(--acid);border:1px solid var(--acid-border);}
 
-        /* CALCULATOR */
-        .calc{margin-top:52px;border:1px solid var(--border);background:var(--bg2);border-radius:4px;overflow:hidden;}
-        .calc-hd{background:var(--bg3);border-bottom:1px solid var(--border);padding:14px 26px;display:flex;align-items:center;gap:10px;}
-        .calc-dots{display:flex;gap:6px;}
-        .calc-dots span{width:8px;height:8px;border-radius:50%;background:var(--border2);}
-        .calc-title{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted2);margin-left:4px;}
-        .calc-body{display:grid;grid-template-columns:1fr 1fr;}
-        .calc-in{padding:28px 32px;border-right:1px solid var(--border);}
-        .calc-lbl{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:5px;display:block;}
-        .calc-fg{margin-bottom:20px;}
-        .calc-ir{display:flex;align-items:center;}
-        .c-input{background:var(--bg);border:1px solid var(--border2);color:var(--text);font-family:var(--mono);font-size:13px;padding:9px 13px;border-radius:2px 0 0 2px;width:100%;outline:none;transition:border-color .2s;-moz-appearance:textfield;}
-        .c-input::-webkit-outer-spin-button,.c-input::-webkit-inner-spin-button{-webkit-appearance:none;}
-        .c-input:focus{border-color:var(--acid);}
-        .c-unit{background:var(--bg3);border:1px solid var(--border2);border-left:none;color:var(--muted);font-family:var(--mono);font-size:10px;padding:9px 11px;border-radius:0 2px 2px 0;white-space:nowrap;}
-        .c-hint{font-size:9px;color:var(--muted);margin-top:3px;letter-spacing:.3px;}
-        .c-slider-w{margin-bottom:20px;}
-        .c-slider{width:100%;height:3px;appearance:none;background:var(--border2);border-radius:2px;cursor:pointer;outline:none;}
-        .c-slider::-webkit-slider-thumb{appearance:none;width:14px;height:14px;background:var(--acid);border-radius:50%;cursor:pointer;border:2px solid var(--bg);}
-        .c-slider::-moz-range-thumb{width:14px;height:14px;background:var(--acid);border-radius:50%;cursor:pointer;border:2px solid var(--bg);}
-        .sv{display:flex;justify-content:space-between;margin-top:5px;}
-        .sv span{font-size:9px;color:var(--muted);letter-spacing:1px;}
-        .sv span.act{color:var(--acid);}
-        .calc-res{padding:28px 32px;display:flex;flex-direction:column;gap:0;}
-        .res-ttl{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:18px;}
-        .rl{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--border);}
-        .rl:last-child{border-bottom:none;}
-        .rl-k{font-size:11px;color:var(--muted3);}
-        .rl-v{font-size:13px;font-weight:500;color:var(--text);}
-        .rl-v.big{font-size:20px;letter-spacing:-.5px;color:#fff;}
-        .rl-v.green{color:var(--acid);}
-        .rl-v.red{color:var(--red);}
-        .calc-ft{grid-column:1/-1;border-top:1px solid var(--border);padding:14px 32px;background:var(--bg);display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
-        .calc-note{font-size:10px;color:var(--muted);}
-        .calc-note strong{color:var(--muted3);}
-        .calc-cta{margin-left:auto;background:none;border:1px solid var(--acid-border);color:var(--acid);font-family:var(--mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:8px 15px;border-radius:2px;cursor:pointer;transition:all .2s;text-decoration:none;}
-        .calc-cta:hover{background:var(--acid-dim);}
+        /* HOW IT WORKS */
+        .hiw-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);}
+        .hiw-panel{padding:44px 40px;}
+        .hiw-panel.dark{background:var(--bg);}
+        .hiw-panel.mid{background:var(--bg2);}
+        .hiw-panel-lbl{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:20px;}
+        .hiw-panel h3{font-size:clamp(16px,2vw,22px);font-weight:500;color:#fff;line-height:1.2;letter-spacing:-.2px;margin-bottom:12px;}
+        .hiw-panel p{font-size:12px;line-height:1.75;color:var(--muted3);margin-bottom:24px;}
 
-        /* ── TECH ── */
-        .tech-wrap{background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
-        .tech-grid{display:grid;grid-template-columns:1fr 1.5fr;gap:72px;align-items:start;}
-        .tech-left h2{font-size:clamp(24px,3.5vw,44px);font-weight:500;color:#fff;line-height:1.12;letter-spacing:-.5px;margin-bottom:14px;}
-        .tech-left p{font-size:13px;line-height:1.8;color:var(--muted3);}
-        .terminal{background:var(--bg);border:1px solid var(--border2);border-radius:4px;overflow:hidden;margin-top:32px;}
-        .term-hd{background:var(--bg3);border-bottom:1px solid var(--border);padding:10px 15px;display:flex;align-items:center;gap:6px;}
-        .tdot{width:8px;height:8px;border-radius:50%;background:var(--border2);}
-        .term-ttl{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-left:5px;}
-        .term-body{padding:16px 18px;display:flex;flex-direction:column;gap:5px;line-height:1.5;}
-        .tl{font-size:11px;color:var(--muted3);}
-        .tl .g{color:var(--acid);}.tl .r{color:var(--red);}.tl .a{color:var(--amber);}.tl .b{color:var(--blue);}.tl .w{color:#fff;}.tl .d{color:var(--muted);}
+        /* BRANCHING FLOW — intercept visual */
+        .branch-flow{display:flex;flex-direction:column;gap:0;border:1px solid var(--border);}
+        .bf-step{padding:14px 18px;border-bottom:1px solid var(--border);display:grid;grid-template-columns:24px 1fr;gap:12px;align-items:start;}
+        .bf-step:last-child{border-bottom:none;}
+        .bf-num{font-size:9px;font-weight:600;color:var(--muted);padding-top:1px;}
+        .bf-head{font-size:11px;font-weight:500;color:var(--text);margin-bottom:2px;}
+        .bf-body{font-size:10px;line-height:1.5;color:var(--muted3);}
+        .bf-fork{padding:14px 18px;border-bottom:1px solid var(--border);background:var(--bg3);}
+        .bf-fork-label{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+        .bf-paths{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+        .bf-path{padding:10px 14px;border-radius:2px;border:1px solid var(--border);}
+        .bf-path.old{border-color:rgba(255,92,92,.2);background:rgba(255,92,92,.04);}
+        .bf-path.new{border-color:var(--acid-border);background:var(--acid-dim);}
+        .bf-path-label{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px;}
+        .bf-path.old .bf-path-label{color:var(--red);}
+        .bf-path.new .bf-path-label{color:var(--acid);}
+        .bf-path-outcome{font-size:10px;font-weight:500;}
+        .bf-path.old .bf-path-outcome{color:var(--red);}
+        .bf-path.new .bf-path-outcome{color:var(--acid);}
+        .bf-intercept{padding:14px 18px;border-bottom:1px solid var(--acid-border);background:rgba(190,255,10,.025);display:grid;grid-template-columns:24px 1fr;gap:12px;}
+        .bf-intercept-num{font-size:10px;font-weight:600;color:var(--acid);}
+        .bf-intercept-head{font-size:11px;font-weight:500;color:var(--acid);margin-bottom:2px;}
+        .bf-intercept-body{font-size:10px;line-height:1.5;color:var(--muted3);}
+
+        /* stack layers */
         .stack{border:1px solid var(--border);}
-        .stl{padding:22px 26px;border-bottom:1px solid var(--border);display:grid;grid-template-columns:88px 1fr;gap:18px;transition:background .2s;}
+        .stl{padding:18px 22px;border-bottom:1px solid var(--border);display:grid;grid-template-columns:80px 1fr;gap:14px;transition:background .2s;}
         .stl:last-child{border-bottom:none;}
-        .stl:hover{background:rgba(190,255,10,.013);}
-        .lp{font-size:8px;letter-spacing:2px;text-transform:uppercase;padding:4px 9px;border-radius:2px;text-align:center;align-self:start;margin-top:2px;}
+        .stl:hover{background:rgba(190,255,10,.012);}
+        .lp{font-size:8px;letter-spacing:2px;text-transform:uppercase;padding:4px 8px;border-radius:2px;text-align:center;align-self:start;margin-top:2px;}
         .lp-o{background:rgba(190,255,10,.1);color:var(--acid);border:1px solid var(--acid-border);}
         .lp-a{background:rgba(108,180,255,.07);color:var(--blue);border:1px solid rgba(108,180,255,.14);}
         .lp-g{background:rgba(200,140,255,.06);color:#C88CFF;border:1px solid rgba(200,140,255,.12);}
         .lp-d{background:rgba(200,200,200,.04);color:var(--muted2);border:1px solid var(--border2);}
-        .lh{font-size:12px;font-weight:500;color:#fff;margin-bottom:4px;}
-        .lbody{font-size:11px;line-height:1.65;color:var(--muted3);}
-        .chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px;}
-        .chip{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;padding:2px 7px;border:1px solid var(--border);border-radius:2px;color:var(--muted);}
+        .lh{font-size:11px;font-weight:500;color:var(--text);margin-bottom:3px;}
+        .lbody{font-size:10px;line-height:1.6;color:var(--muted3);}
+        .chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;}
+        .chip{font-size:8px;letter-spacing:1px;text-transform:uppercase;padding:2px 6px;border:1px solid var(--border);border-radius:2px;color:var(--muted);}
 
-        /* ── TRACTION ── */
-        .tr-wrap{border-top:1px solid var(--border);}
-        .tr-hd{display:grid;grid-template-columns:1fr 1fr;gap:72px;margin-bottom:52px;}
-        .tr-hd h2{font-size:clamp(24px,3.5vw,44px);font-weight:500;color:#fff;line-height:1.12;letter-spacing:-.5px;}
-        .tr-hd p{font-size:13px;line-height:1.8;color:var(--muted3);padding-top:8px;}
-        .pgrid{border:1px solid var(--border);display:grid;grid-template-columns:repeat(3,1fr);}
-        .pcard{padding:32px 32px;border-right:1px solid var(--border);}
-        .pcard:last-child{border-right:none;}
-        .prole{font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
-        .pname{font-size:17px;font-weight:500;color:#fff;margin-bottom:8px;letter-spacing:-.2px;}
-        .pstat{display:inline-flex;align-items:center;gap:5px;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--acid);margin-bottom:14px;}
-        .pstat::before{content:"";width:4px;height:4px;border-radius:50%;background:var(--acid);animation:pulse 2s infinite;}
-        .pbody{font-size:11px;line-height:1.7;color:var(--muted3);}
-        .dstrip{grid-column:1/-1;border-top:1px solid var(--border);padding:14px 32px;background:var(--bg2);display:flex;align-items:center;gap:10px;}
+        /* HOW WE ENGAGE */
+        .engage-grid{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:start;}
+        .engage-left h2{font-size:clamp(22px,3vw,36px);font-weight:500;color:#fff;line-height:1.2;letter-spacing:-.3px;margin-bottom:14px;}
+        .engage-left h2 em{font-style:normal;color:var(--acid);}
+        .engage-left p{font-size:13px;line-height:1.8;color:var(--muted3);margin-bottom:14px;}
 
-        /* ── TEAM ── */
-        .team-wrap{background:var(--bg2);border-top:1px solid var(--border);}
-        .tgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);margin-top:48px;}
-        .tcard{padding:28px 28px;background:var(--bg3);transition:background .2s;}
-        .tcard:hover{background:var(--bg4);}
-        .trole{font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--acid);margin-bottom:9px;}
-        .tname{font-size:16px;font-weight:500;color:#fff;margin-bottom:11px;letter-spacing:-.2px;}
-        .tbio{font-size:11px;line-height:1.7;color:var(--muted3);margin-bottom:16px;}
-        .tprev{display:flex;flex-direction:column;gap:4px;border-top:1px solid var(--border);padding-top:13px;}
-        .tpi{font-size:9px;color:var(--muted);letter-spacing:.3px;}
-        .adv-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);margin-top:1px;}
-        .acard{padding:20px 28px;background:var(--bg3);}
-        .arole{font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
-        .aname{font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px;}
-        .atitle{font-size:10px;color:var(--muted3);}
+        /* RATE DECLINE CURVE + PHASE TIMELINE */
+        .engage-right{}
 
-        /* ── CTA ── */
-        .cta-wrap{border-top:1px solid var(--border);position:relative;overflow:hidden;}
+        /* SLIDING DOOR CHART */
+        .slider-chart-wrap{width:100%;user-select:none;}
+        .slider-chart-labels{display:flex;justify-content:space-between;margin-bottom:10px;padding:0 2px;}
+        .sc-label-bad{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--red);opacity:1;transition:opacity .3s;}
+        .sc-label-good{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--acid);opacity:.4;transition:opacity .3s;}
+        .slider-chart-container{position:relative;border:1px solid var(--border);border-radius:3px;overflow:hidden;cursor:ew-resize;background:var(--bg3);}
+        #sliderChart{display:block;width:100%;height:200px;}
+        .slider-handle{position:absolute;top:0;bottom:0;width:2px;background:rgba(255,255,255,.15);cursor:ew-resize;transform:translateX(-50%);pointer-events:none;}
+        .slider-handle-line{position:absolute;top:0;bottom:0;left:0;width:1px;background:rgba(255,255,255,.3);}
+        .slider-handle-grip{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--bg4);border:1px solid var(--border2);border-radius:3px;padding:5px 6px;display:flex;gap:4px;align-items:center;pointer-events:none;}
+        .slider-handle-grip span{font-size:9px;color:var(--muted2);}
+        .slider-drag-hint{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);text-align:center;margin-top:8px;}
+        .rate-curve-wrap{border:1px solid var(--border);background:var(--bg3);padding:20px 24px;margin-bottom:1px;}
+        .rate-curve-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
+        .rate-curve-svg{width:100%;height:80px;}
+        .phase-grid{border:1px solid var(--border);}
+        .phase-row{display:grid;grid-template-columns:80px 1fr;border-bottom:1px solid var(--border);}
+        .phase-row:last-child{border-bottom:none;}
+        .phase-week{padding:16px 16px;border-right:1px solid var(--border);display:flex;flex-direction:column;justify-content:center;}
+        .phase-week-lbl{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--acid);margin-bottom:2px;}
+        .phase-week-range{font-size:9px;color:var(--muted);}
+        .phase-detail{padding:16px 20px;}
+        .phase-name{font-size:12px;font-weight:500;color:var(--text);margin-bottom:3px;}
+        .phase-desc{font-size:10px;line-height:1.5;color:var(--muted3);}
+        .engage-note{border:1px solid var(--border);margin-top:1px;padding:14px 20px;background:var(--bg2);font-size:10px;color:var(--muted3);line-height:1.5;}
+        .engage-note strong{color:var(--acid);}
+
+
+        /* TEAM */
+        .team-grid{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:start;}
+        .team-left h2{font-size:clamp(22px,3vw,36px);font-weight:500;color:#fff;line-height:1.15;letter-spacing:-.3px;margin-bottom:14px;}
+        .team-left h2 em{font-style:normal;color:var(--acid);}
+        .team-left p{font-size:13px;line-height:1.8;color:var(--muted3);margin-bottom:14px;}
+        .team-cards{border:1px solid var(--border);}
+        .team-card{display:grid;grid-template-columns:56px 1fr;gap:0;border-bottom:1px solid var(--border);transition:background .2s;}
+        .team-card:last-child{border-bottom:none;}
+        .team-card:hover{background:rgba(190,255,10,.012);}
+        .tc-avatar{width:56px;border-right:1px solid var(--border);display:flex;align-items:center;justify-content:center;background:var(--bg2);position:relative;}
+        .tc-initials{font-size:13px;font-weight:600;color:var(--acid);letter-spacing:1px;}
+        .tc-body{padding:16px 20px;}
+        .tc-role{font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--acid);margin-bottom:4px;}
+        .tc-name{font-size:13px;font-weight:500;color:var(--text);margin-bottom:5px;}
+        .tc-bio{font-size:10px;line-height:1.55;color:var(--muted3);}
+        .tc-prev{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;}
+        .tc-tag{font-size:8px;letter-spacing:1px;padding:2px 6px;border:1px solid var(--border);border-radius:2px;color:var(--muted);}
+        .adv-strip{border:1px solid var(--border);margin-top:1px;}
+        .adv-strip-hd{padding:10px 20px;background:var(--bg2);border-bottom:1px solid var(--border);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);}
+        .adv-row-inner{display:grid;grid-template-columns:repeat(3,1fr);}
+        .adv-cell{padding:16px 20px;border-right:1px solid var(--border);}
+        .adv-cell:last-child{border-right:none;}
+        .adv-name{font-size:12px;font-weight:500;color:var(--text);margin-bottom:2px;}
+        .adv-title{font-size:10px;color:var(--muted3);}
+
+        /* CTA */
         .cta-bg{position:absolute;inset:0;background:radial-gradient(ellipse 55% 75% at 50% 100%,rgba(190,255,10,.05) 0%,transparent 70%);pointer-events:none;}
         .cta-in{position:relative;z-index:1;padding:96px 48px;max-width:1100px;margin:0 auto;}
-        .cta-grid{display:grid;grid-template-columns:1fr auto;gap:72px;align-items:center;}
-        .cta-h2{font-size:clamp(26px,4vw,54px);font-weight:500;color:#fff;line-height:1.07;letter-spacing:-1px;margin-bottom:14px;}
+        .cta-h2{font-size:clamp(26px,4vw,52px);font-weight:500;color:var(--text);line-height:1.07;letter-spacing:-1px;margin-bottom:14px;}
         .cta-h2 em{font-style:normal;color:var(--acid);}
         .cta-p{font-size:13px;line-height:1.8;color:var(--muted3);max-width:480px;margin-bottom:28px;}
         .cta-perks{display:flex;flex-direction:column;gap:9px;margin-bottom:36px;}
         .cta-perk{display:flex;align-items:center;gap:9px;font-size:11px;color:var(--muted3);}
-        .cta-perk::before{content:"→";color:var(--acid);}
-        .cta-r{display:flex;flex-direction:column;align-items:center;gap:10px;min-width:190px;}
-        .cta-lbl{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
-        .cta-price{font-size:60px;font-weight:500;color:var(--acid);letter-spacing:-3px;line-height:1;}
-        .cta-sub{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
-        .cta-box{border:1px solid var(--acid-border);background:var(--acid-dim);padding:12px 22px;border-radius:3px;text-align:center;margin-top:8px;}
-        .btn-pl{background:var(--acid);color:#080808;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;padding:15px 36px;border-radius:3px;border:none;cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s;width:100%;text-align:center;}
-        .btn-pl:hover{background:#d4ff2a;transform:translateY(-1px);}
-
-        /* ── FOOTER ── */
-        footer{border-top:1px solid var(--border);padding:32px 48px;display:flex;align-items:center;justify-content:space-between;}
+        .cta-perk::before{content:'→';color:var(--acid);}
         .fl{display:flex;align-items:center;gap:14px;}
         .f-lm{font-family:var(--mono);font-size:16px;font-weight:600;color:var(--acid);letter-spacing:-1px;}
         .f-wm{font-size:12px;font-weight:500;letter-spacing:4px;text-transform:uppercase;color:var(--text);}
-        .f-sep{color:var(--border2);}
-        .f-tag{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
         .f-copy{font-size:9px;letter-spacing:1px;color:var(--muted);}
 
-        /* ── RESPONSIVE ── */
+        /* ECONOMIC IMPACT */
+        .impact-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start;}
+
+        /* ── PYRAMID ──────────────────────────────────────── */
+        .pyramid-outer{position:relative;overflow:visible;}
+        .layer-canvas{position:absolute;top:0;left:0;pointer-events:none;}
+        .layer-label{position:absolute;left:0;right:0;display:flex;flex-direction:column;align-items:center;pointer-events:none;z-index:50;}
+        .l-tag{font-size:7px;letter-spacing:2px;text-transform:uppercase;margin-bottom:2px;}
+        .l-title{font-size:12px;font-weight:700;letter-spacing:-.2px;text-align:center;}
+        .l-sub{font-size:8px;margin-top:2px;text-align:center;letter-spacing:.3px;}
+        .l-chips{display:flex;gap:4px;flex-wrap:wrap;justify-content:center;margin-top:5px;}
+        .lchip{font-size:7px;letter-spacing:1px;text-transform:uppercase;padding:2px 6px;border-radius:2px;border:1px solid;background:rgba(0,0,0,.12);}
+        .dark-text .l-tag{color:rgba(0,0,0,.5);}
+        .dark-text .l-title{color:#080808;}
+        .dark-text .l-sub{color:rgba(0,0,0,.5);}
+        .dark-text .lchip{border-color:rgba(0,0,0,.2);color:rgba(0,0,0,.6);}
+        .light-text .l-tag{color:rgba(190,255,10,.7);}
+        .light-text .l-title{color:var(--text);text-shadow:0 1px 8px rgba(0,0,0,.9),0 0 16px rgba(0,0,0,.8);}
+        .light-text .l-sub{color:var(--muted3);}
+        .light-text .lchip{border-color:rgba(190,255,10,.25);color:rgba(190,255,10,.7);background:rgba(0,0,0,.55);}
+        .light-text .l-tag{text-shadow:0 1px 4px rgba(0,0,0,.9);}
+        .div-line{position:absolute;left:0;right:0;z-index:20;display:flex;align-items:center;}
+        .div-line-bar{flex:1;height:1px;}
+        .div-line-lbl{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--muted2);padding:0 12px;background:var(--bg);white-space:nowrap;}
+        .ann{position:absolute;z-index:30;display:flex;align-items:flex-start;gap:8px;font-size:9px;color:var(--muted3);line-height:1.5;white-space:normal;max-width:220px;}
+        .ann-rule{width:20px;height:1px;background:var(--border2);flex-shrink:0;margin-top:7px;}
+        .ann em{font-style:normal;color:var(--muted);}
+
+        /* RESPONSIVE */
         @media(max-width:900px){
             nav{padding:15px 22px;}
             .nav-links{display:none;}
-            .hero{padding:140px 22px 80px;}
-            .sec{padding:72px 22px;}
-            .sol-grid,.how-hd,.tech-grid,.tr-hd,.cta-grid,
-            .aud-grid,.tgrid,.adv-row,.pgrid{grid-template-columns:1fr!important;}
-            .prob-cards{grid-template-columns:1fr;}
-            .prob-card{border-right:none!important;}
-            .aud-card{border-right:none!important;}
-            .pcard{border-right:none!important;}
-            #platform .fu > div { grid-template-columns: 1fr !important; }
-            .steps{grid-template-columns:1fr;}
-            .step{border-right:none!important;border-bottom:1px solid var(--border);}
-            .calc-body{grid-template-columns:1fr;}
-            .calc-in{border-right:none;border-bottom:1px solid var(--border);}
-            .stats{flex-direction:column;}
-            .sc{border-right:none;border-bottom:1px solid var(--border);}
+            .hero,.sec{padding-left:22px;padding-right:22px;}
+            .hero{padding-top:140px;}
+            .hero-inner{grid-template-columns:1fr;}
+            .hero-visual{display:none;}
+            .fee-grid{grid-template-columns:1fr 1fr;}
+            .fee-card:nth-child(2){border-right:none;}
+            .fee-card:nth-child(3){border-right:1px solid var(--border);}
+            .fee-card:nth-child(4){border-right:none;}
+            .sol-grid,.engage-grid,.hiw-grid,.team-grid{grid-template-columns:1fr;}
+            .contrast-grid{grid-template-columns:1fr;}
+
+            .adv-row-inner{grid-template-columns:1fr;}
+            .adv-cell{border-right:none;border-bottom:1px solid var(--border);}
+            .bf-paths{grid-template-columns:1fr;}
             footer{flex-direction:column;gap:10px;text-align:center;}
-            .cta-r{width:100%;}
+            .sgd-inner{grid-template-columns:1fr;}
+            .sgd-bridge{border:none;border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+            .signal-gap-diagram{padding:24px;}
         }
     </style>
 
 </head>
 <body>
-
-<div class="scanline"></div>
+<div class="page-grid"></div>
+<div class="page-glow"></div>
 
 <!-- NAV -->
 
 <nav>
     <a href="#" class="nav-logo">
-<span class="logo-mark">
-<span class="lm-gt">&gt;</span><span class="lm-us">_</span>
-</span>
+        <span class="logo-mark"><span class="lm-gt">&gt;</span><span class="lm-us">_</span></span>
         <span class="nav-word">Precursory</span>
     </a>
     <ul class="nav-links">
-        <li><a href="#problem">The Problem</a></li>
+        <li><a href="#problem">How a Fee Is Born</a></li>
         <li><a href="#solution">Solution</a></li>
-        <li><a href="#how">How We Engage</a></li>
-        <li><a href="#platform">How It Works</a></li>
         <li><a href="#team">Team</a></li>
-        <li><a href="#cta" class="nav-cta">Get Your Risk Map</a></li>
+        <li><a href="#cta" class="nav-cta">Get Your Cost Guarantee</a></li>
     </ul>
 </nav>
 
 <!-- HERO -->
 
 <section class="hero">
-    <div class="hero-grid"></div>
-    <div class="hero-glow"></div>
+    <canvas class="radar-canvas" data-radar aria-hidden="true"></canvas>
     <div class="hero-inner">
-        <div class="hero-badge"><span class="bd"></span>Risk Transfer Instrument · Freight Accessorial Coverage</div>
-        <h1>
-            Precursory transfers<br>
-            <span class="ac">freight execution risk</span><br>
-            off your balance sheet.
-        </h1>
-        <p class="hero-sub">We set a guaranteed cost ceiling on accessorials — underwritten on your real operational history, not industry averages. Precursory reads the signals already in your ERP, TMS, and dock operations, gives your carriers the lead time to act before the fee clock starts, and absorbs what we can't prevent.</p>
-        <div class="hero-btns">
-            <a href="#cta" class="btn-p">Get Your Risk Map</a>
-            <a href="#solution" class="btn-g">See How It Works</a>
+        <div class="hero-left">
+            <div class="hero-badge"><span class="bd"></span>Freight Risk Intelligence · Accessorial Coverage</div>
+            <h1>
+                Accessorial risk<br>
+                has a price.<br>
+                <span class="ac">Now it has a ceiling.</span>
+            </h1>
+            <p class="hero-sub">Precursory is the first platform to turn TONU, detention, and per-diem volatility into a fixed, transferable cost — built for shippers who are done budgeting on guesses.</p>
+            <p class="hero-sub" style="margin-top:12px;font-size:12px;color:var(--muted2);">Day one: a cost ceiling underwritten on your actual lane history. Day 100: a model no competitor can replicate, because it was trained on yours.</p>
+            <div class="hero-btns">
+                <a href="#cta" class="btn-p">Get Your Cost Guarantee</a>
+                <a href="#solution" class="btn-g">See How It Works</a>
+            </div>
         </div>
+        <!-- SLIDING DOOR CHART -->
     </div>
 </section>
 
 <!-- PROBLEM -->
 
-<div class="prob-wrap" id="problem">
+<div class="wrap" id="problem">
+    <canvas class="radar-canvas" data-radar aria-hidden="true"></canvas>
     <div class="sec">
-        <div class="sec-lbl">The Problem</div>
-        <div class="prob-grid">
-            <div class="prob-intro">
-                <h2>$18 billion a year in fees that weren't random. They were predictable.</h2>
-                <p>The signals were already in your systems — order volume dips, dock congestion patterns, idle trailer pools, actual fuel consumption. The carriers who needed them never got them. The fee hit the invoice instead.</p>
-            </div>
-            <div class="prob-cards">
-                <div class="prob-card">
-                    <div class="ptag">TONU</div>
-                    <h3>The truck drove there for nothing.</h3>
-                    <p>Your ERP flagged the production delay. The procurement freeze was in the WMS. The tender went out anyway — because no one was connecting those signals to dispatch before the cancellation window closed.</p>
-                    <span class="pamt" style="display:none"></span>
-                </div>
-                <div class="prob-card">
-                    <div class="ptag">Detention</div>
-                    <h3>The clock started the moment the truck arrived.</h3>
-                    <p>Your dock schedule had the congestion. Your labor plan had the gap. The carrier had no idea. By the time the invoice arrived, the truck had already waited three hours — and you had no recourse.</p>
-                    <span class="pamt" style="display:none"></span>
-                </div>
-                <div class="prob-card">
-                    <div class="ptag">Trailer &amp; Equipment</div>
-                    <h3>The trailer sat in your yard the entire time.</h3>
-                    <p>Per-diem accrues silently. The equipment was visible in your TMS for days before the charges hit. The data existed. Nobody connected it to a deadline that could still be acted on.</p>
-                    <span class="pamt" style="display:none"></span>
-                </div>
-                <div class="prob-card">
-                    <div class="ptag">Fuel Surcharge</div>
-                    <h3>A 6 MPG assumption — applied to every load for a decade.</h3>
-                    <p>Every load. Every lane. Every week. The actual consumption data existed in OEM telematics the whole time. No one was connecting it to the billing system to dispute the invoice.</p>
-                    <span class="pamt" style="display:none"></span>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+        <div class="sec-lbl">How a Fee Is Born</div>
+        <p style="font-size:clamp(18px,2.5vw,28px);font-weight:500;color:#fff;letter-spacing:-.3px;max-width:700px;margin-bottom:24px;line-height:1.3;">Every fee was visible before it happened. The signal existed. Nobody connected it to the carrier in time.</p>
+        <p style="font-size:14px;line-height:1.75;color:var(--muted3);max-width:680px;margin-bottom:48px;">The problem isn't that TONU happens. It's that you don't know it's coming until the truck is already rolling — and by then, the fee is already owed. That's not a visibility problem. It's a timing problem. And timing is fixable.</p>
 
-<!-- AUDIENCE -->
+        <div class="fee-grid">
 
-<div class="aud-wrap">
-    <div class="aud-grid">
-        <div class="aud-card">
-            <div class="aud-ey"><span class="aud-dot"></span>For Shippers</div>
-            <h3>You're absorbing risk your own data could price.</h3>
-            <p class="aud-lead">Every accessorial on your invoice traces back to a signal that was already in your systems before the fee was owed.</p>
-            <ul class="symp">
-                <li>Your ERP flagged the production delay days before the TONU hit. The tender went out anyway.</li>
-                <li>Detention fees accruing at docks you control — because the carrier never saw your dock schedule.</li>
-                <li>Trailer per-diem on equipment sitting in your own yard, visible in your TMS, never actioned in time.</li>
-                <li>Fuel surcharge invoices calculated on an industry average that hasn't been challenged in a decade.</li>
-                <li>Finance reconciling the damage every month. Operations absorbing the blame. The cycle repeating.</li>
-            </ul>
+            <div class="fee-card">
+                <div class="fee-tag">TONU</div>
+                <h3>The truck drove there for nothing.</h3>
+                <svg class="fee-svgtl" viewBox="0 0 180 130" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Fee lifecycle diagram">
+                    <!-- spine -->
+                    <line x1="20" y1="16" x2="20" y2="114" stroke="#242424" stroke-width="1"/>
+                    <!-- node 1: signal existed -->
+                    <circle cx="20" cy="16" r="4" fill="#707070"/>
+                    <text x="32" y="13" fill="#949494" font-size="8" font-family="monospace" letter-spacing="0.5">Signal existed</text>
+                    <text x="32" y="24" fill="#484848" font-size="8" font-family="monospace">ERP flagged delay 3 days prior</text>
+                    <!-- gap indicator -->
+                    <line x1="20" y1="20" x2="20" y2="56" stroke="#FF5C5C" stroke-width="1" stroke-dasharray="3,4"/>
+                    <rect x="30" y="34" width="70" height="14" rx="2" fill="rgba(255,92,92,0.08)" stroke="rgba(255,92,92,0.2)" stroke-width="0.5"/>
+                    <text x="35" y="44" fill="#FF5C5C" font-size="7" font-family="monospace" letter-spacing="0.5">No action taken</text>
+                    <!-- node 2: window missed -->
+                    <circle cx="20" cy="58" r="4" fill="#FFB547"/>
+                    <text x="32" y="55" fill="#949494" font-size="8" font-family="monospace" letter-spacing="0.5">Window missed</text>
+                    <text x="32" y="66" fill="#484848" font-size="8" font-family="monospace">Tender issued</text>
+                    <!-- connector -->
+                    <line x1="20" y1="62" x2="20" y2="110" stroke="#242424" stroke-width="1"/>
+                    <!-- node 3: fee charged -->
+                    <circle cx="20" cy="112" r="4" fill="#FF5C5C"/>
+                    <text x="32" y="109" fill="#e2e2e2" font-size="8" font-family="monospace" letter-spacing="0.5" font-weight="500">Fee charged</text>
+                    <text x="32" y="120" fill="#FF5C5C" font-size="8" font-family="monospace">$250–500 TONU</text>
+                </svg>
+            </div>
+
+            <div class="fee-card">
+                <div class="fee-tag">Detention</div>
+                <h3>The clock started the moment they arrived.</h3>
+                <svg class="fee-svgtl" viewBox="0 0 180 130" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Fee lifecycle diagram">
+                    <line x1="20" y1="16" x2="20" y2="114" stroke="#242424" stroke-width="1"/>
+                    <circle cx="20" cy="16" r="4" fill="#707070"/>
+                    <text x="32" y="13" fill="#949494" font-size="8" font-family="monospace" letter-spacing="0.5">Signal existed</text>
+                    <text x="32" y="24" fill="#484848" font-size="8" font-family="monospace">Dock showed 3hr congestion</text>
+                    <line x1="20" y1="20" x2="20" y2="56" stroke="#FF5C5C" stroke-width="1" stroke-dasharray="3,4"/>
+                    <rect x="30" y="34" width="80" height="14" rx="2" fill="rgba(255,92,92,0.08)" stroke="rgba(255,92,92,0.2)" stroke-width="0.5"/>
+                    <text x="35" y="44" fill="#FF5C5C" font-size="7" font-family="monospace" letter-spacing="0.5">Carrier not informed</text>
+                    <circle cx="20" cy="58" r="4" fill="#FFB547"/>
+                    <text x="32" y="55" fill="#949494" font-size="8" font-family="monospace" letter-spacing="0.5">Window missed</text>
+                    <text x="32" y="66" fill="#484848" font-size="8" font-family="monospace">Driver dispatched on time</text>
+                    <line x1="20" y1="62" x2="20" y2="110" stroke="#242424" stroke-width="1"/>
+                    <circle cx="20" cy="112" r="4" fill="#FF5C5C"/>
+                    <text x="32" y="109" fill="#e2e2e2" font-size="8" font-family="monospace" letter-spacing="0.5" font-weight="500">Fee charged</text>
+                    <text x="32" y="120" fill="#FF5C5C" font-size="8" font-family="monospace">$75–150/hr detention</text>
+                </svg>
+            </div>
+
+            <div class="fee-card">
+                <div class="fee-tag">Trailer &amp; Equipment</div>
+                <h3>It sat in your yard the entire time.</h3>
+                <svg class="fee-svgtl" viewBox="0 0 180 130" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Fee lifecycle diagram">
+                    <line x1="20" y1="16" x2="20" y2="114" stroke="#242424" stroke-width="1"/>
+                    <circle cx="20" cy="16" r="4" fill="#707070"/>
+                    <text x="32" y="13" fill="#949494" font-size="8" font-family="monospace" letter-spacing="0.5">Signal existed</text>
+                    <text x="32" y="24" fill="#484848" font-size="8" font-family="monospace">TMS: trailer idle 6 days</text>
+                    <line x1="20" y1="20" x2="20" y2="56" stroke="#FF5C5C" stroke-width="1" stroke-dasharray="3,4"/>
+                    <rect x="30" y="34" width="76" height="14" rx="2" fill="rgba(255,92,92,0.08)" stroke="rgba(255,92,92,0.2)" stroke-width="0.5"/>
+                    <text x="35" y="44" fill="#FF5C5C" font-size="7" font-family="monospace" letter-spacing="0.5">No alert triggered</text>
+                    <circle cx="20" cy="58" r="4" fill="#FFB547"/>
+                    <text x="32" y="55" fill="#949494" font-size="8" font-family="monospace" letter-spacing="0.5">Window missed</text>
+                    <text x="32" y="66" fill="#484848" font-size="8" font-family="monospace">No reposition actioned</text>
+                    <line x1="20" y1="62" x2="20" y2="110" stroke="#242424" stroke-width="1"/>
+                    <circle cx="20" cy="112" r="4" fill="#FF5C5C"/>
+                    <text x="32" y="109" fill="#e2e2e2" font-size="8" font-family="monospace" letter-spacing="0.5" font-weight="500">Fee charged</text>
+                    <text x="32" y="120" fill="#FF5C5C" font-size="8" font-family="monospace">$50–100/day per-diem</text>
+                </svg>
+            </div>
+
+            <div class="fee-card">
+                <div class="fee-tag">Fuel Surcharge</div>
+                <h3>You've been billed on 6 MPG for years.<br>Your trucks run at 7.2.</h3>
+                <svg class="fee-svgtl" viewBox="0 0 180 130" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Fee lifecycle diagram">
+                    <line x1="20" y1="16" x2="20" y2="114" stroke="#242424" stroke-width="1"/>
+                    <circle cx="20" cy="16" r="4" fill="#707070"/>
+                    <text x="32" y="13" fill="#949494" font-size="8" font-family="monospace" letter-spacing="0.5">Signal existed</text>
+                    <text x="32" y="24" fill="#484848" font-size="8" font-family="monospace">OEM: 7.2 MPG actual</text>
+                    <line x1="20" y1="20" x2="20" y2="56" stroke="#FF5C5C" stroke-width="1" stroke-dasharray="3,4"/>
+                    <rect x="30" y="34" width="82" height="14" rx="2" fill="rgba(255,92,92,0.08)" stroke="rgba(255,92,92,0.2)" stroke-width="0.5"/>
+                    <text x="35" y="44" fill="#FF5C5C" font-size="7" font-family="monospace" letter-spacing="0.5">Not connected to billing</text>
+                    <circle cx="20" cy="58" r="4" fill="#FFB547"/>
+                    <text x="32" y="55" fill="#949494" font-size="8" font-family="monospace" letter-spacing="0.5">Not connected</text>
+                    <text x="32" y="66" fill="#484848" font-size="8" font-family="monospace">Billed on 6 MPG assumption</text>
+                    <line x1="20" y1="62" x2="20" y2="110" stroke="#242424" stroke-width="1"/>
+                    <circle cx="20" cy="112" r="4" fill="#FF5C5C"/>
+                    <text x="32" y="109" fill="#e2e2e2" font-size="8" font-family="monospace" letter-spacing="0.5" font-weight="500">Overpayment</text>
+                    <text x="32" y="120" fill="#FF5C5C" font-size="8" font-family="monospace">$0.18/mi every load</text>
+                </svg>
+            </div>
+
         </div>
-        <div class="aud-card">
-            <div class="aud-ey"><span class="aud-dot"></span>For Carriers</div>
-            <h3>You bear three times the cost the shipper ever sees.</h3>
-            <p class="aud-lead">A $250 TONU fee is $750+ in true cost — deadhead miles, lost drive time, the load you couldn't take because the truck was already committed.</p>
-            <ul class="symp">
-                <li>Every detention hour is an hour subtracted from your driver's legal drive window. You can't bill for all of it.</li>
-                <li>Stranded trailers quietly inflate your fleet requirements. The capital cost never shows on a single invoice.</li>
-                <li>Loads that cancel without warning cost drivers. Turnover runs $8–12K per replacement.</li>
-                <li>Modern,fuel-efficient fleets pay the same surcharge rate as inefficient ones — because nobody's sharing consumption data to prove otherwise.</li>
-                <li>The shipper has the signals. No system connects your planning horizon to their operational data.</li>
-            </ul>
+
+        <!-- ACCORDION: The cost hits both sides -->
+        <div style="border:1px solid var(--border);margin-top:48px;" id="bothSides">
+            <button onclick="toggleAccordion()" id="accordionBtn" style="width:100%;padding:20px 28px;background:var(--bg2);border:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-family:var(--mono);">
+                <div style="display:flex;align-items:center;gap:14px;">
+                    <span style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);">Both Sides of the Network</span>
+                    <span style="font-size:13px;font-weight:500;color:var(--text);">The cost hits both sides.</span>
+                </div>
+                <span id="accordionArrow" style="font-size:12px;color:var(--acid);transition:transform .3s;">▼</span>
+            </button>
+            <div id="accordionBody" style="display:none;border-top:1px solid var(--border);">
+
+                <!-- CAROUSEL: Shippers / Carriers -->
+                <div style="position:relative;overflow:hidden;" id="accCarouselWrap" style="overflow:hidden;width:100%;">
+
+                    <!-- Tab strip -->
+                    <div style="display:flex;border-bottom:1px solid var(--border);">
+                        <button id="acc-tab-0" onclick="accGoSlide(0)" style="flex:1;padding:14px 28px;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--acid);background:rgba(190,255,10,.04);border:none;border-right:1px solid var(--border);cursor:pointer;font-family:var(--mono);transition:.2s;">For Shippers</button>
+                        <button id="acc-tab-1" onclick="accGoSlide(1)" style="flex:1;padding:14px 28px;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);background:transparent;border:none;cursor:pointer;font-family:var(--mono);transition:.2s;">For Carriers</button>
+                    </div>
+
+                    <!-- Track -->
+                    <div id="accTrack" style="display:flex;width:100%;transition:transform 0.4s cubic-bezier(.4,0,.2,1);">
+
+                        <!-- PANEL: Shippers -->
+                        <div style="flex:0 0 100%;width:100%;box-sizing:border-box;">
+                            <div class="contrast-grid">
+                                <div class="contrast-col-hd"><span class="col-tag col-now">Reactive</span><span class="col-title">Operating blind · absorbing cost</span></div>
+                                <div class="contrast-col-hd"><span class="col-tag col-pre">Controlled</span><span class="col-title">Risk transferred · cost guaranteed</span></div>
+                                <div class="ct-cell"><svg class="ct-icon" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="#FF5C5C" stroke-width="1.2"/><line x1="7" y1="7" x2="13" y2="13" stroke="#FF5C5C" stroke-width="1.2"/><line x1="13" y1="7" x2="7" y2="13" stroke="#FF5C5C" stroke-width="1.2"/></svg><span class="ct-text bad">ERP flagged the delay. Tender went out anyway. TONU hits invoice.</span></div>
+                                <div class="ct-cell"><svg class="ct-icon" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="#BEFF0A" stroke-width="1.2"/><polyline points="6,10 9,13 14,7" stroke="#BEFF0A" stroke-width="1.2" fill="none"/></svg><span class="ct-text good">Signal read 48hrs early. Carrier alerted. Tender canceled before deadline.</span></div>
+                                <div class="ct-cell"><svg class="ct-icon" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="#FF5C5C" stroke-width="1.2"/><line x1="7" y1="7" x2="13" y2="13" stroke="#FF5C5C" stroke-width="1.2"/><line x1="13" y1="7" x2="7" y2="13" stroke="#FF5C5C" stroke-width="1.2"/></svg><span class="ct-text bad">Detention accruing at docks you control but can't see in real time.</span></div>
+                                <div class="ct-cell"><svg class="ct-icon" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="#BEFF0A" stroke-width="1.2"/><polyline points="6,10 9,13 14,7" stroke="#BEFF0A" stroke-width="1.2" fill="none"/></svg><span class="ct-text good">Dock throughput monitored. Carrier gets lead time. Clock never starts.</span></div>
+                                <div class="ct-cell"><svg class="ct-icon" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="#FF5C5C" stroke-width="1.2"/><line x1="7" y1="7" x2="13" y2="13" stroke="#FF5C5C" stroke-width="1.2"/><line x1="13" y1="7" x2="7" y2="13" stroke="#FF5C5C" stroke-width="1.2"/></svg><span class="ct-text bad">Fuel surcharges invoiced on a 6 MPG industry assumption. Nobody disputes it.</span></div>
+                                <div class="ct-cell"><svg class="ct-icon" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="#BEFF0A" stroke-width="1.2"/><polyline points="6,10 9,13 14,7" stroke="#BEFF0A" stroke-width="1.2" fill="none"/></svg><span class="ct-text good">OEM telemetry connected. Actual MPG per tractor per lane. Overcharges disputed.</span></div>
+                                <div class="ct-cell"><svg class="ct-icon" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="#FF5C5C" stroke-width="1.2"/><line x1="7" y1="7" x2="13" y2="13" stroke="#FF5C5C" stroke-width="1.2"/><line x1="13" y1="7" x2="7" y2="13" stroke="#FF5C5C" stroke-width="1.2"/></svg><span class="ct-text bad">Exposure is variable, unpredictable. Finance reconciles monthly. Blame follows.</span></div>
+                                <div class="ct-cell"><svg class="ct-icon" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="#BEFF0A" stroke-width="1.2"/><polyline points="6,10 9,13 14,7" stroke="#BEFF0A" stroke-width="1.2" fill="none"/></svg><span class="ct-text good">Fixed cost per load. Guaranteed ceiling. Residual risk transferred to Precursory.</span></div>
+                            </div>
+                        </div>
+
+                        <!-- PANEL: Carriers -->
+                        <div style="flex:0 0 100%;width:100%;box-sizing:border-box;">
+                            <div class="contrast-grid">
+                                <div class="contrast-col-hd"><span class="col-tag col-now">Reactive</span><span class="col-title">Absorbing cost · no lead time</span></div>
+                                <div class="contrast-col-hd"><span class="col-tag col-pre">Controlled</span><span class="col-title">Signal shared · asset protected</span></div>
+                                <div class="ct-cell"><svg class="ct-icon" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="#FF5C5C" stroke-width="1.2"/><line x1="7" y1="7" x2="13" y2="13" stroke="#FF5C5C" stroke-width="1.2"/><line x1="13" y1="7" x2="7" y2="13" stroke="#FF5C5C" stroke-width="1.2"/></svg><span class="ct-text bad">$250 TONU fee = $750+ true cost. Deadhead miles, lost drive time, next load missed.</span></div>
+                                <div class="ct-cell"><svg class="ct-icon" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="#BEFF0A" stroke-width="1.2"/><polyline points="6,10 9,13 14,7" stroke="#BEFF0A" stroke-width="1.2" fill="none"/></svg><span class="ct-text good">48hr advance signal. Driver redirected before wheels turn. Asset stays productive.</span></div>
+                                <div class="ct-cell"><svg class="ct-icon" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="#FF5C5C" stroke-width="1.2"/><line x1="7" y1="7" x2="13" y2="13" stroke="#FF5C5C" stroke-width="1.2"/><line x1="13" y1="7" x2="7" y2="13" stroke="#FF5C5C" stroke-width="1.2"/></svg><span class="ct-text bad">Every detention hour burns HOS. A 3hr wait can make a 500-mile load impossible.</span></div>
+                                <div class="ct-cell"><svg class="ct-icon" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="#BEFF0A" stroke-width="1.2"/><polyline points="6,10 9,13 14,7" stroke="#BEFF0A" stroke-width="1.2" fill="none"/></svg><span class="ct-text good">Dock throughput signal shared early. Dispatch resequenced. HOS protected.</span></div>
+                                <div class="ct-cell"><svg class="ct-icon" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="#FF5C5C" stroke-width="1.2"/><line x1="7" y1="7" x2="13" y2="13" stroke="#FF5C5C" stroke-width="1.2"/><line x1="13" y1="7" x2="7" y2="13" stroke="#FF5C5C" stroke-width="1.2"/></svg><span class="ct-text bad">Efficient fleets pay the same surcharge as inefficient ones. No data to prove otherwise.</span></div>
+                                <div class="ct-cell"><svg class="ct-icon" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="#BEFF0A" stroke-width="1.2"/><polyline points="6,10 9,13 14,7" stroke="#BEFF0A" stroke-width="1.2" fill="none"/></svg><span class="ct-text good">OEM-verified consumption data per tractor per lane. Efficiency rewarded in rates.</span></div>
+                                <div class="ct-cell"><svg class="ct-icon" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="#FF5C5C" stroke-width="1.2"/><line x1="7" y1="7" x2="13" y2="13" stroke="#FF5C5C" stroke-width="1.2"/><line x1="13" y1="7" x2="7" y2="13" stroke="#FF5C5C" stroke-width="1.2"/></svg><span class="ct-text bad">Unexpected cancellations drive driver turnover. $8–12K per driver replaced.</span></div>
+                                <div class="ct-cell"><svg class="ct-icon" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="#BEFF0A" stroke-width="1.2"/><polyline points="6,10 9,13 14,7" stroke="#BEFF0A" stroke-width="1.2" fill="none"/></svg><span class="ct-text good">Early cancellation signals. Drivers reassigned to productive loads. Retention protected.</span></div>
+                            </div>
+                        </div>
+
+                    </div><!-- end track -->
+                </div><!-- end carousel wrap -->
+
+            </div>
         </div>
     </div>
 </div>
 
 <!-- SOLUTION -->
 
-<div class="sol-wrap" id="solution">
+<div class="wrap2" id="solution">
+    <canvas class="radar-canvas" data-radar aria-hidden="true"></canvas>
     <div class="sec">
-        <div class="sec-lbl">The Solution</div>
-        <div class="sol-grid">
-            <div class="sol-left">
-                <h2>A risk-transfer instrument<br><em>built for freight operations.</em></h2>
-                <p>Precursory is not a software subscription. It is a risk-transfer agreement — underwritten on your actual lane history, carrier behavior, and facility performance. We take on the financial exposure you've been absorbing and replace it with a fixed cost per load.</p>
-                <p>Your cost becomes predictable. Your exposure becomes capped. And as our prevention engine improves your operations, your rate follows it down.</p>
-                <div class="fm-cite">
-                    <p>FM Global didn't transform property insurance by paying claims faster. They prevented losses before they happened — and priced the residual risk against actual exposure, not industry averages.</p>
-                    <span class="fm-src">&gt;_ The model we're bringing to freight</span>
-                </div>
-            </div>
-            <div class="sol-steps">
-                <div class="sol-step">
-                    <span class="sol-n">01</span>
-                    <div><h4>Audit your actual exposure.</h4><p>We analyze your full accessorial history — lane patterns, carrier behavior, facility performance — to establish your real baseline. Not an industry average. Yours.</p></div>
-                </div>
-                <div class="sol-step">
-                    <span class="sol-n">02</span>
-                    <div><h4>Connect to what's already there.</h4><p>Read-only integrations into your ERP, TMS, WMS, WES, ELD, and telematics. No new workflows. No IT lift beyond access provisioning. Live in weeks.</p></div>
-                </div>
-                <div class="sol-step">
-                    <span class="sol-n">03</span>
-                    <div><h4>Intervene before the clock starts.</h4><p>Every load scored in real time. When we can act — canceling a tender before deadline, alerting a carrier before their planning window closes — we do. Automatically.</p></div>
-                </div>
-                <div class="sol-step">
-                    <span class="sol-n">04</span>
-                    <div><h4>Absorb the residual.</h4><p>For risk we can't eliminate, we price a coverage premium on your actual exposure. Once losses exceed your threshold, we absorb the difference. As avoidance improves, your rate falls.</p></div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+        <div class="sec-lbl">The Instrument</div>
 
-<!-- HOW WE ENGAGE + CALC -->
+        <!-- TOP GRID: copy left, calculator right -->
+        <div style="border:1px solid var(--border);margin-bottom:1px;">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;">
 
-<div class="how-wrap" id="how">
-    <div class="sec">
-        <div class="sec-lbl">How We Engage</div>
-        <div class="sol-grid">
-            <div class="sol-left">
-                <h2>From first conversation<br>to <em>continuous underwriting.</em></h2>
-                <p>We don't deploy software and leave. We shadow your operations, map your risk surface lane by lane, and go live on a contained set before any full rollout. Every phase has a defined output — and every output has a measurable dollar value.</p>
-                <p>No rip-and-replace. No IT lift beyond access provisioning. Live in weeks, not quarters.</p>
-                <div class="fm-cite">
-                    <p>The rate you pay at the end of phase four is lower than the one you agreed to at phase one — because by then, we've already reduced the exposure it was priced against.</p>
-                    <span class="fm-src">&gt;_ Continuous underwriting · not a fixed subscription</span>
-                </div>
-            </div>
-            <div class="sol-steps">
-                <div class="sol-step">
-                    <span class="sol-n">01</span>
-                    <div>
-                        <h4>Map your risk surface. <span style="font-weight:400;color:var(--muted3);">Weeks 1–3</span></h4>
-                        <p>On-site. We trace every upstream data flow — ERP, WMS, WES, MES — and find where avoidable risk lives in your specific operations, not the industry average.</p>
-                    </div>
-                </div>
-                <div class="sol-step">
-                    <span class="sol-n">02</span>
-                    <div>
-                        <h4>Connect to signal sources. <span style="font-weight:400;color:var(--muted3);">Weeks 4–6</span></h4>
-                        <p>Read-only integrations into your existing systems. No new workflows. No new data entry. Live signal ingestion across ERP, TMS, WMS, ELD, and OEM telematics.</p>
-                    </div>
-                </div>
-                <div class="sol-step">
-                    <span class="sol-n">03</span>
-                    <div>
-                        <h4>Pilot with measurable reduction. <span style="font-weight:400;color:var(--muted3);">Weeks 7–12</span></h4>
-                        <p>Live on a contained lane set. Real risk scores, real interventions, real avoidance — measured against your historical baseline. Every saved load documented and attributed.</p>
-                    </div>
-                </div>
-                <div class="sol-step">
-                    <span class="sol-n">04</span>
-                    <div>
-                        <h4>Continuous underwriting. <span style="font-weight:400;color:var(--muted3);">Ongoing</span></h4>
-                        <p>Full rollout. Coverage agreement in place. Risk models sharpen with every load. Your exposure shrinks. Your rate reflects it — automatically.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- CALCULATOR -->
-        <div class="calc" style="margin-top:52px;">
-            <div class="calc-hd">
-                <div class="calc-dots"><span></span><span></span><span></span></div>
-                <span class="calc-title">&gt;_ exposure calculator · model your risk assumptions</span>
-            </div>
-            <div class="calc-body">
-                <div class="calc-in">
-                    <div class="calc-fg">
-                        <label class="calc-lbl">Monthly Load Volume</label>
-                        <div class="calc-ir">
-                            <input class="c-input" type="number" id="c-loads" value="5000" min="100" max="500000" oninput="cu()">
-                            <span class="c-unit">loads / mo</span>
+                <!-- LEFT: headline + FM cite -->
+                <div style="padding:40px 44px;border-right:1px solid var(--border);">
+                    <h2 style="font-size:clamp(22px,3vw,36px);font-weight:500;color:#fff;line-height:1.12;letter-spacing:-.4px;margin-bottom:16px;">You've been absorbing<br><em style="font-style:normal;color:var(--acid);">a cost that was never yours.</em></h2>
+                    <p style="font-size:13px;line-height:1.8;color:var(--muted3);margin-bottom:14px;">We take on the financial exposure you've been absorbing and replace it with a fixed cost per load — underwritten on your actual lane history, not industry averages.</p>
+                    <p style="font-size:13px;line-height:1.8;color:var(--muted3);margin-bottom:14px;">Your cost becomes predictable. Your exposure becomes capped. As our prevention engine improves, your rate follows it down.</p>
+                    <div style="margin-top:20px;display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);">
+                        <div style="background:var(--bg3);padding:16px 20px;">
+                            <div style="font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Day one</div>
+                            <p style="font-size:11px;line-height:1.6;color:var(--muted3);">A cost ceiling underwritten on your real lane and carrier history. Not an industry average. Not a guess.</p>
+                        </div>
+                        <div style="background:var(--bg3);padding:16px 20px;">
+                            <div style="font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--acid);margin-bottom:8px;">Day 100</div>
+                            <p style="font-size:11px;line-height:1.6;color:var(--muted3);">A risk model trained on your specific lanes, carriers, and facilities. Every load sharpens it. No competitor starting today can buy that history.</p>
                         </div>
                     </div>
-                    <div class="calc-fg">
-                        <label class="calc-lbl">Failure Rate</label>
-                        <div class="calc-ir">
-                            <input class="c-input" type="number" id="c-rate" value="8" min="1" max="30" step="0.5" oninput="cu()">
-                            <span class="c-unit">% of loads</span>
-                        </div>
-                        <div class="c-hint">Industry avg: 8% · Your lane history may differ</div>
+                    <div style="margin-top:1px;border:1px solid var(--border2);padding:16px 20px;background:var(--bg3);">
+                        <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--acid);margin-bottom:8px;">The coverage agreement</div>
+                        <p style="font-size:11px;line-height:1.7;color:var(--muted3);margin-bottom:0;">The agreement sets a monthly ceiling on your accessorial exposure. If losses exceed that ceiling, we pay the difference — dollar for dollar, documented per load. Your rate is set in advance. Your downside is capped.</p>
                     </div>
-                    <div class="calc-fg">
-                        <label class="calc-lbl">Avg Cost Per Incident</label>
-                        <div class="calc-ir">
-                            <input class="c-input" type="number" id="c-cost" value="250" min="50" max="2000" step="25" oninput="cu()">
-                            <span class="c-unit">$ / incident</span>
-                        </div>
-                        <div class="c-hint">TONU ~$250–500 · Detention ~$75–150/hr · Per-diem ~$50–100/day</div>
-                    </div>
-                    <div class="c-slider-w">
-                        <label class="calc-lbl">Avoidance Rate (Precursory target)</label>
-                        <input class="c-slider" type="range" id="c-avoid" min="5" max="60" value="25" oninput="cu(); us(this)">
-                        <div class="sv">
-                            <span>5%</span>
-                            <span class="act" id="sd">25%</span>
-                            <span>60%</span>
-                        </div>
-                    </div>
-                    <div class="calc-fg">
-                        <label class="calc-lbl">Friction Cost (admin, disputes, reconciliation)</label>
-                        <div class="calc-ir">
-                            <input class="c-input" type="number" id="c-fric" value="15" min="0" max="60" step="5" oninput="cu()">
-                            <span class="c-unit">% of fee</span>
-                        </div>
-                        <div class="c-hint">Time spent on invoice disputes, audits, and carrier claims</div>
-                    </div>
-                </div>
-                <div class="calc-res">
-                    <div class="res-ttl">&gt;_ exposure breakdown</div>
-                    <div class="rl"><span class="rl-k">Loads at risk / mo</span><span class="rl-v" id="r-risk">400</span></div>
-                    <div class="rl"><span class="rl-k">Raw fee exposure / mo</span><span class="rl-v red" id="r-raw">$100,000</span></div>
-                    <div class="rl"><span class="rl-k">Friction cost / mo</span><span class="rl-v" id="r-fric">$15,000</span></div>
-                    <div class="rl"><span class="rl-k">True total exposure / mo</span><span class="rl-v big red" id="r-total">$115,000</span></div>
-                    <div class="rl"><span class="rl-k">Preventable (at avoidance rate)</span><span class="rl-v green" id="r-prev">$25,000</span></div>
-                    <div class="rl"><span class="rl-k">Residual (Precursory absorbs)</span><span class="rl-v" id="r-res">$75,000</span></div>
-                    <div class="rl"><span class="rl-k">Your fixed cost / mo</span><span class="rl-v big green" id="r-fixed">$100,000</span></div>
-                    <div class="rl"><span class="rl-k">Annual exposure eliminated</span><span class="rl-v green" id="r-ann">$300,000</span></div>
-                </div>
-                <div class="calc-ft">
-                    <span class="calc-note">Illustrative model. <strong>Your rate is derived from your actual lane and facility history</strong> — not industry averages.</span>
-                    <a href="#cta" class="calc-cta">Get your actual risk map →</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- HOW IT WORKS -->
-
-<div class="tech-wrap" id="platform">
-    <div class="sec">
-        <div class="sec-lbl">How It Works</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);">
-
-            <!-- LEFT: OPERATIONS WORKFLOW -->
-            <div style="background:var(--bg);padding:48px 44px;">
-                <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:28px;">Operations Workflow</div>
-                <h3 style="font-size:clamp(18px,2.2vw,26px);font-weight:500;color:#fff;line-height:1.2;letter-spacing:-.3px;margin-bottom:16px;">Where the signal exists — and where it fails to travel.</h3>
-                <p style="font-size:12px;line-height:1.8;color:var(--muted3);margin-bottom:36px;">Every accessorial originates from a decision point in your workflow where a signal existed but didn't reach the person who needed to act on it. Precursory maps those gaps — then closes them.</p>
-
-                <div style="display:flex;flex-direction:column;gap:0;border:1px solid var(--border);">
-                    <div style="padding:20px 24px;border-bottom:1px solid var(--border);display:grid;grid-template-columns:28px 1fr;gap:16px;align-items:start;">
-                        <span style="font-size:10px;color:var(--acid);font-weight:500;padding-top:1px;">01</span>
-                        <div>
-                            <div style="font-size:12px;font-weight:500;color:#fff;margin-bottom:4px;">Order signal exists in ERP</div>
-                            <p style="font-size:11px;line-height:1.65;color:var(--muted3);">Production delays, volume dips, and SKU shifts register in your ERP and WMS before dispatch. The tender goes out anyway — no one is reading those signals against your carrier's planning horizon.</p>
-                        </div>
-                    </div>
-                    <div style="padding:20px 24px;border-bottom:1px solid var(--border);display:grid;grid-template-columns:28px 1fr;gap:16px;align-items:start;">
-                        <span style="font-size:10px;color:var(--acid);font-weight:500;padding-top:1px;">02</span>
-                        <div>
-                            <div style="font-size:12px;font-weight:500;color:#fff;margin-bottom:4px;">Carrier commits the asset</div>
-                            <p style="font-size:11px;line-height:1.65;color:var(--muted3);">The driver is dispatched. The truck moves. The carrier has no visibility into the upstream conditions that have already shifted — and no lead time to redirect the asset before deadhead miles accumulate.</p>
-                        </div>
-                    </div>
-                    <div style="padding:20px 24px;border-bottom:1px solid var(--border);display:grid;grid-template-columns:28px 1fr;gap:16px;align-items:start;">
-                        <span style="font-size:10px;color:var(--acid);font-weight:500;padding-top:1px;">03</span>
-                        <div>
-                            <div style="font-size:12px;font-weight:500;color:#fff;margin-bottom:4px;">The fee clock starts</div>
-                            <p style="font-size:11px;line-height:1.65;color:var(--muted3);">TONU is triggered on cancellation. Detention begins the moment the truck arrives at a congested dock. Per-diem accrues silently on trailers your TMS already shows as idle. The invoice arrives weeks later.</p>
-                        </div>
-                    </div>
-                    <div style="padding:20px 24px;display:grid;grid-template-columns:28px 1fr;gap:16px;align-items:start;background:rgba(190,255,10,.02);">
-                        <span style="font-size:10px;color:var(--acid);font-weight:500;padding-top:1px;">&gt;_</span>
-                        <div>
-                            <div style="font-size:12px;font-weight:500;color:var(--acid);margin-bottom:4px;">Precursory intercepts at step 01</div>
-                            <p style="font-size:11px;line-height:1.65;color:var(--muted3);">We read the signal in your ERP before the tender is issued. We score the risk. We alert the carrier with enough lead time to act. The fee never accrues. What we can't prevent, we've already priced and agreed to absorb.</p>
-                        </div>
+                    <div class="fm-cite" style="margin-top:1px;">
+                        <p>FM Global transformed property insurance by preventing losses before they happened — and pricing the residual against actual exposure.</p>
+                        <span class="fm-src">&gt;_ The model we're bringing to freight</span>
                     </div>
                 </div>
 
-            </div>
-
-            <!-- RIGHT: TECHNOLOGY STACK -->
-            <div style="background:var(--bg2);padding:48px 44px;">
-                <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:28px;">Technology Stack</div>
-                <h3 style="font-size:clamp(18px,2.2vw,26px);font-weight:500;color:#fff;line-height:1.2;letter-spacing:-.3px;margin-bottom:16px;">Where the signal gets read — and what happens next.</h3>
-                <p style="font-size:12px;line-height:1.8;color:var(--muted3);margin-bottom:36px;">Every layer is purpose-built for freight accessorial risk. The system moves from fragmented operational signals to coordinated carrier actions without requiring new workflows, new data entry, or IT lift beyond access provisioning.</p>
-
-                <div class="stack">
-                    <div class="stl">
-                        <span class="lp lp-d">Data</span>
-                        <div>
-                            <div class="lh">Fragmented signals — ingested and normalized</div>
-                            <p class="lbody">ERP order flow, WMS dock schedules, ELD telemetry, OEM engine data — your complete operational picture, live and historical, unified in one place. Read-only. No new workflows.</p>
-                            <div class="chips"><span class="chip">ERP</span><span class="chip">TMS</span><span class="chip">WMS</span><span class="chip">WES</span><span class="chip">ELD</span><span class="chip">OEM Telematics</span><span class="chip">EDI</span></div>
+                <!-- RIGHT: Cost comparison -->
+                <div style="display:flex;flex-direction:column;padding:40px 44px;border-left:1px solid var(--border);justify-content:center;">
+                    <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:20px;">Cost comparison</div>
+                    <div class="slider-chart-wrap">
+                        <div class="slider-chart-labels">
+                            <span class="sc-label-bad" id="sc-lbl-bad">Without Precursory</span>
+                            <span class="sc-label-good" id="sc-lbl-good">With Precursory — $26/load</span>
                         </div>
-                    </div>
-                    <div class="stl">
-                        <span class="lp lp-g">Algorithms</span>
-                        <div>
-                            <div class="lh">Risk scored per load, per lane, in real time</div>
-                            <p class="lbody">Purpose-built models for TONU, detention, per-diem, and fuel surcharge — trained on your specific lane, carrier, and facility history. Not industry benchmarks.</p>
-                            <div class="chips"><span class="chip">TONU Model</span><span class="chip">Clustering</span><span class="chip">Forecasting</span><span class="chip">Anomaly</span><span class="chip">Ensemble</span></div>
-                        </div>
-                    </div>
-                    <div class="stl">
-                        <span class="lp lp-a">Agents</span>
-                        <div>
-                            <div class="lh">Coordinated interventions — without human delay</div>
-                            <p class="lbody">AI agents execute the right action when the risk threshold is crossed: carrier alerts, tender cancellations, dock rescheduling. Before the clock starts — not after the invoice arrives.</p>
-                            <div class="chips"><span class="chip">TONU Alert</span><span class="chip">Auto-Fix</span><span class="chip">Notify</span><span class="chip">Reroute</span><span class="chip">Escalation</span></div>
-                        </div>
-                    </div>
-                    <div class="stl">
-                        <span class="lp lp-o">Outcomes</span>
-                        <div>
-                            <div class="lh">Avoidance measured. Residual absorbed.</div>
-                            <p class="lbody">Every prevented fee is documented and attributed. Every residual loss is absorbed under the coverage agreement. ROI is continuous — and your rate reflects improving avoidance over time.</p>
-                            <div class="chips"><span class="chip">Avoidance Rate</span><span class="chip">ROI</span><span class="chip">Risk Priced</span><span class="chip">Coverage Applied</span></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-    </div>
-</div>
-
-<!-- TEAM -->
-
-<div class="team-wrap" id="team">
-    <div class="sec">
-        <div class="sec-lbl">The Team</div>
-        <div class="sol-grid">
-            <div class="sol-left">
-                <h2>Operators who've lived<br>inside the <em>systems we connect.</em></h2>
-                <p>We understand the complexity of operations, integrations, and decision-making in freight — because we've built inside them. We work with a mission to streamline all three: connecting the signals that already exist, reducing the decisions that delay action, and integrating with the systems teams already rely on.</p>
-                <p>We move fast, communicate directly, and treat every design partner's operations as seriously as our own. We don't invoice for outcomes we can't measure.</p>
-                <div class="fm-cite">
-                    <p>We rely on advisors who have direct operator relationships across the carrier and shipper ecosystem — not general logistics expertise, but the specific relationships that open doors and pressure-test product decisions.</p>
-                    <span class="fm-src">&gt;_ Operators building for operators</span>
-                </div>
-            </div>
-            <div class="sol-steps">
-                <div class="sol-step">
-                    <span class="sol-n" style="font-size:9px;">CEO</span>
-                    <div>
-                        <h4>Mohan Krishnamurthy</h4>
-                        <p>Managed the forecasting platform that informed Uber of impending shocks to marketplace supply-demand. CPO at FleetPulse, SVP Technology at USXpress, Product at Uber &amp; Amazon.</p>
-                    </div>
-                </div>
-                <div class="sol-step">
-                    <span class="sol-n" style="font-size:9px;">CTO</span>
-                    <div>
-                        <h4>Austin Kinney</h4>
-                        <p>Architect of Precursory's real-time intelligence engine. VP Engineering at FleetPulse, Founding Engineer at Uplinq, Sr. Director Engineering at USXpress.</p>
-                    </div>
-                </div>
-                <div class="sol-step">
-                    <span class="sol-n" style="font-size:9px;">ML</span>
-                    <div>
-                        <h4>Saurabh Dingolia</h4>
-                        <p>Built real-time systems and dynamic pricing at Uber. Designs Precursory's risk pricing engine — actuarial methodology grounded in real operational data, not industry tables.</p>
-                    </div>
-                </div>
-                <div class="sol-step">
-                    <span class="sol-n" style="font-size:9px;">ADV</span>
-                    <div>
-                        <h4 style="margin-bottom:12px;">Advisors</h4>
-                        <div style="display:flex;flex-direction:column;gap:10px;">
-                            <div style="display:flex;justify-content:space-between;align-items:baseline;">
-                                <span style="font-size:12px;color:var(--text);">Paul Bunn</span>
-                                <span style="font-size:10px;color:var(--muted3);">President · Covenant Transport</span>
+                        <div class="slider-chart-container">
+                            <canvas id="sliderChart"></canvas>
+                            <div class="slider-handle" id="sliderHandle">
+                                <div class="slider-handle-line"></div>
+                                <div class="slider-handle-grip">
+                                    <span>&#9664;</span><span>&#9654;</span>
+                                </div>
                             </div>
-                            <div style="display:flex;justify-content:space-between;align-items:baseline;">
-                                <span style="font-size:12px;color:var(--text);">Craig Fuller</span>
-                                <span style="font-size:10px;color:var(--muted3);">CEO · FreightWaves</span>
-                            </div>
-                            <div style="display:flex;justify-content:space-between;align-items:baseline;">
-                                <span style="font-size:12px;color:var(--text);">Prasad Gollapalli</span>
-                                <span style="font-size:10px;color:var(--muted3);">CEO · Qued</span>
+                        </div>
+                        <div class="slider-drag-hint">drag to compare</div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- HOW WE POWER -->
+            <div style="border:1px solid var(--border);margin-bottom:1px;background:var(--bg);">
+                <div style="padding:52px 52px 48px;">
+                    <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--acid);margin-bottom:16px;">How We Power</div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start;">
+                        <div>
+                            <h3 style="font-size:clamp(17px,2vw,24px);font-weight:500;color:#fff;line-height:1.15;letter-spacing:-.3px;margin-bottom:12px;">The first risk platform designed to think, not just track.</h3>
+                            <p style="font-size:12px;line-height:1.75;color:var(--muted3);margin-bottom:0;">Every other tool in your stack records what happened. Precursory predicts what will — and prices it before it does. AI-native from the ground up, not a dashboard with a model bolted on.</p>
+                        </div>
+                        <div>
+                            <div style="position:relative;overflow:visible;">
+                                <div class="pyramid-outer" id="po">
+                                    <canvas id="cvGrad" class="layer-canvas" style="z-index:0;"></canvas>
+                                    <canvas id="cvD" class="layer-canvas" style="z-index:1;"></canvas>
+                                    <canvas id="cvC" class="layer-canvas" style="z-index:2;"></canvas>
+                                    <canvas id="cvB" class="layer-canvas" style="z-index:3;"></canvas>
+                                    <canvas id="cvA" class="layer-canvas" style="z-index:4;"></canvas>
+                                    <svg id="psvg" style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:5;pointer-events:none;"></svg>
+                                    <div class="layer-label light-text" id="lblD"><div class="l-title">Data &amp; Integrations</div><div class="l-chips"><span class="lchip">ERP</span><span class="lchip">TMS</span><span class="lchip">WMS</span><span class="lchip">ELD</span><span class="lchip">OEM Telematics</span></div></div>
+                                    <div class="layer-label light-text" id="lblC"><div class="l-title">Intelligence Layer</div><div class="l-chips"><span class="lchip">Prediction</span><span class="lchip">Prevention</span><span class="lchip">Reinforced Learning</span><span class="lchip">Domain Knowledge</span></div></div>
+                                    <div class="layer-label dark-text"  id="lblB"><div class="l-title">Alert &amp; Action Engine</div><div class="l-sub">TONU alerts · dock signals · auto-cancellation · reroute</div></div>
+                                    <div class="layer-label dark-text"  id="lblA"><div class="l-title">Single Guaranteed Price</div></div>
+                                    <div class="div-line" id="divLine">
+                                        <div class="div-line-bar" style="background:linear-gradient(90deg,transparent,rgba(255,255,255,.3));"></div>
+                                        <div class="div-line-lbl">↑ visible &nbsp;·&nbsp; invisible below ↓</div>
+                                        <div class="div-line-bar" style="background:linear-gradient(90deg,rgba(255,255,255,.3),transparent);"></div>
+                                    </div>
+                                    <div class="ann" id="annA"><div class="ann-rule"></div><div>Single Guaranteed Price</div></div>
+                                    <div class="ann" id="annB"><div class="ann-rule"></div><div>Alert &amp; Action Engine</div></div>
+                                    <div class="ann" id="annC"><div class="ann-rule"></div><div>Intelligence</div></div>
+                                    <div class="ann" id="annD"><div class="ann-rule"></div><div>Data &amp; Integrations</div></div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
 
-<!-- CTA -->
-
-<div class="cta-wrap" id="cta">
-    <div class="cta-bg"></div>
-    <div class="cta-in">
-        <div class="sec-lbl" style="margin-bottom:44px;">Design Partner Program</div>
-        <div style="max-width:680px;">
-            <h2 class="cta-h2">Show us your freight.<br>We'll show you <em>where it's bleeding.</em></h2>
-            <p class="cta-p">No deck review. No demo script. We'll map your risk surface — lane by lane, facility by facility — and show you exactly where the avoidable exposure lives. You walk away with a real picture of your risk, whether or not we work together.</p>
-            <div class="cta-perks">
-                <div class="cta-perk">Full system integration — ERP, TMS, WMS, WES, ELD — at no cost</div>
-                <div class="cta-perk">Early warning signals routed into your existing ops workflow</div>
-                <div class="cta-perk">Every avoided fee documented and attributed</div>
-                <div class="cta-perk">A risk model trained on your lanes, carriers, and facilities</div>
-                <div class="cta-perk">Shape the product — your operations inform the roadmap</div>
+            <!-- HOW WE GROW -->
+            <div style="border:1px solid var(--border);margin-bottom:1px;background:var(--bg2);position:relative;">
+                <canvas class="radar-canvas" data-radar></canvas>
+                <div style="padding:52px 52px 48px;">
+                    <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--acid);margin-bottom:16px;">How We Grow</div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;">
+                        <div>
+                            <h3 style="font-size:clamp(17px,2vw,24px);font-weight:500;color:#fff;line-height:1.15;letter-spacing:-.3px;margin-bottom:12px;">The network that prices itself down over time.</h3>
+                            <p style="font-size:12px;line-height:1.75;color:var(--muted3);margin-bottom:20px;">As the network grows, loss ratios drop. As loss ratios drop, coverage costs fall. Shippers pay less. Carriers earn more predictable lanes. The platform gets sharper for everyone — not just the biggest players.</p>
+                            <div style="display:flex;flex-direction:column;gap:10px;">
+                                <div style="display:flex;align-items:start;gap:10px;font-size:11px;color:var(--muted3);"><span style="color:var(--acid);">→</span><span><strong style="color:var(--text);">Carrier X avoids a TONU on your lane.</strong> That outcome trains the model — so the next time that pattern appears, the intervention fires faster.</span></div>
+                                <div style="display:flex;align-items:start;gap:10px;font-size:11px;color:var(--muted3);"><span style="color:var(--acid);">→</span><span><strong style="color:var(--text);">Shipper Y adds a facility.</strong> Their dock data improves detention prediction for every carrier running that corridor.</span></div>
+                                <div style="display:flex;align-items:start;gap:10px;font-size:11px;color:var(--muted3);"><span style="color:var(--acid);">→</span><span><strong style="color:var(--text);">The model sharpens.</strong> Your rate reflects it — as our loss-ratio improves, your coverage cost lowers.</span></div>
+                                <div style="display:flex;align-items:start;gap:10px;font-size:11px;color:var(--muted3);"><span style="color:var(--acid);">→</span><span><strong style="color:var(--text);">A competitor starting today</strong> would need years of this history to underwrite at the same precision. You already have it.</span></div>
+                            </div>
+                        </div>
+                        <div style="display:flex;justify-content:center;align-items:center;">
+                            <canvas id="napkinCanvas" style="display:block;max-width:100%;border-radius:2px;"></canvas>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <a href="mailto:mohan@precursory.ai?subject=Risk%20Map%20Request" class="btn-p">Request Your Risk Map</a>
+
+            <!-- HOW WE ENGAGE -->
+            <div style="border:1px solid var(--border);background:var(--bg);position:relative;">
+                <canvas class="radar-canvas" data-radar></canvas>
+                <div style="padding:52px 52px 48px;">
+                    <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--acid);margin-bottom:16px;">How We Engage</div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start;">
+                        <div>
+                            <h3 style="font-size:clamp(17px,2vw,24px);font-weight:500;color:#fff;line-height:1.15;letter-spacing:-.3px;margin-bottom:12px;">We work inside your operation, <em style="font-style:normal;color:var(--acid);">not around it.</em></h3>
+                            <p style="font-size:12px;line-height:1.75;color:var(--muted3);margin-bottom:20px;">Precursory doesn't ask you to change how you operate. It sits alongside your existing tools, learns your lanes, and starts reducing accessorial exposure from day one. Integration in days, not quarters.</p>
+                            <div class="fm-cite">
+                                <p>We shadow your operations before we sign anything. You see the risk map before you commit to the coverage agreement.</p>
+                                <span class="fm-src">&gt;_ Continuous underwriting · not a fixed subscription</span>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="phase-grid">
+                                <div class="phase-row"><div class="phase-week"><div class="phase-week-lbl">Wk 1–3</div><div class="phase-week-range">Map</div></div><div class="phase-detail"><div class="phase-name">Risk Surface Mapping</div><div class="phase-desc">On-site. Every upstream data flow traced. Where avoidable risk lives in your operations.</div></div></div>
+                                <div class="phase-row"><div class="phase-week"><div class="phase-week-lbl">Wk 4–6</div><div class="phase-week-range">Connect</div></div><div class="phase-detail"><div class="phase-name">Signal Source Integration</div><div class="phase-desc">Read-only integrations. ERP, TMS, WMS, ELD, OEM telematics. No new workflows.</div></div></div>
+                                <div class="phase-row"><div class="phase-week"><div class="phase-week-lbl">Wk 7–12</div><div class="phase-week-range">Pilot</div></div><div class="phase-detail"><div class="phase-name">Contained Lane Pilot</div><div class="phase-desc">Live risk scores, real interventions. Every saved load documented and attributed.</div></div></div>
+                                <div class="phase-row"><div class="phase-week"><div class="phase-week-lbl">Ongoing</div><div class="phase-week-range">Full</div></div><div class="phase-detail"><div class="phase-name">Continuous Underwriting</div><div class="phase-desc">Full rollout. Models sharpen with every load. Your rate reflects improving avoidance.</div></div></div>
+                            </div>
+                            <div class="engage-note" style="margin-top:1px;">Integrates with <strong>ERP · TMS · WMS · WES · MES · ELD · OEM Telematics · EDI · IoT</strong></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TEAM -->
+
+    <div class="wrap" id="team">
+        <canvas class="radar-canvas" data-radar></canvas>
+        <div class="sec">
+            <div class="sec-lbl">The Team</div>
+            <div class="team-grid">
+                <div class="team-left">
+                    <h2 style="margin-bottom:12px;">Built by operators.<br><em>Wired into the systems we connect.</em></h2>
+                    <p>We've dispatched trucks, managed lanes, and lived inside the systems we're now connecting. We treat every design partner's operations as seriously as our own — and we don't invoice for outcomes we can't measure.</p>
+                    <div class="fm-cite">
+                        <p>We rely on advisors with direct operator relationships across the carrier and shipper ecosystem — the specific relationships that open doors.</p>
+                        <span class="fm-src">&gt;_ Operators building for operators</span>
+                    </div>
+                </div>
+                <div>
+                    <div class="team-cards">
+                        <div class="team-card">
+                            <div class="tc-avatar"><span class="tc-initials">MK</span></div>
+                            <div class="tc-body">
+                                <div class="tc-role">Co-Founder &amp; CEO</div>
+                                <div class="tc-name">Mohan Krishnamurthy</div>
+                                <div class="tc-bio">Built the forecasting platform that informed Uber of impending supply-demand shocks. Knows what it takes to turn operational signal into decisions that move at freight speed.</div>
+                                <div class="tc-prev"><span class="tc-tag">CPO · FleetPulse</span><span class="tc-tag">SVP Tech · USXpress</span><span class="tc-tag">Uber</span><span class="tc-tag">Amazon</span></div>
+                            </div>
+                        </div>
+                        <div class="team-card">
+                            <div class="tc-avatar"><span class="tc-initials">AK</span></div>
+                            <div class="tc-body">
+                                <div class="tc-role">Co-Founder &amp; CTO</div>
+                                <div class="tc-name">Austin Kinney</div>
+                                <div class="tc-bio">Architect of Precursory's real-time intelligence engine. Designed for freight signal latency and data fragmentation — because he's lived inside both.</div>
+                                <div class="tc-prev"><span class="tc-tag">VP Eng · FleetPulse</span><span class="tc-tag">Founding Eng · Uplinq</span><span class="tc-tag">Sr. Dir Eng · USXpress</span></div>
+                            </div>
+                        </div>
+                        <div class="team-card">
+                            <div class="tc-avatar"><span class="tc-initials">SD</span></div>
+                            <div class="tc-body">
+                                <div class="tc-role">Head of ML</div>
+                                <div class="tc-name">Saurabh Dingolia</div>
+                                <div class="tc-bio">Built real-time systems and dynamic pricing at Uber. Designs Precursory's risk pricing engine — actuarial methodology grounded in real operational data, not industry tables.</div>
+                                <div class="tc-prev"><span class="tc-tag">Dynamic Pricing · Uber</span><span class="tc-tag">Real-time Systems</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="adv-strip">
+                        <div class="adv-strip-hd">Advisors</div>
+                        <div class="adv-row-inner">
+                            <div class="adv-cell"><div class="adv-name">Paul Bunn</div><div class="adv-title">President · Covenant Transport</div></div>
+                            <div class="adv-cell"><div class="adv-name">Craig Fuller</div><div class="adv-title">CEO · FreightWaves</div></div>
+                            <div class="adv-cell"><div class="adv-name">Prasad Gollapalli</div><div class="adv-title">CEO · Qued</div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- FOOTER -->
+    <!-- CTA -->
 
-<footer>
-    <div class="fl">
-        <span class="f-lm">&gt;<span class="blink">_</span></span>
-        <span class="f-wm">Precursory</span>
-        <span class="f-sep">·</span>
-        <span class="f-tag">Prevent the loss. Price the risk. Own the outcome.</span>
+    <div class="cta-wrap" id="cta">
+        <canvas class="radar-canvas" data-radar></canvas>
+        <div class="cta-bg"></div>
+        <div class="cta-in">
+            <div class="sec-lbl" style="margin-bottom:44px;">Get Your Cost Guarantee</div>
+            <div style="max-width:640px;">
+                <h2 class="cta-h2">Show us your freight.<br>We'll show you <em>where it's bleeding.</em></h2>
+                <p class="cta-p">No deck review. No demo script. We map your risk surface — lane by lane, facility by facility — and show you exactly where the avoidable exposure lives.</p>
+                <div class="cta-perks">
+                    <div class="cta-perk">Full integration — ERP, TMS, WMS, WES, ELD — at no cost</div>
+                    <div class="cta-perk">Every avoided fee documented and attributed</div>
+                    <div class="cta-perk">A risk model trained on your lanes, carriers, and facilities</div>
+                </div>
+                <a href="mailto:mohan@precursory.ai?subject=Cost%20Guarantee%20Request" class="btn-p">Request Your Risk Map</a>
+            </div>
+        </div>
     </div>
-    <span class="f-copy">© 2026 Precursory Technologies Inc.</span>
-</footer>
 
-<script>
-    function fmt(n){
-        if(n>=1000000) return '$'+(n/1000000).toFixed(1)+'M';
-        if(n>=1000) return '$'+Math.round(n/1000)+'K';
-        return '$'+Math.round(n).toLocaleString();
-    }
-    function fmtN(n){ return Math.round(n).toLocaleString(); }
-    function cu(){
-        var loads = parseFloat(document.getElementById('c-loads').value)||0;
-        var rate = parseFloat(document.getElementById('c-rate').value)||0;
-        var cost = parseFloat(document.getElementById('c-cost').value)||0;
-        var avoid = parseFloat(document.getElementById('c-avoid').value)||0;
-        var fric = parseFloat(document.getElementById('c-fric').value)||0;
-        var incidents = loads*(rate/100);
-        var raw = incidents*cost;
-        var friction = raw*(fric/100);
-        var total = raw+friction;
-        var prevented = raw*(avoid/100);
-        var residual = raw*(1-avoid/100);
-        var fixed = residual+friction;
-        var annual = prevented*12;
-        document.getElementById('r-risk').textContent = fmtN(incidents);
-        document.getElementById('r-raw').textContent = fmt(raw);
-        document.getElementById('r-fric').textContent = fmt(friction);
-        document.getElementById('r-total').textContent = fmt(total);
-        document.getElementById('r-prev').textContent = fmt(prevented);
-        document.getElementById('r-res').textContent = fmt(residual);
-        document.getElementById('r-fixed').textContent = fmt(fixed);
-        document.getElementById('r-ann').textContent = fmt(annual);
-    }
-    function us(el){ document.getElementById('sd').textContent = el.value+'%'; }
-    cu();
+    <!-- FOOTER -->
 
-    // Nav smooth scroll — manually offset for fixed nav height
-    document.querySelectorAll('a[href^="#"]').forEach(function(link){
-        link.addEventListener('click', function(e){
-            var href = this.getAttribute('href');
-            if(!href || href === '#' || href.indexOf('mailto') === 0) return;
-            var target = document.querySelector(href);
-            if(!target) return;
-            e.preventDefault();
-            var navH = document.querySelector('nav').offsetHeight;
-            var top = target.getBoundingClientRect().top + window.pageYOffset - navH - 8;
-            window.scrollTo({top: top, behavior: 'smooth'});
+    <footer>
+        <div class="fl">
+            <span class="f-lm">&gt;<span class="blink">_</span></span>
+            <span class="f-wm">Precursory</span>
+        </div>
+        <span class="f-copy">© 2026 Precursory Technologies Inc.</span>
+    </footer>
+
+    <script>
+        // ACCORDION + ACCORDION CAROUSEL
+        function toggleAccordion(){
+            var body = document.getElementById('accordionBody');
+            var arrow = document.getElementById('accordionArrow');
+            var isOpen = body.style.display !== 'none';
+            body.style.display = isOpen ? 'none' : 'block';
+            arrow.style.transform = isOpen ? '' : 'rotate(180deg)';
+        }
+
+        function accGoSlide(n){
+            var track = document.getElementById('accTrack');
+            var tabs = [document.getElementById('acc-tab-0'), document.getElementById('acc-tab-1')];
+            if(!track) return;
+            track.style.transform = 'translateX(-' + (n * 100) + '%)';
+            tabs.forEach(function(t, i){
+                if(!t) return;
+                t.style.color = i === n ? 'var(--acid)' : 'var(--muted)';
+                t.style.background = i === n ? 'rgba(190,255,10,.04)' : 'transparent';
+            });
+        }
+
+        // NAV SCROLL
+        document.querySelectorAll('a[href^="#"]').forEach(function(link){
+            link.addEventListener('click',function(e){
+                var href=this.getAttribute('href');
+                if(!href||href==="#"||href.indexOf('mailto')===0)return;
+                var target=document.querySelector(href);
+                if(!target)return;
+                e.preventDefault();
+                window.scrollTo({top:target.offsetTop,behavior:'smooth'});
+            });
         });
-    });
-</script>
+
+
+        // SLIDING DOOR CHART
+        (function(){
+            var canvas = document.getElementById('sliderChart');
+            var handle = document.getElementById('sliderHandle');
+            var lblBad = document.getElementById('sc-lbl-bad');
+            var lblGood = document.getElementById('sc-lbl-good');
+            if(!canvas) return;
+            var ctx = canvas.getContext('2d');
+            var container = canvas.parentElement;
+
+            // Slider position: 0 = all volatile, 1 = all flat. Starts at 0, auto-slides to 0.72
+            var sliderPct = 0;
+            var targetPct = 0.72;
+            var dragging = false;
+            var dragStartX = 0;
+            var dragStartPct = 0;
+            var autoAnimDone = false;
+
+            // Generate volatile fee exposure data points
+            // Y values in "cost units" — higher = more expensive
+            var N = 60; // data points
+            var voltileY = [];
+            var seed = 42;
+            function rand() { seed = (seed * 1664525 + 1013904223) & 0xffffffff; return (seed >>> 0) / 0xffffffff; }
+            // Build a realistic volatile signal: baseline + spikes + drift
+            var base = 0.55;
+            for(var i=0;i<N;i++){
+                var spike = rand() < 0.18 ? rand() * 0.35 : 0;
+                var drift = Math.sin(i * 0.4) * 0.08;
+                var noise = (rand() - 0.5) * 0.18;
+                voltileY.push(Math.max(0.08, Math.min(0.98, base + spike + drift + noise)));
+            }
+            // Flat line = below average of volatile (guaranteed ceiling)
+            var avg = voltileY.reduce(function(a,b){return a+b;},0) / N;
+            var flatY = avg * 0.72; // guaranteed rate is 28% below average volatile
+
+            function resize() {
+                var dpr = window.devicePixelRatio || 1;
+                var w = container.offsetWidth || 420;
+                var h = 200;
+                canvas.width = w * dpr;
+                canvas.height = h * dpr;
+                canvas.style.width = w + 'px';
+                canvas.style.height = h + 'px';
+                ctx.scale(dpr, dpr);
+                draw(w, h);
+            }
+
+            function draw(w, h) {
+                if(!w) w = parseInt(canvas.style.width) || 420;
+                if(!h) h = parseInt(canvas.style.height) || 200;
+                ctx.clearRect(0,0,w,h);
+
+                var pad = { t:28, r:16, b:28, l:16 };
+                var cw = w - pad.l - pad.r;
+                var ch = h - pad.t - pad.b;
+                var splitX = pad.l + cw * sliderPct;
+
+                // ── BACKGROUND HALVES ──────────────────────────────
+                // Left (volatile) background — subtle red tint
+                ctx.fillStyle = 'rgba(255,92,92,0.03)';
+                ctx.fillRect(pad.l, pad.t, splitX - pad.l, ch);
+
+                // Right (with Precursory) — subtle green tint
+                ctx.fillStyle = 'rgba(190,255,10,0.03)';
+                ctx.fillRect(splitX, pad.t, pad.l + cw - splitX, ch);
+
+                // ── GRID LINES ─────────────────────────────────────
+                ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+                ctx.lineWidth = 1;
+                for(var g=0;g<=4;g++){
+                    var gy = pad.t + (ch/4)*g;
+                    ctx.beginPath(); ctx.moveTo(pad.l, gy); ctx.lineTo(pad.l+cw, gy); ctx.stroke();
+                }
+
+                // ── VOLATILE AREA FILL (left of split) ────────────
+                ctx.save();
+                ctx.beginPath();
+                ctx.rect(pad.l, pad.t, splitX - pad.l, ch+2);
+                ctx.clip();
+
+                // Build path for volatile line
+                ctx.beginPath();
+                for(var i=0;i<N;i++){
+                    var x = pad.l + (i/(N-1))*cw;
+                    var y = pad.t + ch - voltileY[i]*ch;
+                    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+                }
+                // close path for fill
+                var lastX = pad.l + cw;
+                ctx.lineTo(lastX, pad.t+ch);
+                ctx.lineTo(pad.l, pad.t+ch);
+                ctx.closePath();
+                ctx.fillStyle = 'rgba(255,92,92,0.08)';
+                ctx.fill();
+
+                // Volatile line stroke
+                ctx.beginPath();
+                for(var i=0;i<N;i++){
+                    var x = pad.l + (i/(N-1))*cw;
+                    var y = pad.t + ch - voltileY[i]*ch;
+                    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+                }
+                ctx.strokeStyle = 'rgba(255,92,92,0.75)';
+                ctx.lineWidth = 1.5;
+                ctx.lineJoin = 'round';
+                ctx.stroke();
+                ctx.restore();
+
+                // ── FLAT FILL (right of split) ─────────────────────
+                ctx.save();
+                ctx.beginPath();
+                ctx.rect(splitX, pad.t, pad.l+cw-splitX+1, ch+2);
+                ctx.clip();
+
+                var flatYpx = pad.t + ch - flatY*ch;
+
+                // Fill below flat line
+                ctx.beginPath();
+                ctx.moveTo(splitX, flatYpx);
+                ctx.lineTo(pad.l+cw, flatYpx);
+                ctx.lineTo(pad.l+cw, pad.t+ch);
+                ctx.lineTo(splitX, pad.t+ch);
+                ctx.closePath();
+                ctx.fillStyle = 'rgba(190,255,10,0.07)';
+                ctx.fill();
+
+                // Flat line stroke
+                ctx.beginPath();
+                ctx.moveTo(splitX, flatYpx);
+                ctx.lineTo(pad.l+cw, flatYpx);
+                ctx.strokeStyle = 'rgba(190,255,10,0.9)';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Glow on flat line
+                ctx.beginPath();
+                ctx.moveTo(splitX, flatYpx);
+                ctx.lineTo(pad.l+cw, flatYpx);
+                ctx.strokeStyle = 'rgba(190,255,10,0.15)';
+                ctx.lineWidth = 8;
+                ctx.stroke();
+
+                ctx.restore();
+
+                // ── AVERAGE LINE (volatile average, dashed, full width) ─
+                var avgYpx = pad.t + ch - avg*ch;
+                ctx.save();
+                ctx.beginPath();
+                ctx.setLineDash([4,6]);
+                ctx.moveTo(pad.l, avgYpx);
+                ctx.lineTo(pad.l+cw, avgYpx);
+                ctx.strokeStyle = 'rgba(255,92,92,0.2)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                ctx.setLineDash([]);
+                ctx.restore();
+
+                // ── LABELS ────────────────────────────────────────
+                ctx.font = '500 9px monospace';
+                ctx.letterSpacing = '1px';
+                if(sliderPct > 0.05) {
+                    // volatile label top left
+                    ctx.fillStyle = 'rgba(255,92,92,0.7)';
+                    ctx.fillText('Accessorial exposure', pad.l+6, pad.t+14);
+                }
+                if(sliderPct < 0.95) {
+                    // avg dashed label
+                    ctx.fillStyle = 'rgba(255,92,92,0.35)';
+                    ctx.fillText('Avg', pad.l+cw-28, avgYpx-4);
+                }
+                if(sliderPct > 0.15) {
+                    // guaranteed label on flat line right side
+                    ctx.fillStyle = 'rgba(190,255,10,0.85)';
+                    var flatLabelX = Math.max(splitX+8, pad.l+cw-110);
+                    ctx.fillText('Guaranteed ceiling', flatLabelX, flatYpx-6);
+                }
+
+                // ── SPLIT LINE ────────────────────────────────────
+                if(sliderPct > 0 && sliderPct < 1) {
+                    ctx.beginPath();
+                    ctx.moveTo(splitX, pad.t);
+                    ctx.lineTo(splitX, pad.t+ch);
+                    ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+                }
+
+                // ── SAVINGS CALLOUT (right side, when revealed enough) ─
+                if(sliderPct > 0.45) {
+                    var savingsPct = Math.round((1 - flatY/avg)*100);
+                    var calloutX = splitX + (pad.l+cw - splitX)*0.5;
+                    var midY = (flatYpx + avgYpx)/2;
+                    // bracket lines
+                    ctx.strokeStyle = 'rgba(190,255,10,0.3)';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(calloutX-14, avgYpx); ctx.lineTo(calloutX-14, flatYpx);
+                    ctx.stroke();
+                    ctx.beginPath();
+                    ctx.moveTo(calloutX-18, avgYpx); ctx.lineTo(calloutX-10, avgYpx); ctx.stroke();
+                    ctx.beginPath();
+                    ctx.moveTo(calloutX-18, flatYpx); ctx.lineTo(calloutX-10, flatYpx); ctx.stroke();
+                    ctx.fillStyle = 'rgba(190,255,10,0.85)';
+                    ctx.font = 'bold 11px monospace';
+                    ctx.fillText('-' + savingsPct + '%', calloutX-8, midY+4);
+                }
+
+                // Position handle
+                handle.style.left = splitX + 'px';
+
+                // Update label opacity
+                var badOp = Math.max(0.3, 1 - sliderPct * 0.7);
+                var goodOp = Math.min(1, 0.3 + sliderPct * 0.9);
+                lblBad.style.opacity = badOp;
+                lblGood.style.opacity = goodOp;
+            }
+
+            // Auto-animation on load: slide from 0 to 0.72 over ~2.5s with easing
+            var autoStart = null;
+            var autoDuration = 2500;
+            var autoDelay = 800;
+
+            function autoAnimate(ts) {
+                if(!autoStart) autoStart = ts;
+                var elapsed = ts - autoStart;
+                if(elapsed < autoDelay) { requestAnimationFrame(autoAnimate); return; }
+                var t = Math.min(1, (elapsed - autoDelay) / autoDuration);
+                // ease out cubic
+                var ease = 1 - Math.pow(1-t, 3);
+                sliderPct = ease * targetPct;
+                var w = parseInt(canvas.style.width)||420;
+                var h = parseInt(canvas.style.height)||200;
+                draw(w, h);
+                if(t < 1) requestAnimationFrame(autoAnimate);
+                else autoAnimDone = true;
+            }
+
+            // Drag interaction
+            function getX(e) {
+                if(e.touches) return e.touches[0].clientX;
+                return e.clientX;
+            }
+
+            container.addEventListener('mousedown', function(e){
+                dragging = true;
+                dragStartX = getX(e);
+                dragStartPct = sliderPct;
+                e.preventDefault();
+            });
+            container.addEventListener('touchstart', function(e){
+                dragging = true;
+                dragStartX = getX(e);
+                dragStartPct = sliderPct;
+                e.preventDefault();
+            }, {passive:false});
+
+            window.addEventListener('mousemove', function(e){
+                if(!dragging) return;
+                var w = parseInt(canvas.style.width)||420;
+                var pad = 16;
+                var dx = getX(e) - dragStartX;
+                var newPct = dragStartPct + dx/(w - pad*2);
+                sliderPct = Math.max(0, Math.min(1, newPct));
+                draw(w, 200);
+            });
+            window.addEventListener('touchmove', function(e){
+                if(!dragging) return;
+                var w = parseInt(canvas.style.width)||420;
+                var pad = 16;
+                var dx = getX(e) - dragStartX;
+                var newPct = dragStartPct + dx/(w - pad*2);
+                sliderPct = Math.max(0, Math.min(1, newPct));
+                draw(w, 200);
+                e.preventDefault();
+            }, {passive:false});
+            window.addEventListener('mouseup', function(){ dragging = false; });
+            window.addEventListener('touchend', function(){ dragging = false; });
+
+            window.addEventListener('resize', function(){
+                var dpr = window.devicePixelRatio||1;
+                var w = container.offsetWidth||420;
+                canvas.width = w*dpr; canvas.height = 200*dpr;
+                canvas.style.width = w+'px'; canvas.style.height = '200px';
+                ctx.setTransform(1,0,0,1,0,0);
+                ctx.scale(dpr,dpr);
+                draw(w,200);
+            });
+
+            // Init
+            resize();
+            setTimeout(function(){ requestAnimationFrame(autoAnimate); }, 300);
+        })();
+
+        // ── PYRAMID ───────────────────────────────────────────────────────────────
+        (function(){
+            var W = 525, H = 315;
+            var APEX_X = W/2, APEX_Y = 0;
+            var BASE_L = 14, BASE_R = W-14, BASE_Y = H;
+            var LH = H/4;
+
+            function xAt(y){
+                var t=y/H, hw=(BASE_R-BASE_L)/2*t;
+                return {l:APEX_X-hw, r:APEX_X+hw};
+            }
+
+            var LAYERS = [
+                {k:'A', y1:0,     y2:LH,    mode:'solid'},
+                {k:'B', y1:LH,    y2:LH*2,  mode:'ordered'},
+                {k:'C', y1:LH*2,  y2:LH*3,  mode:'clustering'},
+                {k:'D', y1:LH*3,  y2:H,     mode:'static'}
+            ];
+
+            var outer = document.getElementById('po');
+            outer.style.width  = W+'px';
+            outer.style.height = H+'px';
+
+            LAYERS.forEach(function(lyr){
+                var cv = document.getElementById('cv'+lyr.k);
+                cv.width=W; cv.height=H;
+                cv.style.width=W+'px'; cv.style.height=H+'px';
+            });
+
+            var svg = document.getElementById('psvg');
+            svg.setAttribute('viewBox','0 0 '+W+' '+H);
+
+            var tri = document.createElementNS('http://www.w3.org/2000/svg','polygon');
+            tri.setAttribute('points', APEX_X+','+APEX_Y+' '+BASE_R+','+BASE_Y+' '+BASE_L+','+BASE_Y);
+            tri.setAttribute('fill','none'); tri.setAttribute('stroke','rgba(190,255,10,0.3)'); tri.setAttribute('stroke-width','1.5');
+            svg.appendChild(tri);
+
+            LAYERS.forEach(function(lyr){
+                if(lyr.y2<H){
+                    var b=xAt(lyr.y2);
+                    var ln=document.createElementNS('http://www.w3.org/2000/svg','line');
+                    ln.setAttribute('x1',b.l); ln.setAttribute('y1',lyr.y2);
+                    ln.setAttribute('x2',b.r); ln.setAttribute('y2',lyr.y2);
+                    ln.setAttribute('stroke', lyr.k==='B'?'rgba(255,255,255,0.4)':'rgba(190,255,10,0.15)');
+                    ln.setAttribute('stroke-width', lyr.k==='B'?'1.5':'1');
+                    if(lyr.k==='B') ln.setAttribute('stroke-dasharray','5,5');
+                    svg.appendChild(ln);
+                }
+            });
+
+            LAYERS.forEach(function(lyr){
+                var midY=(lyr.y1+lyr.y2)/2, b=xAt(midY);
+                var lbl=document.getElementById('lbl'+lyr.k);
+                lbl.style.top=(midY-26)+'px'; lbl.style.left=b.l+'px'; lbl.style.right=(W-b.r)+'px';
+                var ann=document.getElementById('ann'+lyr.k);
+                if(lyr.k==='A'||lyr.k==='B'){
+                    ann.style.top=(midY-7)+'px'; ann.style.left=(xAt(lyr.y2).r+14)+'px';
+                    ann.style.right='auto'; ann.style.flexDirection='row';
+                } else {
+                    ann.style.top=(midY-7)+'px'; ann.style.right=(W-xAt(lyr.y2).l+14)+'px';
+                    ann.style.left='auto'; ann.style.flexDirection='row-reverse'; ann.style.textAlign='right';
+                }
+            });
+
+            var dl=document.getElementById('divLine');
+            dl.style.top=(LH*2-1)+'px';
+
+            var cvGrad=document.getElementById('cvGrad');
+            cvGrad.width=W; cvGrad.height=H;
+            cvGrad.style.width=W+'px'; cvGrad.style.height=H+'px';
+            var ctxGrad=cvGrad.getContext('2d');
+            ctxGrad.save();
+            ctxGrad.beginPath(); ctxGrad.moveTo(APEX_X,APEX_Y); ctxGrad.lineTo(BASE_R,BASE_Y); ctxGrad.lineTo(BASE_L,BASE_Y); ctxGrad.closePath(); ctxGrad.clip();
+            var grad=ctxGrad.createLinearGradient(0,APEX_Y,0,BASE_Y);
+            grad.addColorStop(0,'#BEFF0A'); grad.addColorStop(0.25,'#BEFF0A');
+            grad.addColorStop(0.50,'rgba(140,210,8,0.75)'); grad.addColorStop(0.75,'rgba(60,100,4,0.40)'); grad.addColorStop(1.0,'#060906');
+            ctxGrad.fillStyle=grad; ctxGrad.fillRect(0,0,W,H); ctxGrad.restore();
+
+            var cvD=document.getElementById('cvD'), ctxD=cvD.getContext('2d'), imgD=ctxD.createImageData(W,H);
+            function drawStatic(){
+                var data=imgD.data, b1=xAt(LH*3), b2=xAt(H);
+                for(var y=Math.floor(LH*3);y<H;y++){
+                    var t=(y-LH*3)/(H-LH*3), xL=Math.ceil(b1.l+t*(b2.l-b1.l)), xR=Math.floor(b1.r+t*(b2.r-b1.r));
+                    for(var x=0;x<W;x++){
+                        var idx=(y*W+x)*4;
+                        if(x<xL||x>xR){data[idx]=0;data[idx+1]=0;data[idx+2]=0;data[idx+3]=0;}
+                        else{var rv=Math.random();
+                            if(rv>0.92){data[idx]=190;data[idx+1]=255;data[idx+2]=10;data[idx+3]=255;}
+                            else if(rv<0.12){data[idx]=0;data[idx+1]=0;data[idx+2]=0;data[idx+3]=0;}
+                            else{var v=Math.floor(Math.random()*256);data[idx]=v;data[idx+1]=v;data[idx+2]=v;data[idx+3]=230;}}
+                    }
+                }
+                ctxD.putImageData(imgD,0,0);
+            }
+
+            var cvC=document.getElementById('cvC'), ctxC=cvC.getContext('2d');
+            var CY1=LH*2, CY2=LH*3, clusters=[], Cparticles=[];
+            (function(){
+                var nCols=8,nRows=4;
+                for(var cr=0;cr<nRows;cr++) for(var cc=0;cc<nCols;cc++){
+                    var rowT=(cr+0.5)/nRows, ly=CY1+rowT*(CY2-CY1), bRow=xAt(ly), lw=bRow.r-bRow.l;
+                    clusters.push({cx:bRow.l+(cc+0.5)/nCols*lw, cy:ly});
+                }
+                for(var i=0;i<600;i++){
+                    var rowT2=Math.random(), ly2=CY1+rowT2*(CY2-CY1), bRow2=xAt(ly2);
+                    var cl=clusters[Math.floor(Math.random()*clusters.length)];
+                    var sc=Math.random()>0.45;
+                    Cparticles.push({x:sc?(bRow2.l+Math.random()*(bRow2.r-bRow2.l)):cl.cx+(Math.random()-.5)*60,
+                        y:sc?ly2:cl.cy+(Math.random()-.5)*40, tx:cl.cx,ty:cl.cy, vx:0,vy:0,
+                        isSignal:Math.random()>0.55, size:1.2+Math.random()*1.8, alpha:0.4+Math.random()*0.5, phase:Math.random()*Math.PI*2});
+                }
+            })();
+            function drawClustering(ts){
+                ctxC.clearRect(0,0,W,H); ctxC.save();
+                var b1=xAt(CY1),b2=xAt(CY2);
+                ctxC.beginPath(); ctxC.moveTo(b1.l,CY1); ctxC.lineTo(b1.r,CY1); ctxC.lineTo(b2.r,CY2); ctxC.lineTo(b2.l,CY2); ctxC.closePath(); ctxC.clip();
+                ctxC.clearRect(0,0,W,H); ctxC.fillStyle='rgba(4,6,4,0.55)'; ctxC.fillRect(0,0,W,H);
+                ctxC.strokeStyle='rgba(190,255,10,0.04)'; ctxC.lineWidth=0.5;
+                for(var i=0;i<Cparticles.length;i++){var pi=Cparticles[i]; if(!pi.isSignal) continue;
+                    for(var j=i+1;j<Cparticles.length;j++){var pj=Cparticles[j]; if(!pj.isSignal) continue;
+                        var dx=pi.x-pj.x,dy=pi.y-pj.y,dist=Math.sqrt(dx*dx+dy*dy);
+                        if(dist<40){ctxC.globalAlpha=(1-dist/40)*0.15; ctxC.beginPath(); ctxC.moveTo(pi.x,pi.y); ctxC.lineTo(pj.x,pj.y); ctxC.stroke();}
+                    }
+                }
+                ctxC.globalAlpha=1;
+                Cparticles.forEach(function(p){
+                    var fx=(p.tx-p.x)*0.008+Math.sin(ts*0.0008+p.phase)*0.15;
+                    var fy=(p.ty-p.y)*0.008+Math.cos(ts*0.0007+p.phase)*0.1;
+                    p.vx=p.vx*0.94+fx; p.vy=p.vy*0.94+fy; p.x+=p.vx; p.y+=p.vy;
+                    var ddx=p.x-p.tx,ddy=p.y-p.ty,dist=Math.sqrt(ddx*ddx+ddy*ddy),prox=Math.max(0,1-dist/80);
+                    var sz=p.isSignal?1.5+prox*3.5:1.2;
+                    if(p.isSignal){
+                        var ga=p.alpha*(0.6+prox*0.4)*(0.7+Math.sin(ts*0.002+p.phase)*0.3);
+                        if(prox>0.5){ctxC.globalAlpha=ga*0.2; ctxC.fillStyle='rgba(190,255,10,1)'; ctxC.beginPath(); ctxC.arc(p.x,p.y,sz*2.2,0,Math.PI*2); ctxC.fill();}
+                        ctxC.globalAlpha=ga; ctxC.fillStyle='rgba(190,255,10,1)'; ctxC.beginPath(); ctxC.arc(p.x,p.y,sz/2,0,Math.PI*2); ctxC.fill();
+                    } else {
+                        var v=Math.floor(80+Math.random()*60); ctxC.globalAlpha=0.35; ctxC.fillStyle='rgba('+v+','+v+','+v+',1)';
+                        ctxC.fillRect(Math.round(p.x-sz/2),Math.round(p.y-sz/2),sz,sz);
+                    }
+                    ctxC.globalAlpha=1;
+                });
+                ctxC.restore();
+            }
+
+            var cvB=document.getElementById('cvB'), ctxB=cvB.getContext('2d'), BY1=LH, BY2=LH*2;
+            function drawOrdered(ts){
+                ctxB.clearRect(0,0,W,H); ctxB.save();
+                var b1=xAt(BY1),b2=xAt(BY2);
+                ctxB.beginPath(); ctxB.moveTo(b1.l,BY1); ctxB.lineTo(b1.r,BY1); ctxB.lineTo(b2.r,BY2); ctxB.lineTo(b2.l,BY2); ctxB.closePath(); ctxB.clip();
+                ctxB.fillStyle='rgba(8,14,8,0.88)'; ctxB.fillRect(0,0,W,H);
+                var gs=18, hOff=(ts*0.04)%(gs*2);
+                for(var gy=BY1-gs+(hOff%gs);gy<BY2+gs;gy+=gs){
+                    var bL=xAt(Math.max(BY1,Math.min(BY2,gy))), ph=((gy-BY1-hOff)/(BY2-BY1+gs));
+                    ctxB.globalAlpha=0.08+(0.5+0.5*Math.sin(ph*Math.PI*6-ts*0.003))*0.14;
+                    ctxB.strokeStyle='rgba(190,255,10,1)'; ctxB.lineWidth=0.5;
+                    ctxB.beginPath(); ctxB.moveTo(bL.l,gy); ctxB.lineTo(bL.r,gy); ctxB.stroke();
+                }
+                var vOff=(ts*0.028)%(gs*2);
+                for(var rx=-gs+(vOff%gs);rx<W;rx+=gs){
+                    var ph2=rx/W;
+                    ctxB.globalAlpha=0.06+(0.5+0.5*Math.sin(ph2*Math.PI*8-ts*0.0025))*0.10;
+                    ctxB.strokeStyle='rgba(190,255,10,1)'; ctxB.lineWidth=0.5;
+                    ctxB.beginPath(); ctxB.moveTo(rx,BY1); ctxB.lineTo(rx,BY2); ctxB.stroke();
+                }
+                ctxB.globalAlpha=1;
+                for(var ny=BY1+gs/2;ny<BY2;ny+=gs){var br3=xAt(ny);
+                    for(var nx=br3.l+gs/2;nx<br3.r;nx+=gs){
+                        var np=0.5+0.5*Math.sin(ts*0.003+nx*0.08+ny*0.06);
+                        ctxB.globalAlpha=0.15+np*0.2; ctxB.fillStyle='rgba(190,255,10,1)';
+                        var ns=1.5+np; ctxB.fillRect(Math.round(nx-ns/2),Math.round(ny-ns/2),ns,ns);
+                    }
+                }
+                ctxB.globalAlpha=1; ctxB.restore();
+            }
+
+            var cvA=document.getElementById('cvA'), ctxA=cvA.getContext('2d');
+            function drawSolid(){
+                ctxA.clearRect(0,0,W,H); ctxA.save();
+                var b2=xAt(LH);
+                ctxA.beginPath(); ctxA.moveTo(APEX_X,0); ctxA.lineTo(b2.r,LH); ctxA.lineTo(b2.l,LH); ctxA.closePath(); ctxA.clip();
+                ctxA.fillStyle='#BEFF0A'; ctxA.fillRect(0,0,W,H); ctxA.restore();
+            }
+            drawSolid();
+
+            var st=0;
+            function animate(ts){ st++; if(st%4===0) drawStatic(); drawClustering(ts); drawOrdered(ts); requestAnimationFrame(animate); }
+            requestAnimationFrame(animate);
+        })();
+
+        // NAPKIN FLYWHEEL — faithful port of user's design, dark theme
+        (function(){
+            var canvas = document.getElementById('napkinCanvas');
+            if(!canvas) return;
+            var dpr = window.devicePixelRatio || 1;
+            var W = 900, H = 620;
+            canvas.width  = W * dpr;
+            canvas.height = H * dpr;
+            canvas.style.width  = W + 'px';
+            canvas.style.height = H + 'px';
+            var ctx = canvas.getContext('2d');
+            ctx.scale(dpr, dpr);
+
+            // Dark-theme palette (original used light #1a1816 on #f0ece4)
+            var ink     = 'rgba(226,226,226,0.88)';
+            var inkDim  = 'rgba(226,226,226,0.35)';
+            var ACID    = '#BEFF0A';
+            var ACID_D  = 'rgba(190,255,10,0.55)';  // dashed branch
+
+            // Stable per-point jitter — same every frame
+            var _j = {};
+            function sj(k, a) {
+                if (!(k in _j)) _j[k] = (Math.random() - 0.5) * a;
+                return _j[k];
+            }
+
+            // Ellipse track centre
+            var CX = 420, CY = 290, RX = 155, RY = 105;
+
+            // Draw a jittered quadratic bezier with arrowhead at end
+            function sketchBezier(x1,y1,cpx,cpy,x2,y2,lw,id,dashed,col) {
+                ctx.strokeStyle = col || ink;
+                ctx.lineWidth   = lw;
+                ctx.lineCap     = 'round';
+                ctx.setLineDash(dashed ? [8,5] : []);
+                ctx.beginPath();
+                var steps = 36;
+                for (var i = 0; i <= steps; i++) {
+                    var t  = i / steps;
+                    var px = (1-t)*(1-t)*x1 + 2*(1-t)*t*cpx + t*t*x2;
+                    var py = (1-t)*(1-t)*y1 + 2*(1-t)*t*cpy + t*t*y2;
+                    if (i === 0) ctx.moveTo(px + sj(id+'x'+i, 0.8), py + sj(id+'y'+i, 0.8));
+                    else         ctx.lineTo(px + sj(id+'x'+i, 0.8), py + sj(id+'y'+i, 0.8));
+                }
+                ctx.stroke();
+                ctx.setLineDash([]);
+                // Arrowhead
+                var t1 = 0.93;
+                var ax = (1-t1)*(1-t1)*x1 + 2*(1-t1)*t1*cpx + t1*t1*x2;
+                var ay = (1-t1)*(1-t1)*y1 + 2*(1-t1)*t1*cpy + t1*t1*y2;
+                var ang = Math.atan2(y2 - ay, x2 - ax);
+                var al  = 13;
+                ctx.strokeStyle = col || ink;
+                ctx.lineWidth   = lw + 0.4;
+                ctx.setLineDash([]);
+                ctx.beginPath();
+                ctx.moveTo(x2, y2);
+                ctx.lineTo(x2 - al*Math.cos(ang-0.35), y2 - al*Math.sin(ang-0.35));
+                ctx.moveTo(x2, y2);
+                ctx.lineTo(x2 - al*Math.cos(ang+0.35), y2 - al*Math.sin(ang+0.35));
+                ctx.stroke();
+            }
+
+            function txt(text, x, y, size, align, color) {
+                ctx.fillStyle    = color || ink;
+                ctx.textAlign    = align || 'center';
+                ctx.textBaseline = 'middle';
+                ctx.font         = '700 ' + size + 'px "SF Mono",Menlo,monospace';
+                ctx.fillText(text, x, y);
+            }
+
+            function dot(x, y, r, col) {
+                ctx.fillStyle = col || ACID;
+                ctx.beginPath();
+                ctx.arc(x, y, r, 0, Math.PI*2);
+                ctx.fill();
+            }
+
+            function sketchEllipse(cx, cy, rx, ry, lw, alpha) {
+                ctx.strokeStyle = inkDim;
+                ctx.lineWidth   = lw;
+                ctx.globalAlpha = alpha;
+                ctx.beginPath();
+                for (var i = 0; i <= 80; i++) {
+                    var a  = (i/80) * Math.PI * 2;
+                    var w  = sj('ell'+i, 0.8);
+                    var px = cx + (rx+w)*Math.cos(a);
+                    var py = cy + (ry+w)*Math.sin(a);
+                    if (i === 0) ctx.moveTo(px, py);
+                    else         ctx.lineTo(px, py);
+                }
+                ctx.closePath();
+                ctx.stroke();
+                ctx.globalAlpha = 1;
+            }
+
+            function draw() {
+                ctx.clearRect(0, 0, W, H);
+
+                // Subtle lined-paper texture
+                ctx.strokeStyle = 'rgba(190,255,10,0.03)';
+                ctx.lineWidth   = 0.5;
+                for (var ly = 32; ly < H; ly += 32) {
+                    ctx.beginPath(); ctx.moveTo(0,ly); ctx.lineTo(W,ly); ctx.stroke();
+                }
+
+                // Title
+                txt('Precursory Flywheel', W/2, 38, 22, 'center', ACID);
+
+                // Ellipse track
+                sketchEllipse(CX, CY, RX, RY, 0.8, 0.12);
+
+                // ── GREEN MAIN LOOP ──────────────────────────────────────────────────
+                // Q1: Shippers(420,182) → Intelligence(580,290)
+                sketchBezier(456, 184, 536, 170, 578, 264, 2.2, 'g1', false, ACID);
+                // Q2: Intelligence(580,290) → Disruption(420,398)
+                sketchBezier(578, 318, 558, 392, 454, 396, 2.2, 'g2', false, ACID);
+                // Q3: Disruption(420,398) → Coverage Cost(270,290)
+                sketchBezier(386, 396, 314, 402, 270, 318, 2.2, 'g3', false, ACID);
+                // Q4: Coverage Cost(270,290) → Shippers(420,182)
+                sketchBezier(270, 264, 284, 190, 386, 184, 2.2, 'g4', false, ACID);
+
+                // Node dots
+                dot(420, 182, 5, ACID);
+                dot(580, 290, 5, ACID);
+                dot(420, 398, 5, ACID);
+                dot(270, 290, 5, ACID);
+
+                // Labels — arrow glyphs per user spec
+                txt('Shippers \u2197',       420, 154, 20, 'center', ink);
+                txt('Intelligence \u2198',   614, 290, 18, 'left',   ink);
+                txt('Disruption \u2199',     420, 428, 20, 'center', ink);
+                txt('Coverage Cost \u2196',  248, 290, 17, 'right',  ink);
+
+                // ── DASHED OUTER BRANCH ─────────────────────────────────────────────
+                // Disruption → Utilization (down)
+                sketchBezier(420, 450, 420, 468, 420, 484, 1.8, 'b0', true, ACID_D);
+                // Utilization → Carriers (sweep left)
+                sketchBezier(396, 500, 248, 528, 114, 436, 1.8, 'b1', true, ACID_D);
+                // Carriers → Rates (arc up)
+                sketchBezier(110, 410, 86,  364, 58,  306, 1.8, 'b2', true, ACID_D);
+                // Rates → Shippers (long sweep back up)
+                sketchBezier(54,  264, 72,  182, 386, 166, 1.8, 'b3', true, ACID_D);
+
+                // Branch dots
+                dot(420, 484, 4.5, ACID_D);
+                dot(114, 436, 4.5, ACID_D);
+                dot( 58, 285, 4.5, ACID_D);
+
+                // Branch labels
+                txt('Utilization \u2191',  444, 484, 15, 'left',  inkDim);
+                txt('Carriers \u2191',      96, 444, 15, 'right', inkDim);
+                txt('Rates \u2193',          36, 285, 15, 'right', inkDim);
+
+                // ── CENTER HUB ───────────────────────────────────────────────────────
+                ctx.globalAlpha = 0.22;
+                ctx.strokeStyle = ACID;
+                ctx.lineWidth   = 1;
+                ctx.beginPath();
+                ctx.arc(CX, CY, 32, 0, Math.PI*2);
+                ctx.stroke();
+                ctx.globalAlpha = 1;
+
+                var blinkOn = Math.floor(Date.now() / 600) % 2 === 0;
+                txt(blinkOn ? '>_' : '>', CX, CY, 20, 'center', ACID);
+
+                // ── BOTTOM RULE + TAGLINE ────────────────────────────────────────────
+                ctx.strokeStyle = inkDim;
+                ctx.lineWidth   = 0.6;
+                ctx.beginPath();
+                ctx.moveTo(260, 548); ctx.lineTo(580, 548);
+                ctx.stroke();
+
+                txt('Single shipper  =  dashboard',              W/2, 566, 16, 'center', inkDim);
+                txt('Network  =  prevention engine + pricing moat', W/2, 588, 16, 'center', ink);
+
+                requestAnimationFrame(draw);
+            }
+
+            draw();
+        })();
+
+        // RADAR ENGINE
+        (function(){
+            var ACID='rgba(190,255,10,',SPEED=1.6,TRAIL=Math.PI*0.85,radars=[];
+            document.querySelectorAll('canvas[data-radar]').forEach(function(cv,i,all){
+                radars.push({canvas:cv,parent:cv.parentElement,angle:-Math.PI/2,startAngle:-Math.PI/2,
+                    done:false,fadeAlpha:1,w:0,h:0,cx:0,cy:0,radius:0});
+            });
+            function sz(r){
+                let p = r.parent, rc = p.getBoundingClientRect();
+                let w = rc.width || p.offsetWidth || window.innerWidth, h = rc.height;
+                if(h<20){var el=p;for(var k=0;k<6;k++){el=el.parentElement;if(!el)break;
+                    h=el.getBoundingClientRect().height;if(h>20)break;}}
+                if(h<20)h=500;
+                r.canvas.width=w;r.canvas.height=h;r.canvas.style.width=w+'px';r.canvas.style.height=h+'px';
+                r.w=w;r.h=h;r.cx=w/2;r.cy=h/2;r.radius=Math.sqrt(w*w+h*h)/2;
+            }
+            function trigger(r){if(r.w<20)sz(r);r.angle=r.startAngle;r.done=false;r.fadeAlpha=1;}
+            function szAll(){radars.forEach(sz);}
+            window.addEventListener('resize',szAll);
+            [100,400,1000].forEach(function(ms){setTimeout(szAll,ms);});
+            if(window.IntersectionObserver){
+                let io = new IntersectionObserver(function (entries) {
+                    entries.forEach(function (e) {
+                        if (!e.isIntersecting) return;
+                        radars.forEach(function (r) {
+                            if (r.parent === e.target) trigger(r);
+                        });
+                    });
+                }, {threshold: 0.15});
+                radars.forEach(function(r){io.observe(r.parent);});
+            } else { radars.forEach(trigger); }
+            szAll();
+            var last=null;
+            function tick(ts){
+                if(!last)last=ts;var dt=Math.min((ts-last)/1000,0.05);last=ts;
+                radars.forEach(function(r){
+                    if(r.w<20){sz(r);if(r.w<20)return;}
+                    if(r.done){if(r.fadeAlpha<=0)return;r.fadeAlpha=Math.max(0,r.fadeAlpha-dt*1.2);}
+                    else{r.angle+=SPEED*dt;if(r.angle>=r.startAngle+Math.PI*2){r.angle=r.startAngle+Math.PI*2;r.done=true;}}
+                    var ctx=r.canvas.getContext('2d');ctx.clearRect(0,0,r.w,r.h);if(r.fadeAlpha<=0)return;
+                    ctx.save();ctx.globalAlpha=r.fadeAlpha;
+                    for(var ring=1;ring<=3;ring++){ctx.beginPath();ctx.arc(r.cx,r.cy,(r.radius*ring)/3,0,Math.PI*2);
+                        ctx.strokeStyle='rgba(190,255,10,0.04)';ctx.lineWidth=1;ctx.stroke();}
+                    ctx.strokeStyle='rgba(190,255,10,0.04)';ctx.lineWidth=1;
+                    ctx.beginPath();ctx.moveTo(r.cx,0);ctx.lineTo(r.cx,r.h);ctx.stroke();
+                    ctx.beginPath();ctx.moveTo(0,r.cy);ctx.lineTo(r.w,r.cy);ctx.stroke();
+                    var swept=r.angle-r.startAngle,trailLen=Math.min(swept,TRAIL);
+                    for(var s=0;s<48;s++){var t2=s/48,a0=r.angle-trailLen+t2*trailLen,a1=r.angle-trailLen+(t2+1/48)*trailLen;
+                        ctx.beginPath();ctx.moveTo(r.cx,r.cy);ctx.arc(r.cx,r.cy,r.radius,a0,a1);ctx.closePath();
+                        ctx.fillStyle=ACID+(t2*t2*0.117)+')';ctx.fill();}
+                    var bx=r.cx+Math.cos(r.angle)*r.radius,by=r.cy+Math.sin(r.angle)*r.radius;
+                    var bg=ctx.createLinearGradient(r.cx,r.cy,bx,by);
+                    bg.addColorStop(0,ACID+'0)');bg.addColorStop(0.4,ACID+'0.054)');bg.addColorStop(1,ACID+'0.495)');
+                    ctx.beginPath();ctx.moveTo(r.cx,r.cy);ctx.lineTo(bx,by);ctx.strokeStyle=bg;ctx.lineWidth=1.5;ctx.stroke();
+                    ctx.beginPath();ctx.arc(bx,by,2.5,0,Math.PI*2);ctx.fillStyle=ACID+'0.63)';ctx.fill();
+                    ctx.beginPath();ctx.arc(r.cx,r.cy,3,0,Math.PI*2);ctx.fillStyle=ACID+'0.225)';ctx.fill();
+                    ctx.restore();});requestAnimationFrame(tick);}
+            requestAnimationFrame(tick);
+        })();
+    </script>
+
+</body>
+</html>
