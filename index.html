@@ -1,1552 +1,1386 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Precursory — Freight Risk Intelligence</title>
-    <style>
-        :root{
-            --acid:#BEFF0A;
-            --acid-dim:rgba(190,255,10,0.07);
-            --acid-border:rgba(190,255,10,0.18);
-            --bg:#080808;
-            --bg2:#0d0d0d;
-            --bg3:#111111;--bg4:#161616;
-            --border:#1a1a1a;--border2:#242424;
-            --text:#e2e2e2;--muted:#484848;--muted2:#707070;--muted3:#949494;
-            --mono:'SF Mono','SFMono-Regular','Menlo','Monaco','Consolas',monospace;
-            --red:#FF5C5C;--blue:#6CB4FF;--amber:#FFB547;
-        }
-        *{margin:0;padding:0;box-sizing:border-box;}
-        html{scroll-behavior:smooth;}
-        body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:13px;line-height:1.6;overflow-x:hidden;}
-        body::before{content:"";position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9000;opacity:0.45;}
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Precursory — Margin Insurance for Freight Brokerages</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0E1410;
+    --paper:#F7F4ED;
+    --ledger:#2D5A4A;
+    --ledger-soft:#3E7464;
+    --stamp:#C4392B;
+    --grey:#8A8475;
+    --line:#D9D4C7;
+    --max:1080px;
+  }
 
-        .radar-canvas{position:absolute;top:0;left:0;bottom:0;right:0;width:100%;height:100%;pointer-events:none;z-index:0;display:block;}
-        @keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}
-        .blink{animation:blink 1s step-end infinite;}
-        @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
-        .pulse{animation:pulse 2.2s ease-in-out infinite;}
-        [id]{scroll-margin-top:80px;}
+  *{box-sizing:border-box; margin:0; padding:0;}
 
-        /* PAGE GRID + GLOW */
-        .page-grid{position:fixed;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:60px 60px;opacity:.18;pointer-events:none;z-index:0;}
-        .page-glow{position:fixed;top:0;left:50%;transform:translateX(-50%);width:900px;height:900px;background:radial-gradient(ellipse,rgba(190,255,10,.04) 0%,transparent 65%);pointer-events:none;z-index:0;animation:glowpulse 8s ease-in-out infinite;}
-        @keyframes glowpulse{0%,100%{opacity:1;transform:translateX(-50%) scale(1);}50%{opacity:.6;transform:translateX(-50%) scale(1.08);}}
+  html{scroll-behavior:smooth;}
 
-        /* NAV */
-        nav{position:fixed;top:0;left:0;right:0;z-index:500;display:flex;align-items:center;justify-content:space-between;padding:18px 48px;background:rgba(8,8,8,.94);border-bottom:1px solid var(--border);backdrop-filter:blur(16px);}
-        .nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
-        .logo-mark{font-family:var(--mono);font-size:17px;font-weight:600;letter-spacing:-1px;display:flex;align-items:center;}
-        .lm-gt{color:var(--muted2);}
-        .lm-us{color:var(--acid);animation:blink 1s step-end infinite;}
-        .nav-word{font-size:13px;font-weight:500;letter-spacing:5px;text-transform:uppercase;color:var(--text);}
-        .nav-links{display:flex;align-items:center;gap:28px;list-style:none;}
-        .nav-links a{color:var(--muted2);text-decoration:none;font-size:10px;letter-spacing:2px;text-transform:uppercase;transition:color .2s;}
-        .nav-links a:hover{color:var(--acid);}
-        .nav-cta{background:var(--acid)!important;color:#080808!important;padding:8px 20px;border-radius:3px;font-weight:700!important;}
-        .nav-cta:hover{background:#d4ff2a!important;}
+  body{
+    background-color:var(--paper);
+    background-image:
+      linear-gradient(180deg, var(--paper) 0%, rgba(247,244,237,0) 28%, rgba(247,244,237,0) 72%, var(--paper) 100%),
+      linear-gradient(to right, rgba(45,90,74,0.045) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(45,90,74,0.045) 1px, transparent 1px);
+    background-size: 100% 100%, 32px 32px, 32px 32px;
+    background-attachment: fixed;
+    color:var(--ink);
+    font-family:'Inter', sans-serif;
+    font-size:16px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
 
-        /* BUTTONS */
-        .btn-p{background:var(--acid);color:#080808;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;padding:14px 32px;border-radius:3px;border:none;cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s;}
-        .btn-p:hover{background:#d4ff2a;transform:translateY(-1px);}
-        .btn-g{background:none;color:var(--muted2);font-family:var(--mono);font-size:11px;letter-spacing:2px;text-transform:uppercase;padding:14px 28px;border-radius:3px;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s;}
-        .btn-g:hover{border-color:var(--muted2);color:var(--text);}
+  ::selection{ background:var(--stamp); color:var(--paper); }
 
-        /* SHARED */
-        .sec{padding:96px 48px;max-width:1100px;margin:0 auto;}
-        .sec-lbl{font-size:9px;letter-spacing:4px;text-transform:uppercase;color:var(--muted);margin-bottom:52px;display:flex;align-items:center;gap:12px;}
-        .sec-lbl::after{content:'';flex:1;height:1px;background:var(--border);max-width:56px;}
-        .wrap{border-top:1px solid var(--border);position:relative;z-index:1;overflow:hidden;}
-        .wrap2{border-top:1px solid var(--border);background:rgba(13,13,13,.88);position:relative;z-index:1;overflow:hidden;}
-        .hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:160px 48px 80px;position:relative;z-index:1;overflow:hidden;}
-        .contrast-wrap{border-top:1px solid var(--border);position:relative;z-index:1;overflow:hidden;}
-        .cta-wrap{border-top:1px solid var(--border);position:relative;overflow:hidden;z-index:1;}
-        footer{border-top:1px solid var(--border);padding:32px 48px;display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1;overflow:hidden;}
+  a{ color:inherit; }
 
-        /* HERO */
-        .hero-inner{position:relative;z-index:1;max-width:1100px;margin:0 auto;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;}
-        .hero-badge{display:inline-flex;align-items:center;gap:8px;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--acid);border:1px solid var(--acid-border);background:var(--acid-dim);padding:5px 14px;border-radius:2px;margin-bottom:40px;}
-        .hero-badge .bd{width:5px;height:5px;border-radius:50%;background:var(--acid);animation:pulse 2s infinite;}
-        .hero h1{font-size:clamp(34px,4.5vw,62px);font-weight:500;line-height:1.06;letter-spacing:-1.5px;color:#fff;margin-bottom:20px;}
-        .hero h1 .ac{color:var(--acid);}
-        .hero-sub{font-size:14px;line-height:1.7;color:var(--muted3);margin-bottom:40px;max-width:420px;}
-        .hero-btns{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
-        .hero-visual{position:relative;z-index:1;}
+  .mono{ font-family:'Inter', sans-serif; }
 
-        /* SIGNAL FLOW DIAGRAM in hero */
-        .signal-flow{width:100%;max-width:420px;}
-        .sf-node{display:flex;flex-direction:column;align-items:center;}
-        .sf-node-box{border:1px solid var(--border2);background:var(--bg3);padding:12px 20px;border-radius:3px;text-align:center;width:100%;}
-        .sf-node-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
-        .sf-node-name{font-size:12px;font-weight:500;color:var(--text);}
-        .sf-node-subs{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;justify-content:center;}
-        .sf-sub{font-size:8px;letter-spacing:1px;padding:2px 6px;border:1px solid var(--border);border-radius:2px;color:var(--muted);}
-        .sf-connector{display:flex;flex-direction:column;align-items:center;padding:8px 0;position:relative;}
-        .sf-line{width:1px;background:var(--border);flex:1;}
-        .sf-line.broken{background:repeating-linear-gradient(to bottom,var(--border) 0px,var(--border) 4px,transparent 4px,transparent 8px);}
-        .sf-line.active{background:var(--acid);box-shadow:0 0 6px rgba(190,255,10,.3);}
-        .sf-arrow{font-size:10px;color:var(--muted);}
-        .sf-arrow.active{color:var(--acid);}
-        .sf-gap-label{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--red);background:rgba(255,92,92,.06);border:1px solid rgba(255,92,92,.15);padding:3px 10px;border-radius:2px;white-space:nowrap;}
-        .sf-intercept{border-color:var(--acid-border)!important;background:rgba(190,255,10,.04)!important;}
-        .sf-intercept .sf-node-label{color:var(--acid);}
-        .sf-intercept .sf-node-name{color:var(--acid);}
-        .sf-carrier-box{border-color:var(--blue)!important;background:rgba(108,180,255,.04)!important;}
-        .sf-carrier-box .sf-node-label{color:var(--blue);}
+  .label{
+    font-family:'Inter', sans-serif;
+    font-size:0.72rem;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:var(--grey);
+  }
 
-        /* pulse animation on active line */
-        @keyframes flowpulse{
-            0%{opacity:.3;} 50%{opacity:1;} 100%{opacity:.3;}
-        }
-        .sf-line.active{animation:flowpulse 2s ease-in-out infinite;}
+  h1, h2, h3{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    letter-spacing:-0.01em;
+  }
 
-        /* PROBLEM */
-        .fee-grid{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--border);}
-        .fee-card{padding:32px 28px;border-right:1px solid var(--border);position:relative;overflow:hidden;}
-        .fee-card:last-child{border-right:none;}
-        .fee-tag{font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--acid);margin-bottom:14px;}
-        .fee-card h3{font-size:13px;font-weight:500;color:#fff;margin-bottom:20px;letter-spacing:-.2px;line-height:1.35;}
+  /* ===== Header ===== */
+  header{
+    position:sticky; top:0; z-index:50;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:1.4rem clamp(1.5rem, 5vw, 4rem);
+    background:rgba(247,244,237,0.85);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  .wordmark{
+    font-family:'Fraunces', serif;
+    font-weight:700;
+    font-size:1.15rem;
+    letter-spacing:-0.01em;
+    display:flex; align-items:center; gap:0.55rem;
+  }
+  .mark{
+    position:relative;
+    display:inline-flex;
+    align-items:center;
+    width:14px;
+    height:1.3em;
+  }
+  .mark .dash{
+    position:absolute;
+    left:0;
+    bottom:0;
+    width:4px;
+    height:0.95em;
+    background:var(--stamp);
+    border-radius:1px;
+  }
+  .mark .dot{
+    position:absolute;
+    top:0.18em;
+    left:5px;
+    width:6px;
+    height:6px;
+    border-radius:50%;
+    background:var(--stamp);
+  }
+  nav{ display:flex; gap:2rem; align-items:center; }
+  nav a{
+    font-family:'Inter', sans-serif;
+    font-size:0.78rem;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    text-decoration:none;
+    color:var(--ink);
+    opacity:0.7;
+    transition:opacity .15s ease;
+  }
+  nav a:hover{ opacity:1; }
+  .nav-cta{
+    border:1px solid var(--ink);
+    padding:0.5rem 1.1rem;
+    border-radius:2px;
+    opacity:1 !important;
+  }
+  .nav-cta:hover{ background:var(--ink); color:var(--paper); }
 
-        /* upgraded SVG timeline */
-        .fee-svgtl{width:100%;margin-top:4px;}
+  @media (max-width: 720px){
+    nav .nav-link{ display:none; }
+  }
 
-        /* SIGNAL GAP DIAGRAM */
-        .signal-gap-diagram{max-width:1100px;margin:0 auto 0;padding:40px 48px 0;}
-        .sgd-inner{display:grid;grid-template-columns:1fr auto 1fr;gap:0;align-items:center;border:1px solid var(--border);background:var(--bg2);}
-        .sgd-side{padding:28px 32px;}
-        .sgd-side-label{font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
-        .sgd-side-name{font-size:14px;font-weight:500;color:var(--text);margin-bottom:10px;}
-        .sgd-sources{display:flex;flex-wrap:wrap;gap:5px;}
-        .sgd-src{font-size:8px;letter-spacing:1px;padding:2px 7px;border:1px solid var(--border2);border-radius:2px;color:var(--muted2);}
-        .sgd-bridge{display:flex;flex-direction:column;align-items:center;padding:28px 0;border-left:1px solid var(--border);border-right:1px solid var(--border);min-width:180px;}
-        .sgd-bridge-broken{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
-        .sgd-dash{width:28px;height:1px;background:repeating-linear-gradient(to right,var(--red) 0,var(--red) 4px,transparent 4px,transparent 8px);}
-        .sgd-break{font-size:14px;color:var(--red);}
-        .sgd-bridge-label{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--red);margin-bottom:16px;}
-        .sgd-intercept-label{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--acid);background:var(--acid-dim);border:1px solid var(--acid-border);padding:4px 10px;border-radius:2px;}
-        .sgd-right{border-left:1px solid var(--border);}
+  /* ===== Hero ===== */
+  .hero{
+    max-width:var(--max);
+    margin:0 auto;
+    padding:clamp(3rem, 8vw, 6rem) clamp(1.5rem, 5vw, 4rem) clamp(2rem, 6vw, 4rem);
+    display:grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap:clamp(2rem, 6vw, 5rem);
+    align-items:center;
+  }
+  @media (max-width: 880px){
+    .hero{ grid-template-columns:1fr; padding-top:3rem; }
+  }
 
-        /* CONTRAST TABLE */
-        .contrast-hd{padding:48px 48px 0;max-width:1100px;margin:0 auto;}
-        .contrast-hd h2{font-size:clamp(22px,3vw,36px);font-weight:500;color:#fff;letter-spacing:-.3px;margin-bottom:8px;}
-        .contrast-hd p{font-size:13px;color:var(--muted3);max-width:480px;}
-        .contrast-grid{display:grid;grid-template-columns:1fr 1fr;max-width:1100px;margin:0 auto;border-left:1px solid var(--border);border-right:1px solid var(--border);border-top:1px solid var(--border);}
-        .contrast-col-hd{padding:16px 32px;border-bottom:1px solid var(--border);border-right:1px solid var(--border);display:flex;align-items:center;gap:8px;}
-        .contrast-col-hd:last-child{border-right:none;}
-        .col-tag{font-size:8px;letter-spacing:3px;text-transform:uppercase;padding:3px 8px;border-radius:2px;}
-        .col-now{background:rgba(255,92,92,.08);color:var(--red);border:1px solid rgba(255,92,92,.15);}
-        .col-pre{background:var(--acid-dim);color:var(--acid);border:1px solid var(--acid-border);}
-        .col-title{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted2);}
-        .ct-cell{padding:14px 32px;border-bottom:1px solid var(--border);border-right:1px solid var(--border);display:flex;align-items:center;gap:12px;}
-        .ct-cell:nth-child(even){border-right:none;}
-        .ct-icon{width:20px;height:20px;flex-shrink:0;}
-        .ct-text{font-size:11px;line-height:1.5;color:var(--muted3);}
-        .ct-text.bad{color:rgba(255,92,92,.8);}
-        .ct-text.good{color:var(--text);}
-        .audience-tab-bar{display:flex;border-bottom:1px solid var(--border);max-width:1100px;margin:0 auto;}
-        .aud-tab{padding:16px 32px;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;background:none;border-top:none;border-left:none;border-right:none;font-family:var(--mono);}
-        .aud-tab.active{color:var(--acid);border-bottom-color:var(--acid);}
-        .aud-panel{display:none;max-width:1100px;margin:0 auto;}
-        .aud-panel.active{display:block;}
+  .eyebrow{
+    display:flex; align-items:center; gap:0.6rem;
+    margin-bottom:1.4rem;
+  }
+  .eyebrow::before{
+    content:'';
+    width:28px; height:1px;
+    background:var(--stamp);
+    display:inline-block;
+  }
 
-        /* SOLUTION */
-        .sol-grid{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:start;}
-        .sol-left h2{font-size:clamp(24px,3vw,40px);font-weight:500;color:#fff;line-height:1.12;letter-spacing:-.5px;margin-bottom:16px;}
-        .sol-left h2 em{font-style:normal;color:var(--acid);}
-        .sol-left p{font-size:13px;line-height:1.8;color:var(--muted3);margin-bottom:14px;}
-        .fm-cite{background:var(--bg3);border:1px solid var(--border2);border-left:2px solid var(--acid);padding:16px 20px;margin-top:24px;}
-        .fm-cite p{font-size:11px;line-height:1.7;color:var(--muted3);margin-bottom:6px;}
-        .fm-src{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+  .hero h1{
+    font-size:clamp(2.4rem, 5.6vw, 4rem);
+    line-height:1.04;
+    margin-bottom:1.4rem;
+  }
+  .hero h1 em{
+    font-style:italic;
+    color:var(--ledger);
+  }
 
-        /* SOLUTION FLOW — horizontal state machine */
-        .sol-flow{display:flex;flex-direction:column;gap:0;border:1px solid var(--border);}
-        .sol-flow-step{padding:20px 24px;border-bottom:1px solid var(--border);display:grid;grid-template-columns:28px 1fr auto;gap:14px;align-items:start;transition:background .2s;}
-        .sol-flow-step:last-child{border-bottom:none;}
-        .sol-flow-step:hover{background:rgba(190,255,10,.012);}
-        .sf-n{font-size:10px;font-weight:500;color:var(--acid);width:24px;height:24px;border:1px solid var(--acid-border);border-radius:3px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
-        .sf-content h4{font-size:12px;font-weight:500;color:var(--text);margin-bottom:3px;}
-        .sf-content p{font-size:11px;line-height:1.6;color:var(--muted3);}
-        .sf-state{display:flex;flex-direction:column;gap:4px;align-items:flex-end;flex-shrink:0;}
-        .sf-before{font-size:8px;letter-spacing:1px;padding:2px 6px;border-radius:2px;background:rgba(255,92,92,.08);color:var(--red);border:1px solid rgba(255,92,92,.15);}
-        .sf-after{font-size:8px;letter-spacing:1px;padding:2px 6px;border-radius:2px;background:var(--acid-dim);color:var(--acid);border:1px solid var(--acid-border);}
+  .hero p.lede{
+    font-size:1.05rem;
+    color:#3a352c;
+    max-width:46ch;
+    margin-bottom:2rem;
+  }
 
-        /* HOW IT WORKS */
-        .hiw-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);}
-        .hiw-panel{padding:44px 40px;}
-        .hiw-panel.dark{background:var(--bg);}
-        .hiw-panel.mid{background:var(--bg2);}
-        .hiw-panel-lbl{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:20px;}
-        .hiw-panel h3{font-size:clamp(16px,2vw,22px);font-weight:500;color:#fff;line-height:1.2;letter-spacing:-.2px;margin-bottom:12px;}
-        .hiw-panel p{font-size:12px;line-height:1.75;color:var(--muted3);margin-bottom:24px;}
+  .hero-ctas{ display:flex; gap:0.9rem; flex-wrap:wrap; }
+  .btn{
+    font-family:'Inter', sans-serif;
+    font-size:0.8rem;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    text-decoration:none;
+    padding:0.85rem 1.5rem;
+    border-radius:2px;
+    display:inline-block;
+    transition:all .15s ease;
+  }
+  .btn-primary{
+    background:var(--ink); color:var(--paper);
+    border:1px solid var(--ink);
+  }
+  .btn-primary:hover{ background:var(--ledger); border-color:var(--ledger); }
+  .btn-ghost{
+    border:1px solid var(--ink);
+    color:var(--ink);
+  }
+  .btn-ghost:hover{ background:var(--ink); color:var(--paper); }
 
-        /* BRANCHING FLOW — intercept visual */
-        .branch-flow{display:flex;flex-direction:column;gap:0;border:1px solid var(--border);}
-        .bf-step{padding:14px 18px;border-bottom:1px solid var(--border);display:grid;grid-template-columns:24px 1fr;gap:12px;align-items:start;}
-        .bf-step:last-child{border-bottom:none;}
-        .bf-num{font-size:9px;font-weight:600;color:var(--muted);padding-top:1px;}
-        .bf-head{font-size:11px;font-weight:500;color:var(--text);margin-bottom:2px;}
-        .bf-body{font-size:10px;line-height:1.5;color:var(--muted3);}
-        .bf-fork{padding:14px 18px;border-bottom:1px solid var(--border);background:var(--bg3);}
-        .bf-fork-label{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
-        .bf-paths{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-        .bf-path{padding:10px 14px;border-radius:2px;border:1px solid var(--border);}
-        .bf-path.old{border-color:rgba(255,92,92,.2);background:rgba(255,92,92,.04);}
-        .bf-path.new{border-color:var(--acid-border);background:var(--acid-dim);}
-        .bf-path-label{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px;}
-        .bf-path.old .bf-path-label{color:var(--red);}
-        .bf-path.new .bf-path-label{color:var(--acid);}
-        .bf-path-outcome{font-size:10px;font-weight:500;}
-        .bf-path.old .bf-path-outcome{color:var(--red);}
-        .bf-path.new .bf-path-outcome{color:var(--acid);}
-        .bf-intercept{padding:14px 18px;border-bottom:1px solid var(--acid-border);background:rgba(190,255,10,.025);display:grid;grid-template-columns:24px 1fr;gap:12px;}
-        .bf-intercept-num{font-size:10px;font-weight:600;color:var(--acid);}
-        .bf-intercept-head{font-size:11px;font-weight:500;color:var(--acid);margin-bottom:2px;}
-        .bf-intercept-body{font-size:10px;line-height:1.5;color:var(--muted3);}
+  /* ===== Hero disruption grid ===== */
+  .disruption-card{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:1.5rem 1.5rem 1.4rem;
+    box-shadow:0 30px 60px -30px rgba(14,20,16,0.25);
+  }
+  .disruption-head{
+    display:flex; justify-content:space-between; align-items:flex-start;
+    margin-bottom:1.2rem;
+  }
+  .disruption-grid{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    grid-template-rows:repeat(3, 1fr);
+    gap:0.6rem;
+    aspect-ratio: 4 / 3;
+  }
+  .d-cell{
+    position:relative;
+    border:1px solid var(--line);
+    border-radius:3px;
+    background:var(--paper);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:0.4rem;
+    padding:0.5rem;
+    overflow:hidden;
+  }
+  .d-cell .d-icon{
+    width:22px; height:22px;
+    color:var(--ledger);
+    transition: color 0.3s ease;
+  }
+  .d-cell .d-label{
+    font-family:'Inter', sans-serif;
+    font-size:0.6rem;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--grey);
+    text-align:center;
+    line-height:1.3;
+  }
+  .d-cell .d-scale{
+    position:absolute;
+    top:6px; right:6px;
+    font-family:'Inter', sans-serif;
+    font-size:0.55rem;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--grey);
+    opacity:0.6;
+  }
+  .d-cell.flash{
+    animation: cell-flash 1.6s ease-out;
+  }
+  .d-cell.flash .d-icon{ color:var(--stamp); }
+  .d-cell.flash::before{
+    content:'';
+    position:absolute;
+    inset:0;
+    background:var(--stamp);
+    opacity:0;
+    animation: cell-flash-bg 1.6s ease-out;
+  }
+  @keyframes cell-flash-bg{
+    0%{ opacity:0.16; }
+    100%{ opacity:0; }
+  }
+  @keyframes cell-flash{
+    0%{ border-color:var(--stamp); }
+    60%{ border-color:var(--stamp); }
+    100%{ border-color:var(--line); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .d-cell.flash, .d-cell.flash::before{ animation:none; }
+  }
 
-        /* stack layers */
-        .stack{border:1px solid var(--border);}
-        .stl{padding:18px 22px;border-bottom:1px solid var(--border);display:grid;grid-template-columns:80px 1fr;gap:14px;transition:background .2s;}
-        .stl:last-child{border-bottom:none;}
-        .stl:hover{background:rgba(190,255,10,.012);}
-        .lp{font-size:8px;letter-spacing:2px;text-transform:uppercase;padding:4px 8px;border-radius:2px;text-align:center;align-self:start;margin-top:2px;}
-        .lp-o{background:rgba(190,255,10,.1);color:var(--acid);border:1px solid var(--acid-border);}
-        .lp-a{background:rgba(108,180,255,.07);color:var(--blue);border:1px solid rgba(108,180,255,.14);}
-        .lp-g{background:rgba(200,140,255,.06);color:#C88CFF;border:1px solid rgba(200,140,255,.12);}
-        .lp-d{background:rgba(200,200,200,.04);color:var(--muted2);border:1px solid var(--border2);}
-        .lh{font-size:11px;font-weight:500;color:var(--text);margin-bottom:3px;}
-        .lbody{font-size:10px;line-height:1.6;color:var(--muted3);}
-        .chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;}
-        .chip{font-size:8px;letter-spacing:1px;text-transform:uppercase;padding:2px 6px;border:1px solid var(--border);border-radius:2px;color:var(--muted);}
-
-        /* HOW WE ENGAGE */
-        .engage-grid{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:start;}
-        .engage-left h2{font-size:clamp(22px,3vw,36px);font-weight:500;color:#fff;line-height:1.2;letter-spacing:-.3px;margin-bottom:14px;}
-        .engage-left h2 em{font-style:normal;color:var(--acid);}
-        .engage-left p{font-size:13px;line-height:1.8;color:var(--muted3);margin-bottom:14px;}
-
-        /* RATE DECLINE CURVE + PHASE TIMELINE */
-        .engage-right{}
-
-        /* SLIDING DOOR CHART */
-        .slider-chart-wrap{width:100%;user-select:none;}
-        .slider-chart-labels{display:flex;justify-content:space-between;margin-bottom:10px;padding:0 2px;}
-        .sc-label-bad{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--red);opacity:1;transition:opacity .3s;}
-        .sc-label-good{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--acid);opacity:.4;transition:opacity .3s;}
-        .slider-chart-container{position:relative;border:1px solid var(--border);border-radius:3px;overflow:hidden;cursor:ew-resize;background:var(--bg3);}
-        #sliderChart{display:block;width:100%;height:200px;}
-        .slider-handle{position:absolute;top:0;bottom:0;width:2px;background:rgba(255,255,255,.15);cursor:ew-resize;transform:translateX(-50%);pointer-events:none;}
-        .slider-handle-line{position:absolute;top:0;bottom:0;left:0;width:1px;background:rgba(255,255,255,.3);}
-        .slider-handle-grip{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--bg4);border:1px solid var(--border2);border-radius:3px;padding:5px 6px;display:flex;gap:4px;align-items:center;pointer-events:none;}
-        .slider-handle-grip span{font-size:9px;color:var(--muted2);}
-        .slider-drag-hint{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);text-align:center;margin-top:8px;}
-        .rate-curve-wrap{border:1px solid var(--border);background:var(--bg3);padding:20px 24px;margin-bottom:1px;}
-        .rate-curve-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
-        .rate-curve-svg{width:100%;height:80px;}
-        .phase-grid{border:1px solid var(--border);}
-        .phase-row{display:grid;grid-template-columns:80px 1fr;border-bottom:1px solid var(--border);}
-        .phase-row:last-child{border-bottom:none;}
-        .phase-week{padding:16px 16px;border-right:1px solid var(--border);display:flex;flex-direction:column;justify-content:center;}
-        .phase-week-lbl{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--acid);margin-bottom:2px;}
-        .phase-week-range{font-size:9px;color:var(--muted);}
-        .phase-detail{padding:16px 20px;}
-        .phase-name{font-size:12px;font-weight:500;color:var(--text);margin-bottom:3px;}
-        .phase-desc{font-size:10px;line-height:1.5;color:var(--muted3);}
-        .engage-note{border:1px solid var(--border);margin-top:1px;padding:14px 20px;background:var(--bg2);font-size:10px;color:var(--muted3);line-height:1.5;}
-        .engage-note strong{color:var(--acid);}
+  .disruption-legend{
+    display:flex; gap:1.6rem; margin-top:1rem; flex-wrap:wrap;
+    font-family:'Inter', sans-serif; font-size:0.7rem; color:var(--grey);
+  }
+  .disruption-legend span{ display:flex; align-items:center; gap:0.4rem; }
+  .disruption-legend .dotc{
+    width:8px; height:8px; border-radius:50%;
+    display:inline-block;
+  }
+  .disruption-legend .dotc.macro{ background:var(--stamp); }
+  .disruption-legend .dotc.micro{ background:var(--ledger); }
 
 
-        /* TEAM */
-        .team-grid{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:start;}
-        .team-left h2{font-size:clamp(22px,3vw,36px);font-weight:500;color:#fff;line-height:1.15;letter-spacing:-.3px;margin-bottom:14px;}
-        .team-left h2 em{font-style:normal;color:var(--acid);}
-        .team-left p{font-size:13px;line-height:1.8;color:var(--muted3);margin-bottom:14px;}
-        .team-cards{border:1px solid var(--border);}
-        .team-card{display:grid;grid-template-columns:56px 1fr;gap:0;border-bottom:1px solid var(--border);transition:background .2s;}
-        .team-card:last-child{border-bottom:none;}
-        .team-card:hover{background:rgba(190,255,10,.012);}
-        .tc-avatar{width:56px;border-right:1px solid var(--border);display:flex;align-items:center;justify-content:center;background:var(--bg2);position:relative;}
-        .tc-initials{font-size:13px;font-weight:600;color:var(--acid);letter-spacing:1px;}
-        .tc-body{padding:16px 20px;}
-        .tc-role{font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--acid);margin-bottom:4px;}
-        .tc-name{font-size:13px;font-weight:500;color:var(--text);margin-bottom:5px;}
-        .tc-bio{font-size:10px;line-height:1.55;color:var(--muted3);}
-        .tc-prev{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;}
-        .tc-tag{font-size:8px;letter-spacing:1px;padding:2px 6px;border:1px solid var(--border);border-radius:2px;color:var(--muted);}
-        .adv-strip{border:1px solid var(--border);margin-top:1px;}
-        .adv-strip-hd{padding:10px 20px;background:var(--bg2);border-bottom:1px solid var(--border);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);}
-        .adv-row-inner{display:grid;grid-template-columns:repeat(3,1fr);}
-        .adv-cell{padding:16px 20px;border-right:1px solid var(--border);}
-        .adv-cell:last-child{border-right:none;}
-        .adv-name{font-size:12px;font-weight:500;color:var(--text);margin-bottom:2px;}
-        .adv-title{font-size:10px;color:var(--muted3);}
+  .chart-title{ font-family:'Inter', sans-serif; font-size:0.75rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--grey); }
+  .chart-sub{ font-family:'Inter', sans-serif; font-size:0.7rem; color:var(--grey); margin-top:0.2rem; }
 
-        /* CTA */
-        .cta-bg{position:absolute;inset:0;background:radial-gradient(ellipse 55% 75% at 50% 100%,rgba(190,255,10,.05) 0%,transparent 70%);pointer-events:none;}
-        .cta-in{position:relative;z-index:1;padding:96px 48px;max-width:1100px;margin:0 auto;}
-        .cta-h2{font-size:clamp(26px,4vw,52px);font-weight:500;color:var(--text);line-height:1.07;letter-spacing:-1px;margin-bottom:14px;}
-        .cta-h2 em{font-style:normal;color:var(--acid);}
-        .cta-p{font-size:13px;line-height:1.8;color:var(--muted3);max-width:480px;margin-bottom:28px;}
-        .cta-perks{display:flex;flex-direction:column;gap:9px;margin-bottom:36px;}
-        .cta-perk{display:flex;align-items:center;gap:9px;font-size:11px;color:var(--muted3);}
-        .cta-perk::before{content:'→';color:var(--acid);}
-        .fl{display:flex;align-items:center;gap:14px;}
-        .f-lm{font-family:var(--mono);font-size:16px;font-weight:600;color:var(--acid);letter-spacing:-1px;}
-        .f-wm{font-size:12px;font-weight:500;letter-spacing:4px;text-transform:uppercase;color:var(--text);}
-        .f-copy{font-size:9px;letter-spacing:1px;color:var(--muted);}
+  /* ===== Quote flipboard ===== */
+  .quote-band{
+    border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+    background:var(--ink);
+    color:var(--paper);
+    overflow:hidden;
+  }
+  .quote-inner{
+    max-width:var(--max);
+    margin:0 auto;
+    padding:clamp(3rem, 7vw, 5rem) clamp(1.5rem, 5vw, 4rem);
+  }
 
-        /* ECONOMIC IMPACT */
-        .impact-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start;}
+  .flip-stage{
+    position:relative;
+    min-height:clamp(11rem, 22vw, 13rem);
+  }
+  .flip-card{
+    position:absolute;
+    inset:0;
+    opacity:0;
+    visibility:hidden;
+    transform:rotateX(-90deg);
+    transform-origin:center top;
+    transition: transform 0.6s cubic-bezier(.5,0,.2,1), opacity 0.3s ease;
+  }
+  .flip-card.active{
+    position:relative;
+    opacity:1;
+    visibility:visible;
+    transform:rotateX(0deg);
+  }
+  .flip-card blockquote{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    font-style:italic;
+    font-size:clamp(1.3rem, 3vw, 1.9rem);
+    line-height:1.45;
+    max-width:46ch;
+  }
+  .flip-card blockquote .accent{
+    color:#9fd9c4;
+    font-style:normal;
+  }
+  .flip-card .quote-attr{
+    margin-top:1.5rem;
+    font-family:'Inter', sans-serif;
+    font-size:0.75rem;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:#8fa89e;
+  }
 
-        /* ── PYRAMID ──────────────────────────────────────── */
-        .pyramid-outer{position:relative;overflow:visible;}
-        .layer-canvas{position:absolute;top:0;left:0;pointer-events:none;}
-        .layer-label{position:absolute;left:0;right:0;display:flex;flex-direction:column;align-items:center;pointer-events:none;z-index:50;}
-        .l-tag{font-size:7px;letter-spacing:2px;text-transform:uppercase;margin-bottom:2px;}
-        .l-title{font-size:12px;font-weight:700;letter-spacing:-.2px;text-align:center;}
-        .l-sub{font-size:8px;margin-top:2px;text-align:center;letter-spacing:.3px;}
-        .l-chips{display:flex;gap:4px;flex-wrap:wrap;justify-content:center;margin-top:5px;}
-        .lchip{font-size:7px;letter-spacing:1px;text-transform:uppercase;padding:2px 6px;border-radius:2px;border:1px solid;background:rgba(0,0,0,.12);}
-        .dark-text .l-tag{color:rgba(0,0,0,.5);}
-        .dark-text .l-title{color:#080808;}
-        .dark-text .l-sub{color:rgba(0,0,0,.5);}
-        .dark-text .lchip{border-color:rgba(0,0,0,.2);color:rgba(0,0,0,.6);}
-        .light-text .l-tag{color:rgba(190,255,10,.7);}
-        .light-text .l-title{color:var(--text);text-shadow:0 1px 8px rgba(0,0,0,.9),0 0 16px rgba(0,0,0,.8);}
-        .light-text .l-sub{color:var(--muted3);}
-        .light-text .lchip{border-color:rgba(190,255,10,.25);color:rgba(190,255,10,.7);background:rgba(0,0,0,.55);}
-        .light-text .l-tag{text-shadow:0 1px 4px rgba(0,0,0,.9);}
-        .div-line{position:absolute;left:0;right:0;z-index:20;display:flex;align-items:center;}
-        .div-line-bar{flex:1;height:1px;}
-        .div-line-lbl{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--muted2);padding:0 12px;background:var(--bg);white-space:nowrap;}
-        .ann{position:absolute;z-index:30;display:flex;align-items:flex-start;gap:8px;font-size:9px;color:var(--muted3);line-height:1.5;white-space:normal;max-width:220px;}
-        .ann-rule{width:20px;height:1px;background:var(--border2);flex-shrink:0;margin-top:7px;}
-        .ann em{font-style:normal;color:var(--muted);}
+  @media (prefers-reduced-motion: reduce){
+    .flip-card{ transition:none; }
+  }
 
-        /* RESPONSIVE */
-        @media(max-width:900px){
-            nav{padding:15px 22px;}
-            .nav-links{display:none;}
-            .hero,.sec{padding-left:22px;padding-right:22px;}
-            .hero{padding-top:140px;}
-            .hero-inner{grid-template-columns:1fr;}
-            .hero-visual{display:none;}
-            .fee-grid{grid-template-columns:1fr 1fr;}
-            .fee-card:nth-child(2){border-right:none;}
-            .fee-card:nth-child(3){border-right:1px solid var(--border);}
-            .fee-card:nth-child(4){border-right:none;}
-            .sol-grid,.engage-grid,.hiw-grid,.team-grid{grid-template-columns:1fr;}
-            .contrast-grid{grid-template-columns:1fr;}
+  .flip-controls{
+    display:flex;
+    gap:0.6rem;
+    margin-top:2rem;
+  }
+  .flip-dot{
+    width:28px; height:3px;
+    background:#2a3530;
+    border:none;
+    cursor:pointer;
+    border-radius:1px;
+    padding:0;
+    position:relative;
+    overflow:hidden;
+  }
+  .flip-dot::after{
+    content:'';
+    position:absolute;
+    inset:0;
+    background:#9fd9c4;
+    transform:scaleX(0);
+    transform-origin:left center;
+    transition:transform 0.2s ease;
+  }
+  .flip-dot.active::after{
+    transform:scaleX(1);
+    transition:transform 6s linear;
+  }
 
-            .adv-row-inner{grid-template-columns:1fr;}
-            .adv-cell{border-right:none;border-bottom:1px solid var(--border);}
-            .bf-paths{grid-template-columns:1fr;}
-            footer{flex-direction:column;gap:10px;text-align:center;}
-            .sgd-inner{grid-template-columns:1fr;}
-            .sgd-bridge{border:none;border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
-            .signal-gap-diagram{padding:24px;}
-        }
-    </style>
+  /* ===== Products ===== */
+  .products-list{
+    display:flex;
+    flex-direction:column;
+  }
+  .product-row{
+    display:grid;
+    grid-template-columns: 90px 1fr 1.4fr;
+    gap:2rem;
+    padding:2.2rem 0;
+    border-bottom:1px solid var(--line);
+    align-items:start;
+  }
+  .product-row:first-child{ border-top:1px solid var(--line); }
+  .product-row.coming-soon{
+    opacity:0.6;
+  }
+  @media (max-width:760px){
+    .product-row{ grid-template-columns:1fr; gap:0.8rem; }
+  }
+  .product-id{
+    font-family:'Inter', sans-serif;
+    font-size:0.75rem;
+    letter-spacing:0.1em;
+    color:var(--stamp);
+    padding-top:0.2rem;
+  }
+  .product-row.coming-soon .product-id{ color:var(--grey); }
+  .product-name{
+    display:flex; flex-direction:column; gap:0.4rem;
+  }
+  .product-name h3{ font-size:1.5rem; }
+  .product-tagline{
+    font-family:'Inter', sans-serif;
+    font-size:0.72rem;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--ledger);
+  }
+  .product-row.coming-soon .product-tagline{ color:var(--grey); }
+  .product-desc p{
+    color:#544f44;
+    font-size:0.96rem;
+    max-width:55ch;
+  }
+  .product-status{
+    margin-top:0.9rem;
+    font-family:'Inter', sans-serif;
+    font-size:0.7rem;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--grey);
+    display:flex; align-items:center; gap:0.5rem;
+  }
+  .product-status::before{
+    content:'';
+    width:6px; height:6px; border-radius:50%;
+    background:var(--ledger);
+    display:inline-block;
+  }
+  .product-row.coming-soon .product-status::before{ background:var(--grey); }
 
+  /* ===== Mechanism tabs / flip ===== */
+  .mech-tabs{
+    display:flex;
+    gap:0.5rem;
+    margin-top:1.4rem;
+  }
+  .mech-tab{
+    font-family:'Inter', sans-serif;
+    font-size:0.75rem;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    padding:0.6rem 1.2rem;
+    border:1px solid var(--line);
+    border-radius:2px;
+    background:transparent;
+    color:var(--grey);
+    cursor:pointer;
+    transition: all .15s ease;
+  }
+  .mech-tab:hover{ border-color:var(--ink); color:var(--ink); }
+  .mech-tab.active{
+    background:var(--ink);
+    border-color:var(--ink);
+    color:var(--paper);
+  }
+
+  .mech-panels{
+    position:relative;
+    perspective:1600px;
+  }
+  .mech-panel{
+    display:none;
+  }
+  .mech-panel.active{
+    display:block;
+    animation: flip-in 0.5s cubic-bezier(.2,.7,.3,1);
+    transform-origin: left center;
+  }
+  @keyframes flip-in{
+    from{ opacity:0; transform: rotateY(-8deg) translateX(-12px); }
+    to{ opacity:1; transform: rotateY(0) translateX(0); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .mech-panel.active{ animation:none; }
+  }
+
+
+  .section{
+    max-width:var(--max);
+    margin:0 auto;
+    padding:clamp(3.5rem, 8vw, 6rem) clamp(1.5rem, 5vw, 4rem);
+    position:relative;
+    border-top:1px solid var(--line);
+  }
+  .section-head{
+    margin-bottom:clamp(2rem, 5vw, 3.5rem);
+    display:flex; flex-direction:column; gap:0.8rem;
+  }
+  .section-head h2{ font-size:clamp(1.6rem, 3.5vw, 2.4rem); max-width:26ch; }
+  .section-head p{ color:#544f44; max-width:50ch; }
+
+  .mechanism{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:1px;
+    background:var(--line);
+    border:1px solid var(--line);
+  }
+  @media (max-width:800px){
+    .mechanism{ grid-template-columns:1fr; }
+  }
+  .step{
+    background:var(--paper);
+    padding:2rem;
+    position:relative;
+  }
+  .step-num{
+    font-family:'Inter', sans-serif;
+    font-size:0.75rem;
+    color:var(--stamp);
+    letter-spacing:0.1em;
+    margin-bottom:1.2rem;
+    display:block;
+  }
+  .step h3{ font-size:1.25rem; margin-bottom:0.6rem; }
+  .step p{ color:#544f44; font-size:0.95rem; }
+  .step .tag{
+    margin-top:1.2rem;
+    font-family:'Inter', sans-serif;
+    font-size:0.7rem;
+    letter-spacing:0.06em;
+    color:var(--grey);
+    display:flex; align-items:center; gap:0.5rem;
+  }
+  .step .tag::before{ content:'→'; color:var(--ledger); }
+
+  /* ===== Formula block ===== */
+  .formula{
+    margin-top:clamp(2rem, 5vw, 3rem);
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:1.8rem 2rem;
+    background:#fff;
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:1.2rem 2.5rem;
+  }
+  .formula .label{ width:100%; }
+  .formula-eq{
+    font-family:'Inter', sans-serif;
+    font-size:clamp(0.95rem, 2.4vw, 1.25rem);
+    color:var(--ink);
+  }
+  .formula-eq .var{ color:var(--ledger); }
+  .formula-eq .const{ color:var(--stamp); }
+
+  /* ===== Team ===== */
+  .team-grid{
+    display:grid;
+    grid-template-columns:repeat(2, 1fr);
+    gap:1.25rem;
+    max-width:75%;
+    margin:0 auto;
+  }
+  @media (max-width:700px){
+    .team-grid{ grid-template-columns:1fr; max-width:100%; }
+  }
+
+  .team-card{
+    position:relative;
+    aspect-ratio: 4 / 5;
+    overflow:hidden;
+    background:var(--ink);
+    cursor:pointer;
+  }
+  .team-card img{
+    width:100%; height:100%;
+    object-fit:cover;
+    display:block;
+    filter:grayscale(1) contrast(1.05);
+    transform:scale(1.02);
+    transition:transform .6s ease, filter .6s ease;
+  }
+  .team-card:hover img{
+    transform:scale(1.06);
+    filter:grayscale(0.4) contrast(1.05);
+  }
+
+  .team-overlay{
+    position:absolute;
+    inset:0;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-end;
+    padding:1.8rem;
+    background:linear-gradient(180deg, rgba(14,20,16,0) 35%, rgba(14,20,16,0.92) 100%);
+  }
+
+  .team-name-row{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:1rem;
+  }
+  .team-card h3{
+    color:var(--paper);
+    font-size:1.4rem;
+    margin-bottom:0.15rem;
+  }
+  .team-role{
+    font-family:'Inter', sans-serif;
+    font-size:0.72rem;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:#9fd9c4;
+  }
+  .team-cursor-hint{
+    font-family:'Inter', sans-serif;
+    font-size:0.68rem;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:#8fa89e;
+    opacity:0.85;
+    flex-shrink:0;
+  }
+
+  .team-bio{
+    color:#d8d4c8;
+    font-size:0.92rem;
+    line-height:1.55;
+    max-width:42ch;
+    margin-top:0.9rem;
+    max-height:0;
+    opacity:0;
+    overflow:hidden;
+    transition: max-height .45s ease, opacity .35s ease, margin-top .45s ease;
+  }
+  .team-card:hover .team-bio{
+    max-height:220px;
+    opacity:1;
+  }
+  .team-card:hover .team-cursor-hint{ opacity:0; }
+  .team-card:hover .team-overlay{
+    background:linear-gradient(180deg, rgba(14,20,16,0) 10%, rgba(14,20,16,0.94) 100%);
+  }
+
+  @media (max-width:700px){
+    /* on touch devices, show bios always */
+    .team-bio{ max-height:220px; opacity:1; margin-top:0.9rem; }
+    .team-cursor-hint{ display:none; }
+    .team-overlay{ background:linear-gradient(180deg, rgba(14,20,16,0) 10%, rgba(14,20,16,0.94) 100%); }
+  }
+
+  /* ===== FAQ ===== */
+  .section-title-block{
+    align-self:flex-start;
+    font-family:'Inter', sans-serif;
+    font-weight:600;
+    font-size:0.72rem;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:var(--grey);
+    margin-bottom:0.2rem;
+  }
+  .faq-tabs{
+    display:flex;
+    gap:0.5rem;
+    margin-bottom:2rem;
+    flex-wrap:wrap;
+  }
+  .faq-tab{
+    font-family:'Inter', sans-serif;
+    font-size:0.75rem;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    padding:0.6rem 1.2rem;
+    border:1px solid var(--line);
+    border-radius:2px;
+    background:transparent;
+    color:var(--grey);
+    cursor:pointer;
+    transition: all .15s ease;
+  }
+  .faq-tab:hover{ border-color:var(--ink); color:var(--ink); }
+  .faq-tab.active{
+    background:var(--ink);
+    border-color:var(--ink);
+    color:var(--paper);
+  }
+  .faq-panel{
+    display:none;
+  }
+  .faq-panel.active{
+    display:block;
+  }
+  .faq-list{
+    border-top:1px solid var(--line);
+  }
+  .faq-item{
+    border-bottom:1px solid var(--line);
+  }
+  .faq-q{
+    width:100%;
+    text-align:left;
+    background:none;
+    border:none;
+    cursor:pointer;
+    padding:1.6rem 0;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:1rem;
+    font-family:'Inter', sans-serif;
+    font-weight:500;
+    font-size:1.15rem;
+    color:var(--ink);
+  }
+  .faq-q .icon{
+    font-family:'Inter', sans-serif;
+    font-weight:400;
+    font-size:1.6rem;
+    line-height:1;
+    color:var(--stamp);
+    flex-shrink:0;
+    transition:transform .25s ease;
+  }
+  .faq-item.open .faq-q .icon{ transform:rotate(45deg); }
+  .faq-a{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height .3s ease;
+  }
+  .faq-a-inner{
+    padding-bottom:1.6rem;
+    color:#544f44;
+    max-width:60ch;
+    font-size:0.95rem;
+  }
+  .faq-item.open .faq-a{ max-height:300px; }
+
+  /* ===== Footer / contact ===== */
+  footer{
+    border-top:1px solid var(--line);
+    background:var(--ink);
+    color:var(--paper);
+  }
+  .footer-inner{
+    max-width:var(--max);
+    margin:0 auto;
+    padding:clamp(3rem, 7vw, 5rem) clamp(1.5rem, 5vw, 4rem);
+    display:flex;
+    flex-direction:column;
+    gap:2rem;
+  }
+  .footer-top{
+    display:flex; justify-content:space-between; align-items:flex-end; gap:2rem; flex-wrap:wrap;
+  }
+  .footer-top h2{
+    color:var(--paper);
+    font-size:clamp(1.8rem, 4vw, 2.6rem);
+    max-width:16ch;
+  }
+  .footer-bottom{
+    display:flex; justify-content:space-between; align-items:center;
+    flex-wrap:wrap; gap:1rem;
+    font-family:'Inter', sans-serif;
+    font-size:0.72rem;
+    letter-spacing:0.05em;
+    color:#8fa89e;
+    border-top:1px solid #2a3530;
+    padding-top:1.5rem;
+  }
+  .footer-bottom a{ text-decoration:none; color:#9fd9c4; }
+</style>
 </head>
 <body>
-<div class="page-grid"></div>
-<div class="page-glow"></div>
 
-<!-- NAV -->
-
-<nav>
-    <a href="#" class="nav-logo">
-        <span class="logo-mark"><span class="lm-gt">&gt;</span><span class="lm-us">_</span></span>
-        <span class="nav-word">Precursory</span>
-    </a>
-    <ul class="nav-links">
-        <li><a href="#problem">How a Fee Is Born</a></li>
-        <li><a href="#solution">Solution</a></li>
-        <li><a href="#team">Team</a></li>
-        <li><a href="#cta" class="nav-cta">Get Your Cost Guarantee</a></li>
-    </ul>
-</nav>
-
-<!-- HERO -->
+<header>
+  <div class="wordmark">Precursory<span class="mark"><span class="dash"></span><span class="dot"></span></span></div>
+  <nav>
+    <a class="nav-link" href="#products">products</a>
+    <a class="nav-link" href="#mechanism">mechanism</a>
+    <a class="nav-link" href="#team">team</a>
+    <a class="nav-link" href="#faq">faq</a>
+    <a class="nav-cta" href="#contact">talk to us</a>
+  </nav>
+</header>
 
 <section class="hero">
-    <canvas class="radar-canvas" data-radar aria-hidden="true"></canvas>
-    <div class="hero-inner">
-        <div class="hero-left">
-            <div class="hero-badge"><span class="bd"></span>Freight Risk Intelligence · Accessorial Coverage</div>
-            <h1>
-                Accessorial risk<br>
-                has a price.<br>
-                <span class="ac">Now it has a ceiling.</span>
-            </h1>
-            <p class="hero-sub">Precursory is the first platform to turn TONU, detention, and per-diem volatility into a fixed, transferable cost — built for shippers who are done budgeting on guesses.</p>
-            <p class="hero-sub" style="margin-top:12px;font-size:12px;color:var(--muted2);">Day one: a cost ceiling underwritten on your actual lane history. Day 100: a model no competitor can replicate, because it was trained on yours.</p>
-            <div class="hero-btns">
-                <a href="#cta" class="btn-p">Get Your Cost Guarantee</a>
-                <a href="#solution" class="btn-g">See How It Works</a>
-            </div>
-        </div>
-        <!-- SLIDING DOOR CHART -->
+  <div>
+    <div class="eyebrow"><span class="label">Precursory · MGA</span></div>
+    <h1>Parametric insurance<br>for <em>supply chain volatility</em>.</h1>
+    <p class="lede">
+      Freight rates swing. Fuel spikes. Margins compress overnight. Precursory
+      writes parametric guarantees against the volatility that's structurally
+      built into supply chains — so a bad quarter for the market doesn't have
+      to mean a bad quarter for you.
+    </p>
+    <div class="hero-ctas">
+      <a class="btn btn-primary" href="#products">See our products</a>
+      <a class="btn btn-ghost" href="#mechanism">How it works</a>
     </div>
+  </div>
+
+  <div class="disruption-card">
+    <div class="disruption-head">
+      <div>
+        <div class="chart-title">Disruption Feed</div>
+        <div class="chart-sub">macro &amp; micro signals · live</div>
+      </div>
+      <div class="chart-sub" style="text-align:right;">12 sources<br>monitored</div>
+    </div>
+
+    <div class="disruption-grid">
+      <div class="d-cell" data-cell="0">
+        <span class="d-scale">macro</span>
+        <svg class="d-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 17h20M4 17V9l4-3 4 3v8M12 17V6l4-2 4 2v11"/></svg>
+        <span class="d-label">Port congestion</span>
+      </div>
+      <div class="d-cell" data-cell="1">
+        <span class="d-scale">macro</span>
+        <svg class="d-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 18 0 9 9 0 1 0-18 0Z"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>
+        <span class="d-label">Geopolitical risk</span>
+      </div>
+      <div class="d-cell" data-cell="2">
+        <span class="d-scale">macro</span>
+        <svg class="d-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M17 18a4 4 0 0 0 0-8 5 5 0 0 0-9.6-1.5A4.5 4.5 0 0 0 7 18h10Z"/><path d="M8 21l1-2M12 22l1-2M16 21l1-2"/></svg>
+        <span class="d-label">Weather event</span>
+      </div>
+      <div class="d-cell" data-cell="3">
+        <span class="d-scale">macro</span>
+        <svg class="d-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17h2l2-5h10l2 5h2M7 17v2M17 17v2"/><circle cx="7" cy="19" r="1.2"/><circle cx="17" cy="19" r="1.2"/><path d="M3 17V9a2 2 0 0 1 2-2h2"/></svg>
+        <span class="d-label">Fuel price spike</span>
+      </div>
+
+      <div class="d-cell" data-cell="4">
+        <span class="d-scale">micro</span>
+        <svg class="d-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4l2.5 2.5"/><circle cx="12" cy="12" r="9"/></svg>
+        <span class="d-label">Detention at dock</span>
+      </div>
+      <div class="d-cell" data-cell="5">
+        <span class="d-scale">micro</span>
+        <svg class="d-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18M3 6h18M3 18h18"/><circle cx="9" cy="6" r="1.4" fill="currentColor" stroke="none"/><circle cx="15" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="9" cy="18" r="1.4" fill="currentColor" stroke="none"/></svg>
+        <span class="d-label">Lane rate swing</span>
+      </div>
+      <div class="d-cell" data-cell="6">
+        <span class="d-scale">micro</span>
+        <svg class="d-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l3-3 3 2 4-5"/></svg>
+        <span class="d-label">Margin compression</span>
+      </div>
+      <div class="d-cell" data-cell="7">
+        <span class="d-scale">micro</span>
+        <svg class="d-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="1.5"/><path d="M3 9h18M8 4v14"/></svg>
+        <span class="d-label">TONU / cancellation</span>
+      </div>
+
+      <div class="d-cell" data-cell="8">
+        <span class="d-scale">macro</span>
+        <svg class="d-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2-7 4 14 2-7h6"/></svg>
+        <span class="d-label">Demand shock</span>
+      </div>
+      <div class="d-cell" data-cell="9">
+        <span class="d-scale">micro</span>
+        <svg class="d-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1"/></svg>
+        <span class="d-label">Layover delay</span>
+      </div>
+      <div class="d-cell" data-cell="10">
+        <span class="d-scale">macro</span>
+        <svg class="d-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        <span class="d-label">Capacity crunch</span>
+      </div>
+      <div class="d-cell" data-cell="11">
+        <span class="d-scale">micro</span>
+        <svg class="d-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M5 12l4-4M5 12l4 4M19 12l-4-4M19 12l-4 4"/></svg>
+        <span class="d-label">Accessorial spike</span>
+      </div>
+    </div>
+
+    <div class="disruption-legend">
+      <span><i class="dotc macro"></i> Macro disruption</span>
+      <span><i class="dotc micro"></i> Micro / load-level</span>
+    </div>
+  </div>
 </section>
 
-<!-- PROBLEM -->
+<div class="quote-band">
+  <div class="quote-inner">
+    <div class="flip-stage">
+      <div class="flip-card active" data-quote="0">
+        <blockquote>
+          Fuel surcharges are supposed to pass volatility through. In practice,
+          the lag between the spike and the surcharge update is where margin
+          quietly disappears.
+          <span class="accent">We insure that lag.</span>
+        </blockquote>
+        <div class="quote-attr">Fuel Price Volatility</div>
+      </div>
 
-<div class="wrap" id="problem">
-    <canvas class="radar-canvas" data-radar aria-hidden="true"></canvas>
-    <div class="sec">
-        <div class="sec-lbl">How a Fee Is Born</div>
-        <p style="font-size:clamp(18px,2.5vw,28px);font-weight:500;color:#fff;letter-spacing:-.3px;max-width:700px;margin-bottom:24px;line-height:1.3;">Every fee was visible before it happened. The signal existed. Nobody connected it to the carrier in time.</p>
-        <p style="font-size:14px;line-height:1.75;color:var(--muted3);max-width:680px;margin-bottom:48px;">The problem isn't that TONU happens. It's that you don't know it's coming until the truck is already rolling — and by then, the fee is already owed. That's not a visibility problem. It's a timing problem. And timing is fixable.</p>
+      <div class="flip-card" data-quote="1">
+        <blockquote>
+          Energy solved margin volatility with index-based derivatives — and
+          accepted basis risk as the cost of not seeing inside the plant.
+          <span class="accent">We can see inside the brokerage.</span>
+        </blockquote>
+        <div class="quote-attr">Brokerage Margin Volatility</div>
+      </div>
 
-        <div class="fee-grid">
-
-            <div class="fee-card">
-                <div class="fee-tag">TONU</div>
-                <h3>The truck drove there for nothing.</h3>
-                <svg class="fee-svgtl" viewBox="0 0 180 130" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Fee lifecycle diagram">
-                    <!-- spine -->
-                    <line x1="20" y1="16" x2="20" y2="114" stroke="#242424" stroke-width="1"/>
-                    <!-- node 1: signal existed -->
-                    <circle cx="20" cy="16" r="4" fill="#707070"/>
-                    <text x="32" y="13" fill="#949494" font-size="8" font-family="monospace" letter-spacing="0.5">Signal existed</text>
-                    <text x="32" y="24" fill="#484848" font-size="8" font-family="monospace">ERP flagged delay 3 days prior</text>
-                    <!-- gap indicator -->
-                    <line x1="20" y1="20" x2="20" y2="56" stroke="#FF5C5C" stroke-width="1" stroke-dasharray="3,4"/>
-                    <rect x="30" y="34" width="70" height="14" rx="2" fill="rgba(255,92,92,0.08)" stroke="rgba(255,92,92,0.2)" stroke-width="0.5"/>
-                    <text x="35" y="44" fill="#FF5C5C" font-size="7" font-family="monospace" letter-spacing="0.5">No action taken</text>
-                    <!-- node 2: window missed -->
-                    <circle cx="20" cy="58" r="4" fill="#FFB547"/>
-                    <text x="32" y="55" fill="#949494" font-size="8" font-family="monospace" letter-spacing="0.5">Window missed</text>
-                    <text x="32" y="66" fill="#484848" font-size="8" font-family="monospace">Tender issued</text>
-                    <!-- connector -->
-                    <line x1="20" y1="62" x2="20" y2="110" stroke="#242424" stroke-width="1"/>
-                    <!-- node 3: fee charged -->
-                    <circle cx="20" cy="112" r="4" fill="#FF5C5C"/>
-                    <text x="32" y="109" fill="#e2e2e2" font-size="8" font-family="monospace" letter-spacing="0.5" font-weight="500">Fee charged</text>
-                    <text x="32" y="120" fill="#FF5C5C" font-size="8" font-family="monospace">$250–500 TONU</text>
-                </svg>
-            </div>
-
-            <div class="fee-card">
-                <div class="fee-tag">Detention</div>
-                <h3>The clock started the moment they arrived.</h3>
-                <svg class="fee-svgtl" viewBox="0 0 180 130" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Fee lifecycle diagram">
-                    <line x1="20" y1="16" x2="20" y2="114" stroke="#242424" stroke-width="1"/>
-                    <circle cx="20" cy="16" r="4" fill="#707070"/>
-                    <text x="32" y="13" fill="#949494" font-size="8" font-family="monospace" letter-spacing="0.5">Signal existed</text>
-                    <text x="32" y="24" fill="#484848" font-size="8" font-family="monospace">Dock showed 3hr congestion</text>
-                    <line x1="20" y1="20" x2="20" y2="56" stroke="#FF5C5C" stroke-width="1" stroke-dasharray="3,4"/>
-                    <rect x="30" y="34" width="80" height="14" rx="2" fill="rgba(255,92,92,0.08)" stroke="rgba(255,92,92,0.2)" stroke-width="0.5"/>
-                    <text x="35" y="44" fill="#FF5C5C" font-size="7" font-family="monospace" letter-spacing="0.5">Carrier not informed</text>
-                    <circle cx="20" cy="58" r="4" fill="#FFB547"/>
-                    <text x="32" y="55" fill="#949494" font-size="8" font-family="monospace" letter-spacing="0.5">Window missed</text>
-                    <text x="32" y="66" fill="#484848" font-size="8" font-family="monospace">Driver dispatched on time</text>
-                    <line x1="20" y1="62" x2="20" y2="110" stroke="#242424" stroke-width="1"/>
-                    <circle cx="20" cy="112" r="4" fill="#FF5C5C"/>
-                    <text x="32" y="109" fill="#e2e2e2" font-size="8" font-family="monospace" letter-spacing="0.5" font-weight="500">Fee charged</text>
-                    <text x="32" y="120" fill="#FF5C5C" font-size="8" font-family="monospace">$75–150/hr detention</text>
-                </svg>
-            </div>
-
-            <div class="fee-card">
-                <div class="fee-tag">Trailer &amp; Equipment</div>
-                <h3>It sat in your yard the entire time.</h3>
-                <svg class="fee-svgtl" viewBox="0 0 180 130" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Fee lifecycle diagram">
-                    <line x1="20" y1="16" x2="20" y2="114" stroke="#242424" stroke-width="1"/>
-                    <circle cx="20" cy="16" r="4" fill="#707070"/>
-                    <text x="32" y="13" fill="#949494" font-size="8" font-family="monospace" letter-spacing="0.5">Signal existed</text>
-                    <text x="32" y="24" fill="#484848" font-size="8" font-family="monospace">TMS: trailer idle 6 days</text>
-                    <line x1="20" y1="20" x2="20" y2="56" stroke="#FF5C5C" stroke-width="1" stroke-dasharray="3,4"/>
-                    <rect x="30" y="34" width="76" height="14" rx="2" fill="rgba(255,92,92,0.08)" stroke="rgba(255,92,92,0.2)" stroke-width="0.5"/>
-                    <text x="35" y="44" fill="#FF5C5C" font-size="7" font-family="monospace" letter-spacing="0.5">No alert triggered</text>
-                    <circle cx="20" cy="58" r="4" fill="#FFB547"/>
-                    <text x="32" y="55" fill="#949494" font-size="8" font-family="monospace" letter-spacing="0.5">Window missed</text>
-                    <text x="32" y="66" fill="#484848" font-size="8" font-family="monospace">No reposition actioned</text>
-                    <line x1="20" y1="62" x2="20" y2="110" stroke="#242424" stroke-width="1"/>
-                    <circle cx="20" cy="112" r="4" fill="#FF5C5C"/>
-                    <text x="32" y="109" fill="#e2e2e2" font-size="8" font-family="monospace" letter-spacing="0.5" font-weight="500">Fee charged</text>
-                    <text x="32" y="120" fill="#FF5C5C" font-size="8" font-family="monospace">$50–100/day per-diem</text>
-                </svg>
-            </div>
-
-            <div class="fee-card">
-                <div class="fee-tag">Fuel Surcharge</div>
-                <h3>You've been billed on 6 MPG for years.<br>Your trucks run at 7.2.</h3>
-                <svg class="fee-svgtl" viewBox="0 0 180 130" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Fee lifecycle diagram">
-                    <line x1="20" y1="16" x2="20" y2="114" stroke="#242424" stroke-width="1"/>
-                    <circle cx="20" cy="16" r="4" fill="#707070"/>
-                    <text x="32" y="13" fill="#949494" font-size="8" font-family="monospace" letter-spacing="0.5">Signal existed</text>
-                    <text x="32" y="24" fill="#484848" font-size="8" font-family="monospace">OEM: 7.2 MPG actual</text>
-                    <line x1="20" y1="20" x2="20" y2="56" stroke="#FF5C5C" stroke-width="1" stroke-dasharray="3,4"/>
-                    <rect x="30" y="34" width="82" height="14" rx="2" fill="rgba(255,92,92,0.08)" stroke="rgba(255,92,92,0.2)" stroke-width="0.5"/>
-                    <text x="35" y="44" fill="#FF5C5C" font-size="7" font-family="monospace" letter-spacing="0.5">Not connected to billing</text>
-                    <circle cx="20" cy="58" r="4" fill="#FFB547"/>
-                    <text x="32" y="55" fill="#949494" font-size="8" font-family="monospace" letter-spacing="0.5">Not connected</text>
-                    <text x="32" y="66" fill="#484848" font-size="8" font-family="monospace">Billed on 6 MPG assumption</text>
-                    <line x1="20" y1="62" x2="20" y2="110" stroke="#242424" stroke-width="1"/>
-                    <circle cx="20" cy="112" r="4" fill="#FF5C5C"/>
-                    <text x="32" y="109" fill="#e2e2e2" font-size="8" font-family="monospace" letter-spacing="0.5" font-weight="500">Overpayment</text>
-                    <text x="32" y="120" fill="#FF5C5C" font-size="8" font-family="monospace">$0.18/mi every load</text>
-                </svg>
-            </div>
-
-        </div>
-
-        <!-- ACCORDION: The cost hits both sides -->
-        <div style="border:1px solid var(--border);margin-top:48px;" id="bothSides">
-            <button onclick="toggleAccordion()" id="accordionBtn" style="width:100%;padding:20px 28px;background:var(--bg2);border:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-family:var(--mono);">
-                <div style="display:flex;align-items:center;gap:14px;">
-                    <span style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);">Both Sides of the Network</span>
-                    <span style="font-size:13px;font-weight:500;color:var(--text);">The cost hits both sides.</span>
-                </div>
-                <span id="accordionArrow" style="font-size:12px;color:var(--acid);transition:transform .3s;">▼</span>
-            </button>
-            <div id="accordionBody" style="display:none;border-top:1px solid var(--border);">
-
-                <!-- CAROUSEL: Shippers / Carriers -->
-                <div style="position:relative;overflow:hidden;" id="accCarouselWrap" style="overflow:hidden;width:100%;">
-
-                    <!-- Tab strip -->
-                    <div style="display:flex;border-bottom:1px solid var(--border);">
-                        <button id="acc-tab-0" onclick="accGoSlide(0)" style="flex:1;padding:14px 28px;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--acid);background:rgba(190,255,10,.04);border:none;border-right:1px solid var(--border);cursor:pointer;font-family:var(--mono);transition:.2s;">For Shippers</button>
-                        <button id="acc-tab-1" onclick="accGoSlide(1)" style="flex:1;padding:14px 28px;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);background:transparent;border:none;cursor:pointer;font-family:var(--mono);transition:.2s;">For Carriers</button>
-                    </div>
-
-                    <!-- Track -->
-                    <div id="accTrack" style="display:flex;width:100%;transition:transform 0.4s cubic-bezier(.4,0,.2,1);">
-
-                        <!-- PANEL: Shippers -->
-                        <div style="flex:0 0 100%;width:100%;box-sizing:border-box;">
-                            <div class="contrast-grid">
-                                <div class="contrast-col-hd"><span class="col-tag col-now">Reactive</span><span class="col-title">Operating blind · absorbing cost</span></div>
-                                <div class="contrast-col-hd"><span class="col-tag col-pre">Controlled</span><span class="col-title">Risk transferred · cost guaranteed</span></div>
-                                <div class="ct-cell"><svg class="ct-icon" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="#FF5C5C" stroke-width="1.2"/><line x1="7" y1="7" x2="13" y2="13" stroke="#FF5C5C" stroke-width="1.2"/><line x1="13" y1="7" x2="7" y2="13" stroke="#FF5C5C" stroke-width="1.2"/></svg><span class="ct-text bad">ERP flagged the delay. Tender went out anyway. TONU hits invoice.</span></div>
-                                <div class="ct-cell"><svg class="ct-icon" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="#BEFF0A" stroke-width="1.2"/><polyline points="6,10 9,13 14,7" stroke="#BEFF0A" stroke-width="1.2" fill="none"/></svg><span class="ct-text good">Signal read 48hrs early. Carrier alerted. Tender canceled before deadline.</span></div>
-                                <div class="ct-cell"><svg class="ct-icon" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="#FF5C5C" stroke-width="1.2"/><line x1="7" y1="7" x2="13" y2="13" stroke="#FF5C5C" stroke-width="1.2"/><line x1="13" y1="7" x2="7" y2="13" stroke="#FF5C5C" stroke-width="1.2"/></svg><span class="ct-text bad">Detention accruing at docks you control but can't see in real time.</span></div>
-                                <div class="ct-cell"><svg class="ct-icon" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="#BEFF0A" stroke-width="1.2"/><polyline points="6,10 9,13 14,7" stroke="#BEFF0A" stroke-width="1.2" fill="none"/></svg><span class="ct-text good">Dock throughput monitored. Carrier gets lead time. Clock never starts.</span></div>
-                                <div class="ct-cell"><svg class="ct-icon" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="#FF5C5C" stroke-width="1.2"/><line x1="7" y1="7" x2="13" y2="13" stroke="#FF5C5C" stroke-width="1.2"/><line x1="13" y1="7" x2="7" y2="13" stroke="#FF5C5C" stroke-width="1.2"/></svg><span class="ct-text bad">Fuel surcharges invoiced on a 6 MPG industry assumption. Nobody disputes it.</span></div>
-                                <div class="ct-cell"><svg class="ct-icon" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="#BEFF0A" stroke-width="1.2"/><polyline points="6,10 9,13 14,7" stroke="#BEFF0A" stroke-width="1.2" fill="none"/></svg><span class="ct-text good">OEM telemetry connected. Actual MPG per tractor per lane. Overcharges disputed.</span></div>
-                                <div class="ct-cell"><svg class="ct-icon" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="#FF5C5C" stroke-width="1.2"/><line x1="7" y1="7" x2="13" y2="13" stroke="#FF5C5C" stroke-width="1.2"/><line x1="13" y1="7" x2="7" y2="13" stroke="#FF5C5C" stroke-width="1.2"/></svg><span class="ct-text bad">Exposure is variable, unpredictable. Finance reconciles monthly. Blame follows.</span></div>
-                                <div class="ct-cell"><svg class="ct-icon" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="#BEFF0A" stroke-width="1.2"/><polyline points="6,10 9,13 14,7" stroke="#BEFF0A" stroke-width="1.2" fill="none"/></svg><span class="ct-text good">Fixed cost per load. Guaranteed ceiling. Residual risk transferred to Precursory.</span></div>
-                            </div>
-                        </div>
-
-                        <!-- PANEL: Carriers -->
-                        <div style="flex:0 0 100%;width:100%;box-sizing:border-box;">
-                            <div class="contrast-grid">
-                                <div class="contrast-col-hd"><span class="col-tag col-now">Reactive</span><span class="col-title">Absorbing cost · no lead time</span></div>
-                                <div class="contrast-col-hd"><span class="col-tag col-pre">Controlled</span><span class="col-title">Signal shared · asset protected</span></div>
-                                <div class="ct-cell"><svg class="ct-icon" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="#FF5C5C" stroke-width="1.2"/><line x1="7" y1="7" x2="13" y2="13" stroke="#FF5C5C" stroke-width="1.2"/><line x1="13" y1="7" x2="7" y2="13" stroke="#FF5C5C" stroke-width="1.2"/></svg><span class="ct-text bad">$250 TONU fee = $750+ true cost. Deadhead miles, lost drive time, next load missed.</span></div>
-                                <div class="ct-cell"><svg class="ct-icon" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="#BEFF0A" stroke-width="1.2"/><polyline points="6,10 9,13 14,7" stroke="#BEFF0A" stroke-width="1.2" fill="none"/></svg><span class="ct-text good">48hr advance signal. Driver redirected before wheels turn. Asset stays productive.</span></div>
-                                <div class="ct-cell"><svg class="ct-icon" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="#FF5C5C" stroke-width="1.2"/><line x1="7" y1="7" x2="13" y2="13" stroke="#FF5C5C" stroke-width="1.2"/><line x1="13" y1="7" x2="7" y2="13" stroke="#FF5C5C" stroke-width="1.2"/></svg><span class="ct-text bad">Every detention hour burns HOS. A 3hr wait can make a 500-mile load impossible.</span></div>
-                                <div class="ct-cell"><svg class="ct-icon" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="#BEFF0A" stroke-width="1.2"/><polyline points="6,10 9,13 14,7" stroke="#BEFF0A" stroke-width="1.2" fill="none"/></svg><span class="ct-text good">Dock throughput signal shared early. Dispatch resequenced. HOS protected.</span></div>
-                                <div class="ct-cell"><svg class="ct-icon" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="#FF5C5C" stroke-width="1.2"/><line x1="7" y1="7" x2="13" y2="13" stroke="#FF5C5C" stroke-width="1.2"/><line x1="13" y1="7" x2="7" y2="13" stroke="#FF5C5C" stroke-width="1.2"/></svg><span class="ct-text bad">Efficient fleets pay the same surcharge as inefficient ones. No data to prove otherwise.</span></div>
-                                <div class="ct-cell"><svg class="ct-icon" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="#BEFF0A" stroke-width="1.2"/><polyline points="6,10 9,13 14,7" stroke="#BEFF0A" stroke-width="1.2" fill="none"/></svg><span class="ct-text good">OEM-verified consumption data per tractor per lane. Efficiency rewarded in rates.</span></div>
-                                <div class="ct-cell"><svg class="ct-icon" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="#FF5C5C" stroke-width="1.2"/><line x1="7" y1="7" x2="13" y2="13" stroke="#FF5C5C" stroke-width="1.2"/><line x1="13" y1="7" x2="7" y2="13" stroke="#FF5C5C" stroke-width="1.2"/></svg><span class="ct-text bad">Unexpected cancellations drive driver turnover. $8–12K per driver replaced.</span></div>
-                                <div class="ct-cell"><svg class="ct-icon" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="#BEFF0A" stroke-width="1.2"/><polyline points="6,10 9,13 14,7" stroke="#BEFF0A" stroke-width="1.2" fill="none"/></svg><span class="ct-text good">Early cancellation signals. Drivers reassigned to productive loads. Retention protected.</span></div>
-                            </div>
-                        </div>
-
-                    </div><!-- end track -->
-                </div><!-- end carousel wrap -->
-
-            </div>
-        </div>
+      <div class="flip-card" data-quote="2">
+        <blockquote>
+          Detention, layover, and TONU don't show up in the rate sheet — they
+          show up in the actuals, three weeks later, as a number nobody
+          budgeted for.
+          <span class="accent">We cap that number before it lands.</span>
+        </blockquote>
+        <div class="quote-attr">Accessorial Cost Volatility</div>
+      </div>
     </div>
+
+    <div class="flip-controls" role="tablist" aria-label="Volatility examples">
+      <button class="flip-dot active" data-index="0" aria-label="Show quote 1"></button>
+      <button class="flip-dot" data-index="1" aria-label="Show quote 2"></button>
+      <button class="flip-dot" data-index="2" aria-label="Show quote 3"></button>
+    </div>
+  </div>
 </div>
 
-<!-- SOLUTION -->
+<section class="section" id="products" data-index="§ 01 — PRODUCTS">
+  <div class="section-head">
+    <div class="section-title-block">Products</div>
+    <h2>Guarantees against the volatility you already live with.</h2>
+    <p>
+      Each product targets a specific source of supply chain volatility —
+      priced parametrically, triggered by data you already generate, and
+      paid out without a claims fight.
+    </p>
+  </div>
 
-<div class="wrap2" id="solution">
-    <canvas class="radar-canvas" data-radar aria-hidden="true"></canvas>
-    <div class="sec">
-        <div class="sec-lbl">The Instrument</div>
-
-        <!-- TOP GRID: copy left, calculator right -->
-        <div style="border:1px solid var(--border);margin-bottom:1px;">
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;">
-
-                <!-- LEFT: headline + FM cite -->
-                <div style="padding:40px 44px;border-right:1px solid var(--border);">
-                    <h2 style="font-size:clamp(22px,3vw,36px);font-weight:500;color:#fff;line-height:1.12;letter-spacing:-.4px;margin-bottom:16px;">You've been absorbing<br><em style="font-style:normal;color:var(--acid);">a cost that was never yours.</em></h2>
-                    <p style="font-size:13px;line-height:1.8;color:var(--muted3);margin-bottom:14px;">We take on the financial exposure you've been absorbing and replace it with a fixed cost per load — underwritten on your actual lane history, not industry averages.</p>
-                    <p style="font-size:13px;line-height:1.8;color:var(--muted3);margin-bottom:14px;">Your cost becomes predictable. Your exposure becomes capped. As our prevention engine improves, your rate follows it down.</p>
-                    <div style="margin-top:20px;display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);">
-                        <div style="background:var(--bg3);padding:16px 20px;">
-                            <div style="font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Day one</div>
-                            <p style="font-size:11px;line-height:1.6;color:var(--muted3);">A cost ceiling underwritten on your real lane and carrier history. Not an industry average. Not a guess.</p>
-                        </div>
-                        <div style="background:var(--bg3);padding:16px 20px;">
-                            <div style="font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--acid);margin-bottom:8px;">Day 100</div>
-                            <p style="font-size:11px;line-height:1.6;color:var(--muted3);">A risk model trained on your specific lanes, carriers, and facilities. Every load sharpens it. No competitor starting today can buy that history.</p>
-                        </div>
-                    </div>
-                    <div style="margin-top:1px;border:1px solid var(--border2);padding:16px 20px;background:var(--bg3);">
-                        <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--acid);margin-bottom:8px;">The coverage agreement</div>
-                        <p style="font-size:11px;line-height:1.7;color:var(--muted3);margin-bottom:0;">The agreement sets a monthly ceiling on your accessorial exposure. If losses exceed that ceiling, we pay the difference — dollar for dollar, documented per load. Your rate is set in advance. Your downside is capped.</p>
-                    </div>
-                    <div class="fm-cite" style="margin-top:1px;">
-                        <p>FM Global transformed property insurance by preventing losses before they happened — and pricing the residual against actual exposure.</p>
-                        <span class="fm-src">&gt;_ The model we're bringing to freight</span>
-                    </div>
-                </div>
-
-                <!-- RIGHT: Cost comparison -->
-                <div style="display:flex;flex-direction:column;padding:40px 44px;border-left:1px solid var(--border);justify-content:center;">
-                    <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:20px;">Cost comparison</div>
-                    <div class="slider-chart-wrap">
-                        <div class="slider-chart-labels">
-                            <span class="sc-label-bad" id="sc-lbl-bad">Without Precursory</span>
-                            <span class="sc-label-good" id="sc-lbl-good">With Precursory — $26/load</span>
-                        </div>
-                        <div class="slider-chart-container">
-                            <canvas id="sliderChart"></canvas>
-                            <div class="slider-handle" id="sliderHandle">
-                                <div class="slider-handle-line"></div>
-                                <div class="slider-handle-grip">
-                                    <span>&#9664;</span><span>&#9654;</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="slider-drag-hint">drag to compare</div>
-                    </div>
-
-                </div>
-            </div>
-
-            <!-- HOW WE POWER -->
-            <div style="border:1px solid var(--border);margin-bottom:1px;background:var(--bg);">
-                <div style="padding:52px 52px 48px;">
-                    <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--acid);margin-bottom:16px;">How We Power</div>
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start;">
-                        <div>
-                            <h3 style="font-size:clamp(17px,2vw,24px);font-weight:500;color:#fff;line-height:1.15;letter-spacing:-.3px;margin-bottom:12px;">The first risk platform designed to think, not just track.</h3>
-                            <p style="font-size:12px;line-height:1.75;color:var(--muted3);margin-bottom:0;">Every other tool in your stack records what happened. Precursory predicts what will — and prices it before it does. AI-native from the ground up, not a dashboard with a model bolted on.</p>
-                        </div>
-                        <div>
-                            <div style="position:relative;overflow:visible;">
-                                <div class="pyramid-outer" id="po">
-                                    <canvas id="cvGrad" class="layer-canvas" style="z-index:0;"></canvas>
-                                    <canvas id="cvD" class="layer-canvas" style="z-index:1;"></canvas>
-                                    <canvas id="cvC" class="layer-canvas" style="z-index:2;"></canvas>
-                                    <canvas id="cvB" class="layer-canvas" style="z-index:3;"></canvas>
-                                    <canvas id="cvA" class="layer-canvas" style="z-index:4;"></canvas>
-                                    <svg id="psvg" style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:5;pointer-events:none;"></svg>
-                                    <div class="layer-label light-text" id="lblD"><div class="l-title">Data &amp; Integrations</div><div class="l-chips"><span class="lchip">ERP</span><span class="lchip">TMS</span><span class="lchip">WMS</span><span class="lchip">ELD</span><span class="lchip">OEM Telematics</span></div></div>
-                                    <div class="layer-label light-text" id="lblC"><div class="l-title">Intelligence Layer</div><div class="l-chips"><span class="lchip">Prediction</span><span class="lchip">Prevention</span><span class="lchip">Reinforced Learning</span><span class="lchip">Domain Knowledge</span></div></div>
-                                    <div class="layer-label dark-text"  id="lblB"><div class="l-title">Alert &amp; Action Engine</div><div class="l-sub">TONU alerts · dock signals · auto-cancellation · reroute</div></div>
-                                    <div class="layer-label dark-text"  id="lblA"><div class="l-title">Single Guaranteed Price</div></div>
-                                    <div class="div-line" id="divLine">
-                                        <div class="div-line-bar" style="background:linear-gradient(90deg,transparent,rgba(255,255,255,.3));"></div>
-                                        <div class="div-line-lbl">↑ visible &nbsp;·&nbsp; invisible below ↓</div>
-                                        <div class="div-line-bar" style="background:linear-gradient(90deg,rgba(255,255,255,.3),transparent);"></div>
-                                    </div>
-                                    <div class="ann" id="annA"><div class="ann-rule"></div><div>Single Guaranteed Price</div></div>
-                                    <div class="ann" id="annB"><div class="ann-rule"></div><div>Alert &amp; Action Engine</div></div>
-                                    <div class="ann" id="annC"><div class="ann-rule"></div><div>Intelligence</div></div>
-                                    <div class="ann" id="annD"><div class="ann-rule"></div><div>Data &amp; Integrations</div></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- HOW WE GROW -->
-            <div style="border:1px solid var(--border);margin-bottom:1px;background:var(--bg2);position:relative;">
-                <canvas class="radar-canvas" data-radar></canvas>
-                <div style="padding:52px 52px 48px;">
-                    <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--acid);margin-bottom:16px;">How We Grow</div>
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;">
-                        <div>
-                            <h3 style="font-size:clamp(17px,2vw,24px);font-weight:500;color:#fff;line-height:1.15;letter-spacing:-.3px;margin-bottom:12px;">The network that prices itself down over time.</h3>
-                            <p style="font-size:12px;line-height:1.75;color:var(--muted3);margin-bottom:20px;">As the network grows, loss ratios drop. As loss ratios drop, coverage costs fall. Shippers pay less. Carriers earn more predictable lanes. The platform gets sharper for everyone — not just the biggest players.</p>
-                            <div style="display:flex;flex-direction:column;gap:10px;">
-                                <div style="display:flex;align-items:start;gap:10px;font-size:11px;color:var(--muted3);"><span style="color:var(--acid);">→</span><span><strong style="color:var(--text);">Carrier X avoids a TONU on your lane.</strong> That outcome trains the model — so the next time that pattern appears, the intervention fires faster.</span></div>
-                                <div style="display:flex;align-items:start;gap:10px;font-size:11px;color:var(--muted3);"><span style="color:var(--acid);">→</span><span><strong style="color:var(--text);">Shipper Y adds a facility.</strong> Their dock data improves detention prediction for every carrier running that corridor.</span></div>
-                                <div style="display:flex;align-items:start;gap:10px;font-size:11px;color:var(--muted3);"><span style="color:var(--acid);">→</span><span><strong style="color:var(--text);">The model sharpens.</strong> Your rate reflects it — as our loss-ratio improves, your coverage cost lowers.</span></div>
-                                <div style="display:flex;align-items:start;gap:10px;font-size:11px;color:var(--muted3);"><span style="color:var(--acid);">→</span><span><strong style="color:var(--text);">A competitor starting today</strong> would need years of this history to underwrite at the same precision. You already have it.</span></div>
-                            </div>
-                        </div>
-                        <div style="display:flex;justify-content:center;align-items:center;">
-                            <canvas id="napkinCanvas" style="display:block;max-width:100%;border-radius:2px;"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- HOW WE ENGAGE -->
-            <div style="border:1px solid var(--border);background:var(--bg);position:relative;">
-                <canvas class="radar-canvas" data-radar></canvas>
-                <div style="padding:52px 52px 48px;">
-                    <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--acid);margin-bottom:16px;">How We Engage</div>
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start;">
-                        <div>
-                            <h3 style="font-size:clamp(17px,2vw,24px);font-weight:500;color:#fff;line-height:1.15;letter-spacing:-.3px;margin-bottom:12px;">We work inside your operation, <em style="font-style:normal;color:var(--acid);">not around it.</em></h3>
-                            <p style="font-size:12px;line-height:1.75;color:var(--muted3);margin-bottom:20px;">Precursory doesn't ask you to change how you operate. It sits alongside your existing tools, learns your lanes, and starts reducing accessorial exposure from day one. Integration in days, not quarters.</p>
-                            <div class="fm-cite">
-                                <p>We shadow your operations before we sign anything. You see the risk map before you commit to the coverage agreement.</p>
-                                <span class="fm-src">&gt;_ Continuous underwriting · not a fixed subscription</span>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="phase-grid">
-                                <div class="phase-row"><div class="phase-week"><div class="phase-week-lbl">Wk 1–3</div><div class="phase-week-range">Map</div></div><div class="phase-detail"><div class="phase-name">Risk Surface Mapping</div><div class="phase-desc">On-site. Every upstream data flow traced. Where avoidable risk lives in your operations.</div></div></div>
-                                <div class="phase-row"><div class="phase-week"><div class="phase-week-lbl">Wk 4–6</div><div class="phase-week-range">Connect</div></div><div class="phase-detail"><div class="phase-name">Signal Source Integration</div><div class="phase-desc">Read-only integrations. ERP, TMS, WMS, ELD, OEM telematics. No new workflows.</div></div></div>
-                                <div class="phase-row"><div class="phase-week"><div class="phase-week-lbl">Wk 7–12</div><div class="phase-week-range">Pilot</div></div><div class="phase-detail"><div class="phase-name">Contained Lane Pilot</div><div class="phase-desc">Live risk scores, real interventions. Every saved load documented and attributed.</div></div></div>
-                                <div class="phase-row"><div class="phase-week"><div class="phase-week-lbl">Ongoing</div><div class="phase-week-range">Full</div></div><div class="phase-detail"><div class="phase-name">Continuous Underwriting</div><div class="phase-desc">Full rollout. Models sharpen with every load. Your rate reflects improving avoidance.</div></div></div>
-                            </div>
-                            <div class="engage-note" style="margin-top:1px;">Integrates with <strong>ERP · TMS · WMS · WES · MES · ELD · OEM Telematics · EDI · IoT</strong></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+  <div class="products-list">
+    <div class="product-row">
+      <div class="product-id">P-01<br>MMG</div>
+      <div class="product-name">
+        <h3>Minimum Margin Guarantee</h3>
+        <div class="product-tagline">Margin insurance · Brokerages</div>
+      </div>
+      <div class="product-desc">
+        <p>
+          Guarantees that a brokerage's quarterly portfolio average margin
+          won't fall below a defined floor — triggered by TMS-verified
+          load-level data, with zero basis risk. If realized margin dips
+          below the floor, the gap is paid out automatically.
+        </p>
+        <div class="product-status">Live · pilot pricing $2.00/load</div>
+      </div>
     </div>
 
-    <!-- TEAM -->
-
-    <div class="wrap" id="team">
-        <canvas class="radar-canvas" data-radar></canvas>
-        <div class="sec">
-            <div class="sec-lbl">The Team</div>
-            <div class="team-grid">
-                <div class="team-left">
-                    <h2 style="margin-bottom:12px;">Built by operators.<br><em>Wired into the systems we connect.</em></h2>
-                    <p>We've dispatched trucks, managed lanes, and lived inside the systems we're now connecting. We treat every design partner's operations as seriously as our own — and we don't invoice for outcomes we can't measure.</p>
-                    <div class="fm-cite">
-                        <p>We rely on advisors with direct operator relationships across the carrier and shipper ecosystem — the specific relationships that open doors.</p>
-                        <span class="fm-src">&gt;_ Operators building for operators</span>
-                    </div>
-                </div>
-                <div>
-                    <div class="team-cards">
-                        <div class="team-card">
-                            <div class="tc-avatar"><span class="tc-initials">MK</span></div>
-                            <div class="tc-body">
-                                <div class="tc-role">Co-Founder &amp; CEO</div>
-                                <div class="tc-name">Mohan Krishnamurthy</div>
-                                <div class="tc-bio">Built the forecasting platform that informed Uber of impending supply-demand shocks. Knows what it takes to turn operational signal into decisions that move at freight speed.</div>
-                                <div class="tc-prev"><span class="tc-tag">CPO · FleetPulse</span><span class="tc-tag">SVP Tech · USXpress</span><span class="tc-tag">Uber</span><span class="tc-tag">Amazon</span></div>
-                            </div>
-                        </div>
-                        <div class="team-card">
-                            <div class="tc-avatar"><span class="tc-initials">AK</span></div>
-                            <div class="tc-body">
-                                <div class="tc-role">Co-Founder &amp; CTO</div>
-                                <div class="tc-name">Austin Kinney</div>
-                                <div class="tc-bio">Architect of Precursory's real-time intelligence engine. Designed for freight signal latency and data fragmentation — because he's lived inside both.</div>
-                                <div class="tc-prev"><span class="tc-tag">VP Eng · FleetPulse</span><span class="tc-tag">Founding Eng · Uplinq</span><span class="tc-tag">Sr. Dir Eng · USXpress</span></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="adv-strip">
-                        <div class="adv-strip-hd">Advisors</div>
-                        <div class="adv-row-inner">
-                            <div class="adv-cell"><div class="adv-name">Paul Bunn</div><div class="adv-title">President · Covenant Transport</div></div>
-                            <div class="adv-cell"><div class="adv-name">Craig Fuller</div><div class="adv-title">CEO · FreightWaves</div></div>
-                            <div class="adv-cell"><div class="adv-name">Prasad Gollapalli</div><div class="adv-title">CEO · Qued</div></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-    <!-- CTA -->
-
-    <div class="cta-wrap" id="cta">
-        <canvas class="radar-canvas" data-radar></canvas>
-        <div class="cta-bg"></div>
-        <div class="cta-in">
-            <div class="sec-lbl" style="margin-bottom:44px;">Get Your Cost Guarantee</div>
-            <div style="max-width:640px;">
-                <h2 class="cta-h2">Show us your freight.<br>We'll show you <em>where it's bleeding.</em></h2>
-                <p class="cta-p">No deck review. No demo script. We map your risk surface — lane by lane, facility by facility — and show you exactly where the avoidable exposure lives.</p>
-                <div class="cta-perks">
-                    <div class="cta-perk">Full integration — ERP, TMS, WMS, WES, ELD — at no cost</div>
-                    <div class="cta-perk">Every avoided fee documented and attributed</div>
-                    <div class="cta-perk">A risk model trained on your lanes, carriers, and facilities</div>
-                </div>
-                <a href="mailto:mohan@precursory.ai?subject=Cost%20Guarantee%20Request" class="btn-p">Request Your Risk Map</a>
-            </div>
-        </div>
+    <div class="product-row">
+      <div class="product-id">P-02<br>ACG</div>
+      <div class="product-name">
+        <h3>Accessorial Cost Guarantee</h3>
+        <div class="product-tagline">Expense insurance · Shippers</div>
+      </div>
+      <div class="product-desc">
+        <p>
+          Caps a shipper's exposure to accessorial costs — detention,
+          layover, TONU, and other fees that spike unpredictably and erode
+          freight budgets. Verified against shipment-level data, so payouts
+          track real exposure rather than an industry average.
+        </p>
+        <div class="product-status">Design partner pilots underway</div>
+      </div>
     </div>
 
-    <!-- FOOTER -->
+    <div class="product-row coming-soon">
+      <div class="product-id">P-03<br>—</div>
+      <div class="product-name">
+        <h3>Rate Volatility Guarantee</h3>
+        <div class="product-tagline">Coming soon</div>
+      </div>
+      <div class="product-desc">
+        <p>
+          A parametric guarantee against freight rate swings — for shippers
+          and brokers exposed to spot market volatility on key lanes.
+        </p>
+        <div class="product-status">In development</div>
+      </div>
+    </div>
+  </div>
+</section>
 
-    <footer>
-        <div class="fl">
-            <span class="f-lm">&gt;<span class="blink">_</span></span>
-            <span class="f-wm">Precursory</span>
+<section class="section" id="mechanism" data-index="§ 02 — MECHANISM">
+  <div class="section-head">
+    <div class="section-title-block">How It Works</div>
+    <h2>From your operational data to a payout — by product.</h2>
+    <p>
+      Every Precursory product follows the same shape: real operational data
+      in, a verified calculation, and an automatic payout if you cross the
+      line. The data source and the trigger change by product.
+    </p>
+    <div class="mech-tabs" role="tablist">
+      <button class="mech-tab active" role="tab" aria-selected="true" data-target="mmg">MMG</button>
+      <button class="mech-tab" role="tab" aria-selected="false" data-target="acg">ACG</button>
+    </div>
+  </div>
+
+  <div class="mech-panels">
+
+    <div class="mech-panel active" id="panel-mmg">
+      <div class="mechanism">
+        <div class="step">
+          <span class="step-num">01 / TMS DATA</span>
+          <h3>Load-level feed</h3>
+          <p>Your TMS streams revenue and cost data for every load — automatically, with no manual reporting.</p>
+          <div class="tag">Mastery · McLeod integrations live</div>
         </div>
-        <span class="f-copy">© 2026 Precursory Technologies Inc.</span>
-    </footer>
-
-    <script>
-        // ACCORDION + ACCORDION CAROUSEL
-        function toggleAccordion(){
-            var body = document.getElementById('accordionBody');
-            var arrow = document.getElementById('accordionArrow');
-            var isOpen = body.style.display !== 'none';
-            body.style.display = isOpen ? 'none' : 'block';
-            arrow.style.transform = isOpen ? '' : 'rotate(180deg)';
-        }
-
-        function accGoSlide(n){
-            var track = document.getElementById('accTrack');
-            var tabs = [document.getElementById('acc-tab-0'), document.getElementById('acc-tab-1')];
-            if(!track) return;
-            track.style.transform = 'translateX(-' + (n * 100) + '%)';
-            tabs.forEach(function(t, i){
-                if(!t) return;
-                t.style.color = i === n ? 'var(--acid)' : 'var(--muted)';
-                t.style.background = i === n ? 'rgba(190,255,10,.04)' : 'transparent';
-            });
-        }
-
-        // NAV SCROLL
-        document.querySelectorAll('a[href^="#"]').forEach(function(link){
-            link.addEventListener('click',function(e){
-                var href=this.getAttribute('href');
-                if(!href||href==="#"||href.indexOf('mailto')===0)return;
-                var target=document.querySelector(href);
-                if(!target)return;
-                e.preventDefault();
-                window.scrollTo({top:target.offsetTop,behavior:'smooth'});
-            });
-        });
-
-
-        // SLIDING DOOR CHART
-        (function(){
-            var canvas = document.getElementById('sliderChart');
-            var handle = document.getElementById('sliderHandle');
-            var lblBad = document.getElementById('sc-lbl-bad');
-            var lblGood = document.getElementById('sc-lbl-good');
-            if(!canvas) return;
-            var ctx = canvas.getContext('2d');
-            var container = canvas.parentElement;
-
-            // Slider position: 0 = all volatile, 1 = all flat. Starts at 0, auto-slides to 0.72
-            var sliderPct = 0;
-            var targetPct = 0.72;
-            var dragging = false;
-            var dragStartX = 0;
-            var dragStartPct = 0;
-            var autoAnimDone = false;
-
-            // Generate volatile fee exposure data points
-            // Y values in "cost units" — higher = more expensive
-            var N = 60; // data points
-            var voltileY = [];
-            var seed = 42;
-            function rand() { seed = (seed * 1664525 + 1013904223) & 0xffffffff; return (seed >>> 0) / 0xffffffff; }
-            // Build a realistic volatile signal: baseline + spikes + drift
-            var base = 0.55;
-            for(var i=0;i<N;i++){
-                var spike = rand() < 0.18 ? rand() * 0.35 : 0;
-                var drift = Math.sin(i * 0.4) * 0.08;
-                var noise = (rand() - 0.5) * 0.18;
-                voltileY.push(Math.max(0.08, Math.min(0.98, base + spike + drift + noise)));
-            }
-            // Flat line = below average of volatile (guaranteed ceiling)
-            var avg = voltileY.reduce(function(a,b){return a+b;},0) / N;
-            var flatY = avg * 0.72; // guaranteed rate is 28% below average volatile
-
-            function resize() {
-                var dpr = window.devicePixelRatio || 1;
-                var w = container.offsetWidth || 420;
-                var h = 200;
-                canvas.width = w * dpr;
-                canvas.height = h * dpr;
-                canvas.style.width = w + 'px';
-                canvas.style.height = h + 'px';
-                ctx.scale(dpr, dpr);
-                draw(w, h);
-            }
-
-            function draw(w, h) {
-                if(!w) w = parseInt(canvas.style.width) || 420;
-                if(!h) h = parseInt(canvas.style.height) || 200;
-                ctx.clearRect(0,0,w,h);
-
-                var pad = { t:28, r:16, b:28, l:16 };
-                var cw = w - pad.l - pad.r;
-                var ch = h - pad.t - pad.b;
-                var splitX = pad.l + cw * sliderPct;
-
-                // ── BACKGROUND HALVES ──────────────────────────────
-                // Left (volatile) background — subtle red tint
-                ctx.fillStyle = 'rgba(255,92,92,0.03)';
-                ctx.fillRect(pad.l, pad.t, splitX - pad.l, ch);
-
-                // Right (with Precursory) — subtle green tint
-                ctx.fillStyle = 'rgba(190,255,10,0.03)';
-                ctx.fillRect(splitX, pad.t, pad.l + cw - splitX, ch);
-
-                // ── GRID LINES ─────────────────────────────────────
-                ctx.strokeStyle = 'rgba(255,255,255,0.04)';
-                ctx.lineWidth = 1;
-                for(var g=0;g<=4;g++){
-                    var gy = pad.t + (ch/4)*g;
-                    ctx.beginPath(); ctx.moveTo(pad.l, gy); ctx.lineTo(pad.l+cw, gy); ctx.stroke();
-                }
-
-                // ── VOLATILE AREA FILL (left of split) ────────────
-                ctx.save();
-                ctx.beginPath();
-                ctx.rect(pad.l, pad.t, splitX - pad.l, ch+2);
-                ctx.clip();
-
-                // Build path for volatile line
-                ctx.beginPath();
-                for(var i=0;i<N;i++){
-                    var x = pad.l + (i/(N-1))*cw;
-                    var y = pad.t + ch - voltileY[i]*ch;
-                    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
-                }
-                // close path for fill
-                var lastX = pad.l + cw;
-                ctx.lineTo(lastX, pad.t+ch);
-                ctx.lineTo(pad.l, pad.t+ch);
-                ctx.closePath();
-                ctx.fillStyle = 'rgba(255,92,92,0.08)';
-                ctx.fill();
-
-                // Volatile line stroke
-                ctx.beginPath();
-                for(var i=0;i<N;i++){
-                    var x = pad.l + (i/(N-1))*cw;
-                    var y = pad.t + ch - voltileY[i]*ch;
-                    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
-                }
-                ctx.strokeStyle = 'rgba(255,92,92,0.75)';
-                ctx.lineWidth = 1.5;
-                ctx.lineJoin = 'round';
-                ctx.stroke();
-                ctx.restore();
-
-                // ── FLAT FILL (right of split) ─────────────────────
-                ctx.save();
-                ctx.beginPath();
-                ctx.rect(splitX, pad.t, pad.l+cw-splitX+1, ch+2);
-                ctx.clip();
-
-                var flatYpx = pad.t + ch - flatY*ch;
-
-                // Fill below flat line
-                ctx.beginPath();
-                ctx.moveTo(splitX, flatYpx);
-                ctx.lineTo(pad.l+cw, flatYpx);
-                ctx.lineTo(pad.l+cw, pad.t+ch);
-                ctx.lineTo(splitX, pad.t+ch);
-                ctx.closePath();
-                ctx.fillStyle = 'rgba(190,255,10,0.07)';
-                ctx.fill();
-
-                // Flat line stroke
-                ctx.beginPath();
-                ctx.moveTo(splitX, flatYpx);
-                ctx.lineTo(pad.l+cw, flatYpx);
-                ctx.strokeStyle = 'rgba(190,255,10,0.9)';
-                ctx.lineWidth = 2;
-                ctx.stroke();
-
-                // Glow on flat line
-                ctx.beginPath();
-                ctx.moveTo(splitX, flatYpx);
-                ctx.lineTo(pad.l+cw, flatYpx);
-                ctx.strokeStyle = 'rgba(190,255,10,0.15)';
-                ctx.lineWidth = 8;
-                ctx.stroke();
-
-                ctx.restore();
-
-                // ── AVERAGE LINE (volatile average, dashed, full width) ─
-                var avgYpx = pad.t + ch - avg*ch;
-                ctx.save();
-                ctx.beginPath();
-                ctx.setLineDash([4,6]);
-                ctx.moveTo(pad.l, avgYpx);
-                ctx.lineTo(pad.l+cw, avgYpx);
-                ctx.strokeStyle = 'rgba(255,92,92,0.2)';
-                ctx.lineWidth = 1;
-                ctx.stroke();
-                ctx.setLineDash([]);
-                ctx.restore();
-
-                // ── LABELS ────────────────────────────────────────
-                ctx.font = '500 9px monospace';
-                ctx.letterSpacing = '1px';
-                if(sliderPct > 0.05) {
-                    // volatile label top left
-                    ctx.fillStyle = 'rgba(255,92,92,0.7)';
-                    ctx.fillText('Accessorial exposure', pad.l+6, pad.t+14);
-                }
-                if(sliderPct < 0.95) {
-                    // avg dashed label
-                    ctx.fillStyle = 'rgba(255,92,92,0.35)';
-                    ctx.fillText('Avg', pad.l+cw-28, avgYpx-4);
-                }
-                if(sliderPct > 0.15) {
-                    // guaranteed label on flat line right side
-                    ctx.fillStyle = 'rgba(190,255,10,0.85)';
-                    var flatLabelX = Math.max(splitX+8, pad.l+cw-110);
-                    ctx.fillText('Guaranteed ceiling', flatLabelX, flatYpx-6);
-                }
-
-                // ── SPLIT LINE ────────────────────────────────────
-                if(sliderPct > 0 && sliderPct < 1) {
-                    ctx.beginPath();
-                    ctx.moveTo(splitX, pad.t);
-                    ctx.lineTo(splitX, pad.t+ch);
-                    ctx.strokeStyle = 'rgba(255,255,255,0.2)';
-                    ctx.lineWidth = 1;
-                    ctx.stroke();
-                }
-
-                // ── SAVINGS CALLOUT (right side, when revealed enough) ─
-                if(sliderPct > 0.45) {
-                    var savingsPct = Math.round((1 - flatY/avg)*100);
-                    var calloutX = splitX + (pad.l+cw - splitX)*0.5;
-                    var midY = (flatYpx + avgYpx)/2;
-                    // bracket lines
-                    ctx.strokeStyle = 'rgba(190,255,10,0.3)';
-                    ctx.lineWidth = 1;
-                    ctx.beginPath();
-                    ctx.moveTo(calloutX-14, avgYpx); ctx.lineTo(calloutX-14, flatYpx);
-                    ctx.stroke();
-                    ctx.beginPath();
-                    ctx.moveTo(calloutX-18, avgYpx); ctx.lineTo(calloutX-10, avgYpx); ctx.stroke();
-                    ctx.beginPath();
-                    ctx.moveTo(calloutX-18, flatYpx); ctx.lineTo(calloutX-10, flatYpx); ctx.stroke();
-                    ctx.fillStyle = 'rgba(190,255,10,0.85)';
-                    ctx.font = 'bold 11px monospace';
-                    ctx.fillText('-' + savingsPct + '%', calloutX-8, midY+4);
-                }
-
-                // Position handle
-                handle.style.left = splitX + 'px';
-
-                // Update label opacity
-                var badOp = Math.max(0.3, 1 - sliderPct * 0.7);
-                var goodOp = Math.min(1, 0.3 + sliderPct * 0.9);
-                lblBad.style.opacity = badOp;
-                lblGood.style.opacity = goodOp;
-            }
-
-            // Auto-animation on load: slide from 0 to 0.72 over ~2.5s with easing
-            var autoStart = null;
-            var autoDuration = 2500;
-            var autoDelay = 800;
-
-            function autoAnimate(ts) {
-                if(!autoStart) autoStart = ts;
-                var elapsed = ts - autoStart;
-                if(elapsed < autoDelay) { requestAnimationFrame(autoAnimate); return; }
-                var t = Math.min(1, (elapsed - autoDelay) / autoDuration);
-                // ease out cubic
-                var ease = 1 - Math.pow(1-t, 3);
-                sliderPct = ease * targetPct;
-                var w = parseInt(canvas.style.width)||420;
-                var h = parseInt(canvas.style.height)||200;
-                draw(w, h);
-                if(t < 1) requestAnimationFrame(autoAnimate);
-                else autoAnimDone = true;
-            }
-
-            // Drag interaction
-            function getX(e) {
-                if(e.touches) return e.touches[0].clientX;
-                return e.clientX;
-            }
-
-            container.addEventListener('mousedown', function(e){
-                dragging = true;
-                dragStartX = getX(e);
-                dragStartPct = sliderPct;
-                e.preventDefault();
-            });
-            container.addEventListener('touchstart', function(e){
-                dragging = true;
-                dragStartX = getX(e);
-                dragStartPct = sliderPct;
-                e.preventDefault();
-            }, {passive:false});
-
-            window.addEventListener('mousemove', function(e){
-                if(!dragging) return;
-                var w = parseInt(canvas.style.width)||420;
-                var pad = 16;
-                var dx = getX(e) - dragStartX;
-                var newPct = dragStartPct + dx/(w - pad*2);
-                sliderPct = Math.max(0, Math.min(1, newPct));
-                draw(w, 200);
-            });
-            window.addEventListener('touchmove', function(e){
-                if(!dragging) return;
-                var w = parseInt(canvas.style.width)||420;
-                var pad = 16;
-                var dx = getX(e) - dragStartX;
-                var newPct = dragStartPct + dx/(w - pad*2);
-                sliderPct = Math.max(0, Math.min(1, newPct));
-                draw(w, 200);
-                e.preventDefault();
-            }, {passive:false});
-            window.addEventListener('mouseup', function(){ dragging = false; });
-            window.addEventListener('touchend', function(){ dragging = false; });
-
-            window.addEventListener('resize', function(){
-                var dpr = window.devicePixelRatio||1;
-                var w = container.offsetWidth||420;
-                canvas.width = w*dpr; canvas.height = 200*dpr;
-                canvas.style.width = w+'px'; canvas.style.height = '200px';
-                ctx.setTransform(1,0,0,1,0,0);
-                ctx.scale(dpr,dpr);
-                draw(w,200);
-            });
-
-            // Init
-            resize();
-            setTimeout(function(){ requestAnimationFrame(autoAnimate); }, 300);
-        })();
-
-        // ── PYRAMID ───────────────────────────────────────────────────────────────
-        (function(){
-            var W = 525, H = 315;
-            var APEX_X = W/2, APEX_Y = 0;
-            var BASE_L = 14, BASE_R = W-14, BASE_Y = H;
-            var LH = H/4;
-
-            function xAt(y){
-                var t=y/H, hw=(BASE_R-BASE_L)/2*t;
-                return {l:APEX_X-hw, r:APEX_X+hw};
-            }
-
-            var LAYERS = [
-                {k:'A', y1:0,     y2:LH,    mode:'solid'},
-                {k:'B', y1:LH,    y2:LH*2,  mode:'ordered'},
-                {k:'C', y1:LH*2,  y2:LH*3,  mode:'clustering'},
-                {k:'D', y1:LH*3,  y2:H,     mode:'static'}
-            ];
-
-            var outer = document.getElementById('po');
-            outer.style.width  = W+'px';
-            outer.style.height = H+'px';
-
-            LAYERS.forEach(function(lyr){
-                var cv = document.getElementById('cv'+lyr.k);
-                cv.width=W; cv.height=H;
-                cv.style.width=W+'px'; cv.style.height=H+'px';
-            });
-
-            var svg = document.getElementById('psvg');
-            svg.setAttribute('viewBox','0 0 '+W+' '+H);
-
-            var tri = document.createElementNS('http://www.w3.org/2000/svg','polygon');
-            tri.setAttribute('points', APEX_X+','+APEX_Y+' '+BASE_R+','+BASE_Y+' '+BASE_L+','+BASE_Y);
-            tri.setAttribute('fill','none'); tri.setAttribute('stroke','rgba(190,255,10,0.3)'); tri.setAttribute('stroke-width','1.5');
-            svg.appendChild(tri);
-
-            LAYERS.forEach(function(lyr){
-                if(lyr.y2<H){
-                    var b=xAt(lyr.y2);
-                    var ln=document.createElementNS('http://www.w3.org/2000/svg','line');
-                    ln.setAttribute('x1',b.l); ln.setAttribute('y1',lyr.y2);
-                    ln.setAttribute('x2',b.r); ln.setAttribute('y2',lyr.y2);
-                    ln.setAttribute('stroke', lyr.k==='B'?'rgba(255,255,255,0.4)':'rgba(190,255,10,0.15)');
-                    ln.setAttribute('stroke-width', lyr.k==='B'?'1.5':'1');
-                    if(lyr.k==='B') ln.setAttribute('stroke-dasharray','5,5');
-                    svg.appendChild(ln);
-                }
-            });
-
-            LAYERS.forEach(function(lyr){
-                var midY=(lyr.y1+lyr.y2)/2, b=xAt(midY);
-                var lbl=document.getElementById('lbl'+lyr.k);
-                lbl.style.top=(midY-26)+'px'; lbl.style.left=b.l+'px'; lbl.style.right=(W-b.r)+'px';
-                var ann=document.getElementById('ann'+lyr.k);
-                if(lyr.k==='A'||lyr.k==='B'){
-                    ann.style.top=(midY-7)+'px'; ann.style.left=(xAt(lyr.y2).r+14)+'px';
-                    ann.style.right='auto'; ann.style.flexDirection='row';
-                } else {
-                    ann.style.top=(midY-7)+'px'; ann.style.right=(W-xAt(lyr.y2).l+14)+'px';
-                    ann.style.left='auto'; ann.style.flexDirection='row-reverse'; ann.style.textAlign='right';
-                }
-            });
-
-            var dl=document.getElementById('divLine');
-            dl.style.top=(LH*2-1)+'px';
-
-            var cvGrad=document.getElementById('cvGrad');
-            cvGrad.width=W; cvGrad.height=H;
-            cvGrad.style.width=W+'px'; cvGrad.style.height=H+'px';
-            var ctxGrad=cvGrad.getContext('2d');
-            ctxGrad.save();
-            ctxGrad.beginPath(); ctxGrad.moveTo(APEX_X,APEX_Y); ctxGrad.lineTo(BASE_R,BASE_Y); ctxGrad.lineTo(BASE_L,BASE_Y); ctxGrad.closePath(); ctxGrad.clip();
-            var grad=ctxGrad.createLinearGradient(0,APEX_Y,0,BASE_Y);
-            grad.addColorStop(0,'#BEFF0A'); grad.addColorStop(0.25,'#BEFF0A');
-            grad.addColorStop(0.50,'rgba(140,210,8,0.75)'); grad.addColorStop(0.75,'rgba(60,100,4,0.40)'); grad.addColorStop(1.0,'#060906');
-            ctxGrad.fillStyle=grad; ctxGrad.fillRect(0,0,W,H); ctxGrad.restore();
-
-            var cvD=document.getElementById('cvD'), ctxD=cvD.getContext('2d'), imgD=ctxD.createImageData(W,H);
-            function drawStatic(){
-                var data=imgD.data, b1=xAt(LH*3), b2=xAt(H);
-                for(var y=Math.floor(LH*3);y<H;y++){
-                    var t=(y-LH*3)/(H-LH*3), xL=Math.ceil(b1.l+t*(b2.l-b1.l)), xR=Math.floor(b1.r+t*(b2.r-b1.r));
-                    for(var x=0;x<W;x++){
-                        var idx=(y*W+x)*4;
-                        if(x<xL||x>xR){data[idx]=0;data[idx+1]=0;data[idx+2]=0;data[idx+3]=0;}
-                        else{var rv=Math.random();
-                            if(rv>0.92){data[idx]=190;data[idx+1]=255;data[idx+2]=10;data[idx+3]=255;}
-                            else if(rv<0.12){data[idx]=0;data[idx+1]=0;data[idx+2]=0;data[idx+3]=0;}
-                            else{var v=Math.floor(Math.random()*256);data[idx]=v;data[idx+1]=v;data[idx+2]=v;data[idx+3]=230;}}
-                    }
-                }
-                ctxD.putImageData(imgD,0,0);
-            }
-
-            var cvC=document.getElementById('cvC'), ctxC=cvC.getContext('2d');
-            var CY1=LH*2, CY2=LH*3, clusters=[], Cparticles=[];
-            (function(){
-                var nCols=8,nRows=4;
-                for(var cr=0;cr<nRows;cr++) for(var cc=0;cc<nCols;cc++){
-                    var rowT=(cr+0.5)/nRows, ly=CY1+rowT*(CY2-CY1), bRow=xAt(ly), lw=bRow.r-bRow.l;
-                    clusters.push({cx:bRow.l+(cc+0.5)/nCols*lw, cy:ly});
-                }
-                for(var i=0;i<600;i++){
-                    var rowT2=Math.random(), ly2=CY1+rowT2*(CY2-CY1), bRow2=xAt(ly2);
-                    var cl=clusters[Math.floor(Math.random()*clusters.length)];
-                    var sc=Math.random()>0.45;
-                    Cparticles.push({x:sc?(bRow2.l+Math.random()*(bRow2.r-bRow2.l)):cl.cx+(Math.random()-.5)*60,
-                        y:sc?ly2:cl.cy+(Math.random()-.5)*40, tx:cl.cx,ty:cl.cy, vx:0,vy:0,
-                        isSignal:Math.random()>0.55, size:1.2+Math.random()*1.8, alpha:0.4+Math.random()*0.5, phase:Math.random()*Math.PI*2});
-                }
-            })();
-            function drawClustering(ts){
-                ctxC.clearRect(0,0,W,H); ctxC.save();
-                var b1=xAt(CY1),b2=xAt(CY2);
-                ctxC.beginPath(); ctxC.moveTo(b1.l,CY1); ctxC.lineTo(b1.r,CY1); ctxC.lineTo(b2.r,CY2); ctxC.lineTo(b2.l,CY2); ctxC.closePath(); ctxC.clip();
-                ctxC.clearRect(0,0,W,H); ctxC.fillStyle='rgba(4,6,4,0.55)'; ctxC.fillRect(0,0,W,H);
-                ctxC.strokeStyle='rgba(190,255,10,0.04)'; ctxC.lineWidth=0.5;
-                for(var i=0;i<Cparticles.length;i++){var pi=Cparticles[i]; if(!pi.isSignal) continue;
-                    for(var j=i+1;j<Cparticles.length;j++){var pj=Cparticles[j]; if(!pj.isSignal) continue;
-                        var dx=pi.x-pj.x,dy=pi.y-pj.y,dist=Math.sqrt(dx*dx+dy*dy);
-                        if(dist<40){ctxC.globalAlpha=(1-dist/40)*0.15; ctxC.beginPath(); ctxC.moveTo(pi.x,pi.y); ctxC.lineTo(pj.x,pj.y); ctxC.stroke();}
-                    }
-                }
-                ctxC.globalAlpha=1;
-                Cparticles.forEach(function(p){
-                    var fx=(p.tx-p.x)*0.008+Math.sin(ts*0.0008+p.phase)*0.15;
-                    var fy=(p.ty-p.y)*0.008+Math.cos(ts*0.0007+p.phase)*0.1;
-                    p.vx=p.vx*0.94+fx; p.vy=p.vy*0.94+fy; p.x+=p.vx; p.y+=p.vy;
-                    var ddx=p.x-p.tx,ddy=p.y-p.ty,dist=Math.sqrt(ddx*ddx+ddy*ddy),prox=Math.max(0,1-dist/80);
-                    var sz=p.isSignal?1.5+prox*3.5:1.2;
-                    if(p.isSignal){
-                        var ga=p.alpha*(0.6+prox*0.4)*(0.7+Math.sin(ts*0.002+p.phase)*0.3);
-                        if(prox>0.5){ctxC.globalAlpha=ga*0.2; ctxC.fillStyle='rgba(190,255,10,1)'; ctxC.beginPath(); ctxC.arc(p.x,p.y,sz*2.2,0,Math.PI*2); ctxC.fill();}
-                        ctxC.globalAlpha=ga; ctxC.fillStyle='rgba(190,255,10,1)'; ctxC.beginPath(); ctxC.arc(p.x,p.y,sz/2,0,Math.PI*2); ctxC.fill();
-                    } else {
-                        var v=Math.floor(80+Math.random()*60); ctxC.globalAlpha=0.35; ctxC.fillStyle='rgba('+v+','+v+','+v+',1)';
-                        ctxC.fillRect(Math.round(p.x-sz/2),Math.round(p.y-sz/2),sz,sz);
-                    }
-                    ctxC.globalAlpha=1;
-                });
-                ctxC.restore();
-            }
-
-            var cvB=document.getElementById('cvB'), ctxB=cvB.getContext('2d'), BY1=LH, BY2=LH*2;
-            function drawOrdered(ts){
-                ctxB.clearRect(0,0,W,H); ctxB.save();
-                var b1=xAt(BY1),b2=xAt(BY2);
-                ctxB.beginPath(); ctxB.moveTo(b1.l,BY1); ctxB.lineTo(b1.r,BY1); ctxB.lineTo(b2.r,BY2); ctxB.lineTo(b2.l,BY2); ctxB.closePath(); ctxB.clip();
-                ctxB.fillStyle='rgba(8,14,8,0.88)'; ctxB.fillRect(0,0,W,H);
-                var gs=18, hOff=(ts*0.04)%(gs*2);
-                for(var gy=BY1-gs+(hOff%gs);gy<BY2+gs;gy+=gs){
-                    var bL=xAt(Math.max(BY1,Math.min(BY2,gy))), ph=((gy-BY1-hOff)/(BY2-BY1+gs));
-                    ctxB.globalAlpha=0.08+(0.5+0.5*Math.sin(ph*Math.PI*6-ts*0.003))*0.14;
-                    ctxB.strokeStyle='rgba(190,255,10,1)'; ctxB.lineWidth=0.5;
-                    ctxB.beginPath(); ctxB.moveTo(bL.l,gy); ctxB.lineTo(bL.r,gy); ctxB.stroke();
-                }
-                var vOff=(ts*0.028)%(gs*2);
-                for(var rx=-gs+(vOff%gs);rx<W;rx+=gs){
-                    var ph2=rx/W;
-                    ctxB.globalAlpha=0.06+(0.5+0.5*Math.sin(ph2*Math.PI*8-ts*0.0025))*0.10;
-                    ctxB.strokeStyle='rgba(190,255,10,1)'; ctxB.lineWidth=0.5;
-                    ctxB.beginPath(); ctxB.moveTo(rx,BY1); ctxB.lineTo(rx,BY2); ctxB.stroke();
-                }
-                ctxB.globalAlpha=1;
-                for(var ny=BY1+gs/2;ny<BY2;ny+=gs){var br3=xAt(ny);
-                    for(var nx=br3.l+gs/2;nx<br3.r;nx+=gs){
-                        var np=0.5+0.5*Math.sin(ts*0.003+nx*0.08+ny*0.06);
-                        ctxB.globalAlpha=0.15+np*0.2; ctxB.fillStyle='rgba(190,255,10,1)';
-                        var ns=1.5+np; ctxB.fillRect(Math.round(nx-ns/2),Math.round(ny-ns/2),ns,ns);
-                    }
-                }
-                ctxB.globalAlpha=1; ctxB.restore();
-            }
-
-            var cvA=document.getElementById('cvA'), ctxA=cvA.getContext('2d');
-            function drawSolid(){
-                ctxA.clearRect(0,0,W,H); ctxA.save();
-                var b2=xAt(LH);
-                ctxA.beginPath(); ctxA.moveTo(APEX_X,0); ctxA.lineTo(b2.r,LH); ctxA.lineTo(b2.l,LH); ctxA.closePath(); ctxA.clip();
-                ctxA.fillStyle='#BEFF0A'; ctxA.fillRect(0,0,W,H); ctxA.restore();
-            }
-            drawSolid();
-
-            var st=0;
-            function animate(ts){ st++; if(st%4===0) drawStatic(); drawClustering(ts); drawOrdered(ts); requestAnimationFrame(animate); }
-            requestAnimationFrame(animate);
-        })();
-
-        // NAPKIN FLYWHEEL — faithful port of user's design, dark theme
-        (function(){
-            var canvas = document.getElementById('napkinCanvas');
-            if(!canvas) return;
-            var dpr = window.devicePixelRatio || 1;
-            var W = 900, H = 620;
-            canvas.width  = W * dpr;
-            canvas.height = H * dpr;
-            canvas.style.width  = W + 'px';
-            canvas.style.height = H + 'px';
-            var ctx = canvas.getContext('2d');
-            ctx.scale(dpr, dpr);
-
-            // Dark-theme palette (original used light #1a1816 on #f0ece4)
-            var ink     = 'rgba(226,226,226,0.88)';
-            var inkDim  = 'rgba(226,226,226,0.35)';
-            var ACID    = '#BEFF0A';
-            var ACID_D  = 'rgba(190,255,10,0.55)';  // dashed branch
-
-            // Stable per-point jitter — same every frame
-            var _j = {};
-            function sj(k, a) {
-                if (!(k in _j)) _j[k] = (Math.random() - 0.5) * a;
-                return _j[k];
-            }
-
-            // Ellipse track centre
-            var CX = 420, CY = 290, RX = 155, RY = 105;
-
-            // Draw a jittered quadratic bezier with arrowhead at end
-            function sketchBezier(x1,y1,cpx,cpy,x2,y2,lw,id,dashed,col) {
-                ctx.strokeStyle = col || ink;
-                ctx.lineWidth   = lw;
-                ctx.lineCap     = 'round';
-                ctx.setLineDash(dashed ? [8,5] : []);
-                ctx.beginPath();
-                var steps = 36;
-                for (var i = 0; i <= steps; i++) {
-                    var t  = i / steps;
-                    var px = (1-t)*(1-t)*x1 + 2*(1-t)*t*cpx + t*t*x2;
-                    var py = (1-t)*(1-t)*y1 + 2*(1-t)*t*cpy + t*t*y2;
-                    if (i === 0) ctx.moveTo(px + sj(id+'x'+i, 0.8), py + sj(id+'y'+i, 0.8));
-                    else         ctx.lineTo(px + sj(id+'x'+i, 0.8), py + sj(id+'y'+i, 0.8));
-                }
-                ctx.stroke();
-                ctx.setLineDash([]);
-                // Arrowhead
-                var t1 = 0.93;
-                var ax = (1-t1)*(1-t1)*x1 + 2*(1-t1)*t1*cpx + t1*t1*x2;
-                var ay = (1-t1)*(1-t1)*y1 + 2*(1-t1)*t1*cpy + t1*t1*y2;
-                var ang = Math.atan2(y2 - ay, x2 - ax);
-                var al  = 13;
-                ctx.strokeStyle = col || ink;
-                ctx.lineWidth   = lw + 0.4;
-                ctx.setLineDash([]);
-                ctx.beginPath();
-                ctx.moveTo(x2, y2);
-                ctx.lineTo(x2 - al*Math.cos(ang-0.35), y2 - al*Math.sin(ang-0.35));
-                ctx.moveTo(x2, y2);
-                ctx.lineTo(x2 - al*Math.cos(ang+0.35), y2 - al*Math.sin(ang+0.35));
-                ctx.stroke();
-            }
-
-            function txt(text, x, y, size, align, color) {
-                ctx.fillStyle    = color || ink;
-                ctx.textAlign    = align || 'center';
-                ctx.textBaseline = 'middle';
-                ctx.font         = '700 ' + size + 'px "SF Mono",Menlo,monospace';
-                ctx.fillText(text, x, y);
-            }
-
-            function dot(x, y, r, col) {
-                ctx.fillStyle = col || ACID;
-                ctx.beginPath();
-                ctx.arc(x, y, r, 0, Math.PI*2);
-                ctx.fill();
-            }
-
-            function sketchEllipse(cx, cy, rx, ry, lw, alpha) {
-                ctx.strokeStyle = inkDim;
-                ctx.lineWidth   = lw;
-                ctx.globalAlpha = alpha;
-                ctx.beginPath();
-                for (var i = 0; i <= 80; i++) {
-                    var a  = (i/80) * Math.PI * 2;
-                    var w  = sj('ell'+i, 0.8);
-                    var px = cx + (rx+w)*Math.cos(a);
-                    var py = cy + (ry+w)*Math.sin(a);
-                    if (i === 0) ctx.moveTo(px, py);
-                    else         ctx.lineTo(px, py);
-                }
-                ctx.closePath();
-                ctx.stroke();
-                ctx.globalAlpha = 1;
-            }
-
-            function draw() {
-                ctx.clearRect(0, 0, W, H);
-
-                // Subtle lined-paper texture
-                ctx.strokeStyle = 'rgba(190,255,10,0.03)';
-                ctx.lineWidth   = 0.5;
-                for (var ly = 32; ly < H; ly += 32) {
-                    ctx.beginPath(); ctx.moveTo(0,ly); ctx.lineTo(W,ly); ctx.stroke();
-                }
-
-                // Title
-                txt('Precursory Flywheel', W/2, 38, 22, 'center', ACID);
-
-                // Ellipse track
-                sketchEllipse(CX, CY, RX, RY, 0.8, 0.12);
-
-                // ── GREEN MAIN LOOP ──────────────────────────────────────────────────
-                // Q1: Shippers(420,182) → Intelligence(580,290)
-                sketchBezier(456, 184, 536, 170, 578, 264, 2.2, 'g1', false, ACID);
-                // Q2: Intelligence(580,290) → Disruption(420,398)
-                sketchBezier(578, 318, 558, 392, 454, 396, 2.2, 'g2', false, ACID);
-                // Q3: Disruption(420,398) → Coverage Cost(270,290)
-                sketchBezier(386, 396, 314, 402, 270, 318, 2.2, 'g3', false, ACID);
-                // Q4: Coverage Cost(270,290) → Shippers(420,182)
-                sketchBezier(270, 264, 284, 190, 386, 184, 2.2, 'g4', false, ACID);
-
-                // Node dots
-                dot(420, 182, 5, ACID);
-                dot(580, 290, 5, ACID);
-                dot(420, 398, 5, ACID);
-                dot(270, 290, 5, ACID);
-
-                // Labels — arrow glyphs per user spec
-                txt('Shippers \u2197',       420, 154, 20, 'center', ink);
-                txt('Intelligence \u2198',   614, 290, 18, 'left',   ink);
-                txt('Disruption \u2199',     420, 428, 20, 'center', ink);
-                txt('Coverage Cost \u2196',  248, 290, 17, 'right',  ink);
-
-                // ── DASHED OUTER BRANCH ─────────────────────────────────────────────
-                // Disruption → Utilization (down)
-                sketchBezier(420, 450, 420, 468, 420, 484, 1.8, 'b0', true, ACID_D);
-                // Utilization → Carriers (sweep left)
-                sketchBezier(396, 500, 248, 528, 114, 436, 1.8, 'b1', true, ACID_D);
-                // Carriers → Rates (arc up)
-                sketchBezier(110, 410, 86,  364, 58,  306, 1.8, 'b2', true, ACID_D);
-                // Rates → Shippers (long sweep back up)
-                sketchBezier(54,  264, 72,  182, 386, 166, 1.8, 'b3', true, ACID_D);
-
-                // Branch dots
-                dot(420, 484, 4.5, ACID_D);
-                dot(114, 436, 4.5, ACID_D);
-                dot( 58, 285, 4.5, ACID_D);
-
-                // Branch labels
-                txt('Utilization \u2191',  444, 484, 15, 'left',  inkDim);
-                txt('Carriers \u2191',      96, 444, 15, 'right', inkDim);
-                txt('Rates \u2193',          36, 285, 15, 'right', inkDim);
-
-                // ── CENTER HUB ───────────────────────────────────────────────────────
-                ctx.globalAlpha = 0.22;
-                ctx.strokeStyle = ACID;
-                ctx.lineWidth   = 1;
-                ctx.beginPath();
-                ctx.arc(CX, CY, 32, 0, Math.PI*2);
-                ctx.stroke();
-                ctx.globalAlpha = 1;
-
-                var blinkOn = Math.floor(Date.now() / 600) % 2 === 0;
-                txt(blinkOn ? '>_' : '>', CX, CY, 20, 'center', ACID);
-
-                // ── BOTTOM RULE + TAGLINE ────────────────────────────────────────────
-                ctx.strokeStyle = inkDim;
-                ctx.lineWidth   = 0.6;
-                ctx.beginPath();
-                ctx.moveTo(260, 548); ctx.lineTo(580, 548);
-                ctx.stroke();
-
-                txt('Single shipper  =  dashboard',              W/2, 566, 16, 'center', inkDim);
-                txt('Network  =  prevention engine + pricing moat', W/2, 588, 16, 'center', ink);
-
-                requestAnimationFrame(draw);
-            }
-
-            draw();
-        })();
-
-        // RADAR ENGINE
-        (function(){
-            var ACID='rgba(190,255,10,',SPEED=1.6,TRAIL=Math.PI*0.85,radars=[];
-            document.querySelectorAll('canvas[data-radar]').forEach(function(cv,i,all){
-                radars.push({canvas:cv,parent:cv.parentElement,angle:-Math.PI/2,startAngle:-Math.PI/2,
-                    done:false,fadeAlpha:1,w:0,h:0,cx:0,cy:0,radius:0});
-            });
-            function sz(r){
-                let p = r.parent, rc = p.getBoundingClientRect();
-                let w = rc.width || p.offsetWidth || window.innerWidth, h = rc.height;
-                if(h<20){var el=p;for(var k=0;k<6;k++){el=el.parentElement;if(!el)break;
-                    h=el.getBoundingClientRect().height;if(h>20)break;}}
-                if(h<20)h=500;
-                r.canvas.width=w;r.canvas.height=h;r.canvas.style.width=w+'px';r.canvas.style.height=h+'px';
-                r.w=w;r.h=h;r.cx=w/2;r.cy=h/2;r.radius=Math.sqrt(w*w+h*h)/2;
-            }
-            function trigger(r){if(r.w<20)sz(r);r.angle=r.startAngle;r.done=false;r.fadeAlpha=1;}
-            function szAll(){radars.forEach(sz);}
-            window.addEventListener('resize',szAll);
-            [100,400,1000].forEach(function(ms){setTimeout(szAll,ms);});
-            if(window.IntersectionObserver){
-                let io = new IntersectionObserver(function (entries) {
-                    entries.forEach(function (e) {
-                        if (!e.isIntersecting) return;
-                        radars.forEach(function (r) {
-                            if (r.parent === e.target) trigger(r);
-                        });
-                    });
-                }, {threshold: 0.15});
-                radars.forEach(function(r){io.observe(r.parent);});
-            } else { radars.forEach(trigger); }
-            szAll();
-            var last=null;
-            function tick(ts){
-                if(!last)last=ts;var dt=Math.min((ts-last)/1000,0.05);last=ts;
-                radars.forEach(function(r){
-                    if(r.w<20){sz(r);if(r.w<20)return;}
-                    if(r.done){if(r.fadeAlpha<=0)return;r.fadeAlpha=Math.max(0,r.fadeAlpha-dt*1.2);}
-                    else{r.angle+=SPEED*dt;if(r.angle>=r.startAngle+Math.PI*2){r.angle=r.startAngle+Math.PI*2;r.done=true;}}
-                    var ctx=r.canvas.getContext('2d');ctx.clearRect(0,0,r.w,r.h);if(r.fadeAlpha<=0)return;
-                    ctx.save();ctx.globalAlpha=r.fadeAlpha;
-                    for(var ring=1;ring<=3;ring++){ctx.beginPath();ctx.arc(r.cx,r.cy,(r.radius*ring)/3,0,Math.PI*2);
-                        ctx.strokeStyle='rgba(190,255,10,0.04)';ctx.lineWidth=1;ctx.stroke();}
-                    ctx.strokeStyle='rgba(190,255,10,0.04)';ctx.lineWidth=1;
-                    ctx.beginPath();ctx.moveTo(r.cx,0);ctx.lineTo(r.cx,r.h);ctx.stroke();
-                    ctx.beginPath();ctx.moveTo(0,r.cy);ctx.lineTo(r.w,r.cy);ctx.stroke();
-                    var swept=r.angle-r.startAngle,trailLen=Math.min(swept,TRAIL);
-                    for(var s=0;s<48;s++){var t2=s/48,a0=r.angle-trailLen+t2*trailLen,a1=r.angle-trailLen+(t2+1/48)*trailLen;
-                        ctx.beginPath();ctx.moveTo(r.cx,r.cy);ctx.arc(r.cx,r.cy,r.radius,a0,a1);ctx.closePath();
-                        ctx.fillStyle=ACID+(t2*t2*0.117)+')';ctx.fill();}
-                    var bx=r.cx+Math.cos(r.angle)*r.radius,by=r.cy+Math.sin(r.angle)*r.radius;
-                    var bg=ctx.createLinearGradient(r.cx,r.cy,bx,by);
-                    bg.addColorStop(0,ACID+'0)');bg.addColorStop(0.4,ACID+'0.054)');bg.addColorStop(1,ACID+'0.495)');
-                    ctx.beginPath();ctx.moveTo(r.cx,r.cy);ctx.lineTo(bx,by);ctx.strokeStyle=bg;ctx.lineWidth=1.5;ctx.stroke();
-                    ctx.beginPath();ctx.arc(bx,by,2.5,0,Math.PI*2);ctx.fillStyle=ACID+'0.63)';ctx.fill();
-                    ctx.beginPath();ctx.arc(r.cx,r.cy,3,0,Math.PI*2);ctx.fillStyle=ACID+'0.225)';ctx.fill();
-                    ctx.restore();});requestAnimationFrame(tick);}
-            requestAnimationFrame(tick);
-        })();
-    </script>
+        <div class="step">
+          <span class="step-num">02 / MARGIN CALC</span>
+          <h3>Portfolio margin, verified</h3>
+          <p>We compute your realized quarterly portfolio average margin directly from that data — the same number you already track internally.</p>
+          <div class="tag">Zero basis risk by construction</div>
+        </div>
+        <div class="step">
+          <span class="step-num">03 / FLOOR & PAYOUT</span>
+          <h3>Indemnity, automatically</h3>
+          <p>If your realized margin falls below the agreed floor, the gap is paid out — no claims adjuster, no dispute over whose number is right.</p>
+          <div class="tag">Settled from your own ledger</div>
+        </div>
+      </div>
+
+      <div class="formula">
+        <span class="label">Pricing</span>
+        <div class="formula-eq">
+          Rate = <span class="const">$2.00</span> ×
+          ( <span class="var">Avg Load Revenue</span> / <span class="const">$2,000</span> benchmark )
+        </div>
+      </div>
+    </div>
+
+    <div class="mech-panel" id="panel-acg">
+      <div class="mechanism">
+        <div class="step">
+          <span class="step-num">01 / SHIPMENT DATA</span>
+          <h3>Accessorial feed</h3>
+          <p>Detention, layover, and TONU charges are captured at the shipment level as they're billed — straight from your TMS or accounting system.</p>
+          <div class="tag">No manual claims paperwork</div>
+        </div>
+        <div class="step">
+          <span class="step-num">02 / EXPOSURE CALC</span>
+          <h3>Accessorial spend, verified</h3>
+          <p>We compute your realized accessorial cost against the agreed cap — using the same shipment data your team already reconciles.</p>
+          <div class="tag">Tracks real exposure, not an industry average</div>
+        </div>
+        <div class="step">
+          <span class="step-num">03 / CAP & REIMBURSEMENT</span>
+          <h3>Reimbursement, automatically</h3>
+          <p>If accessorial spend exceeds the cap, the excess is reimbursed — settled directly from verified shipment data.</p>
+          <div class="tag">Settled from your own ledger</div>
+        </div>
+      </div>
+
+      <div class="formula">
+        <span class="label">Coverage</span>
+        <div class="formula-eq">
+          Reimbursement = <span class="var">Realized Accessorial Cost</span> − <span class="const">Agreed Cap</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section class="section" id="team" data-index="§ 03 — TEAM">
+  <div class="section-head">
+    <div class="section-title-block">Team</div>
+    <h2>Operators who've sat inside the ecosystem.</h2>
+  </div>
+
+  <div class="team-grid">
+    <div class="team-card">
+      <img src="assets/mo.jpg" alt="Mohan Krishnamurthy" />
+      <div class="team-overlay">
+        <div class="team-name-row">
+          <div>
+            <h3>Mohan Krishnamurthy</h3>
+            <div class="team-role">CEO &amp; Co-Founder</div>
+          </div>
+          <div class="team-cursor-hint">hover for bio</div>
+        </div>
+        <p class="team-bio">
+          Led product for driver incentives and pricing at Uber and Amazon —
+          building real-time supply and demand systems that priced risk at
+          the load level, every day, at scale.
+        </p>
+      </div>
+    </div>
+
+    <div class="team-card">
+      <img src="assets/austin.jpg" alt="Austin Kinney" />
+      <div class="team-overlay">
+        <div class="team-name-row">
+          <div>
+            <h3>Austin Kinney</h3>
+            <div class="team-role">CTO &amp; Co-Founder</div>
+          </div>
+          <div class="team-cursor-hint">hover for bio</div>
+        </div>
+        <p class="team-bio">
+          Previously led technology for USXpress's brokerage operation —
+          the shipper-integration and TMS work that makes Precursory's
+          zero-basis-risk data pipeline possible.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="faq" data-index="§ 04 — FAQ">
+  <div class="section-head">
+    <div class="section-title-block">FAQs</div>
+  </div>
+
+  <div class="faq-tabs" role="tablist">
+    <button class="faq-tab active" role="tab" aria-selected="true" data-target="general">General</button>
+    <button class="faq-tab" role="tab" aria-selected="false" data-target="mmg">MMG</button>
+    <button class="faq-tab" role="tab" aria-selected="false" data-target="acg">ACG</button>
+  </div>
+
+  <div class="faq-panel active" id="faq-panel-general">
+    <div class="faq-list">
+      <div class="faq-item open">
+        <button class="faq-q">What is Precursory?
+          <span class="icon">+</span></button>
+        <div class="faq-a"><div class="faq-a-inner">
+          Precursory is an MGA building parametric insurance products for the
+          freight logistics supply chain — guarantees that pay out
+          automatically when a defined operational threshold is breached,
+          based on data you already generate.
+        </div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">How is this different from a hedge or index-based product?
+          <span class="icon">+</span></button>
+        <div class="faq-a"><div class="faq-a-inner">
+          Hedges settle against an external index and carry basis risk.
+          Precursory's products settle against your own verified operational
+          data, so there's no gap between what's insured and what actually
+          happened in your business.
+        </div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">What's Precursory's role — broker, MGA, carrier?
+          <span class="icon">+</span></button>
+        <div class="faq-a"><div class="faq-a-inner">
+          Precursory operates as a Managing General Agent, underwriting and
+          administering policies on behalf of capacity partners. We're
+          pursuing Lloyd's Coverholder status to bring these products to
+          market with A-rated capacity.
+        </div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">What data do I need to share, and is it secure?
+          <span class="icon">+</span></button>
+        <div class="faq-a"><div class="faq-a-inner">
+          Whatever your TMS or accounting system already produces at the load
+          or shipment level — no new reporting process. We integrate directly
+          with systems like Mastery and McLeod, and data is used only to
+          calculate your coverage.
+        </div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">How fast are payouts settled?
+          <span class="icon">+</span></button>
+        <div class="faq-a"><div class="faq-a-inner">
+          Once the trigger condition is met, payout is calculated
+          automatically from your verified data — no claims adjuster, no
+          manual review. Settlement timelines are defined in your policy.
+        </div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="faq-panel" id="faq-panel-mmg">
+    <div class="faq-list">
+      <div class="faq-item open">
+        <button class="faq-q">What does MMG actually guarantee?
+          <span class="icon">+</span></button>
+        <div class="faq-a"><div class="faq-a-inner">
+          MMG guarantees that your portfolio's realized margin over a policy
+          period won't fall below an agreed floor — and if it does, the gap
+          is paid out automatically.
+        </div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">What exactly triggers a payout?
+          <span class="icon">+</span></button>
+        <div class="faq-a"><div class="faq-a-inner">
+          Your TMS-reported portfolio average margin falling below the floor
+          defined in your policy, calculated from the same load-level data
+          your team already tracks internally.
+        </div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">How is the floor set?
+          <span class="icon">+</span></button>
+        <div class="faq-a"><div class="faq-a-inner">
+          The floor is set based on your historical margin performance and
+          book composition, so it reflects your actual risk profile rather
+          than an industry-wide average.
+        </div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Does this cover one bad load, or my whole portfolio?
+          <span class="icon">+</span></button>
+        <div class="faq-a"><div class="faq-a-inner">
+          MMG is a portfolio-level guarantee — it's designed to protect
+          against systemic margin compression across your book, not isolated
+          load-level losses.
+        </div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">What causes margin volatility that MMG protects against?
+          <span class="icon">+</span></button>
+        <div class="faq-a"><div class="faq-a-inner">
+          Fuel price swings, freight rate softening, and demand shocks are
+          common drivers — anything that compresses the spread between what
+          you bill and what you pay, market-wide.
+        </div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="faq-panel" id="faq-panel-acg">
+    <div class="faq-list">
+      <div class="faq-item open">
+        <button class="faq-q">What does ACG actually guarantee?
+          <span class="icon">+</span></button>
+        <div class="faq-a"><div class="faq-a-inner">
+          ACG caps your exposure to accessorial costs — detention, layover,
+          TONU, and similar fees — so that if realized costs exceed an
+          agreed cap, the excess is reimbursed.
+        </div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">What costs does ACG cover?
+          <span class="icon">+</span></button>
+        <div class="faq-a"><div class="faq-a-inner">
+          Detention, layover, TONU, and other accessorial fees that show up
+          in shipment-level billing — costs that spike unpredictably and
+          erode freight budgets after the rate is locked in.
+        </div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">How is the cap set?
+          <span class="icon">+</span></button>
+        <div class="faq-a"><div class="faq-a-inner">
+          The cap is set based on your historical accessorial cost
+          distribution, so it reflects your real exposure rather than a
+          generic industry benchmark.
+        </div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Is this a claims process?
+          <span class="icon">+</span></button>
+        <div class="faq-a"><div class="faq-a-inner">
+          No. Reimbursement is calculated directly from verified shipment
+          data once realized cost exceeds the cap — no adjuster, no separate
+          claims filing.
+        </div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Who is ACG designed for — shippers or brokers?
+          <span class="icon">+</span></button>
+        <div class="faq-a"><div class="faq-a-inner">
+          ACG is primarily designed for shippers managing accessorial cost
+          exposure across their freight spend, though brokers managing
+          accessorial pass-through can also use it.
+        </div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer id="contact">
+  <div class="footer-inner">
+    <div class="footer-top">
+      <h2>Ready to cap your volatility?</h2>
+      <a class="btn btn-primary" href="mailto:mohan@precursory.ai" style="background:var(--paper); color:var(--ink); border-color:var(--paper);">Talk to us</a>
+    </div>
+    <div class="footer-bottom">
+      <span>Precursory Technologies, Inc. — San Francisco</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.querySelectorAll('.faq-item').forEach(item => {
+    item.querySelector('.faq-q').addEventListener('click', () => {
+      const isOpen = item.classList.contains('open');
+      const group = item.closest('.faq-panel') || document;
+      group.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+      if(!isOpen) item.classList.add('open');
+    });
+  });
+
+  document.querySelectorAll('.faq-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.target;
+      document.querySelectorAll('.faq-tab').forEach(t => {
+        t.classList.toggle('active', t === tab);
+        t.setAttribute('aria-selected', t === tab ? 'true' : 'false');
+      });
+      document.querySelectorAll('.faq-panel').forEach(p => {
+        p.classList.toggle('active', p.id === 'faq-panel-' + target);
+      });
+    });
+  });
+
+  document.querySelectorAll('.mech-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.target;
+      document.querySelectorAll('.mech-tab').forEach(t => {
+        t.classList.toggle('active', t === tab);
+        t.setAttribute('aria-selected', t === tab ? 'true' : 'false');
+      });
+      document.querySelectorAll('.mech-panel').forEach(p => {
+        p.classList.toggle('active', p.id === 'panel-' + target);
+      });
+    });
+  });
+
+  // Flipboard quote rotation
+  (function(){
+    const cards = document.querySelectorAll('.flip-card');
+    const dots = document.querySelectorAll('.flip-dot');
+    let current = 0;
+    let timer;
+
+    function show(index){
+      cards.forEach((c,i) => c.classList.toggle('active', i === index));
+      dots.forEach((d,i) => d.classList.toggle('active', i === index));
+      current = index;
+    }
+
+    function next(){
+      show((current + 1) % cards.length);
+    }
+
+    function startTimer(){
+      clearInterval(timer);
+      timer = setInterval(next, 6000);
+    }
+
+    dots.forEach((dot, i) => {
+      dot.addEventListener('click', () => {
+        show(i);
+        startTimer();
+      });
+    });
+
+    if(cards.length > 1){
+      startTimer();
+    }
+  })();
+
+  // Disruption grid flashing
+  (function(){
+    const cells = document.querySelectorAll('.d-cell');
+    if(!cells.length) return;
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(prefersReduced) return;
+
+    function flashRandom(){
+      const idx = Math.floor(Math.random() * cells.length);
+      const cell = cells[idx];
+      cell.classList.remove('flash');
+      // force reflow to restart animation
+      void cell.offsetWidth;
+      cell.classList.add('flash');
+    }
+
+    // initial staggered flashes
+    setTimeout(flashRandom, 600);
+    setTimeout(flashRandom, 1400);
+
+    setInterval(flashRandom, 1300);
+  })();
+</script>
 
 </body>
 </html>
