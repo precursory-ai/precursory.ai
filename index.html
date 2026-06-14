@@ -6,11 +6,11 @@
 <title>Precursory — Margin Insurance for Freight Brokerages</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --ink:#0E1410;
-    --paper:#F7F4ED;
+    --paper:#FAFAF8;
     --ledger:#2D5A4A;
     --ledger-soft:#3E7464;
     --stamp:#C4392B;
@@ -24,12 +24,11 @@
   html{scroll-behavior:smooth;}
 
   body{
-    background-color:var(--paper);
+    background-color:#FAFAF8;
     background-image:
-      linear-gradient(180deg, var(--paper) 0%, rgba(247,244,237,0) 28%, rgba(247,244,237,0) 72%, var(--paper) 100%),
-      linear-gradient(to right, rgba(45,90,74,0.045) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(45,90,74,0.045) 1px, transparent 1px);
-    background-size: 100% 100%, 32px 32px, 32px 32px;
+      linear-gradient(to right, rgba(45,90,74,0.025) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(45,90,74,0.025) 1px, transparent 1px);
+    background-size: 32px 32px, 32px 32px;
     background-attachment: fixed;
     color:var(--ink);
     font-family:'Inter', sans-serif;
@@ -42,8 +41,6 @@
 
   a{ color:inherit; }
 
-  .mono{ font-family:'Inter', sans-serif; }
-
   .label{
     font-family:'Inter', sans-serif;
     font-size:0.72rem;
@@ -53,7 +50,7 @@
   }
 
   h1, h2, h3{
-    font-family:'Fraunces', serif;
+    font-family:'Space Grotesk', sans-serif;
     font-weight:600;
     letter-spacing:-0.01em;
   }
@@ -63,15 +60,16 @@
     position:sticky; top:0; z-index:50;
     display:flex; align-items:center; justify-content:space-between;
     padding:1.4rem clamp(1.5rem, 5vw, 4rem);
-    background:rgba(247,244,237,0.85);
+    background:rgba(250,250,248,0.85);
     backdrop-filter:blur(8px);
     border-bottom:1px solid var(--line);
+    gap:1rem;
   }
   .wordmark{
-    font-family:'Fraunces', serif;
-    font-weight:700;
-    font-size:1.15rem;
-    letter-spacing:-0.01em;
+    font-family:'Sora', sans-serif;
+    font-weight:600;
+    font-size:1.2rem;
+    letter-spacing:0.04em;
     display:flex; align-items:center; gap:0.55rem;
   }
   .mark{
@@ -99,7 +97,13 @@
     border-radius:50%;
     background:var(--stamp);
   }
-  nav{ display:flex; gap:2rem; align-items:center; }
+  nav{
+    display:flex; gap:2rem; align-items:center;
+    overflow-x:auto;
+    scrollbar-width:none;
+    -ms-overflow-style:none;
+  }
+  nav::-webkit-scrollbar{ display:none; }
   nav a{
     font-family:'Inter', sans-serif;
     font-size:0.78rem;
@@ -109,6 +113,8 @@
     color:var(--ink);
     opacity:0.7;
     transition:opacity .15s ease;
+    white-space:nowrap;
+    flex-shrink:0;
   }
   nav a:hover{ opacity:1; }
   .nav-cta{
@@ -120,7 +126,7 @@
   .nav-cta:hover{ background:var(--ink); color:var(--paper); }
 
   @media (max-width: 720px){
-    nav .nav-link{ display:none; }
+    nav{ flex:1; gap:1.2rem; justify-content:flex-start; }
   }
 
   /* ===== Hero ===== */
@@ -149,8 +155,8 @@
   }
 
   .hero h1{
-    font-size:clamp(2.4rem, 5.6vw, 4rem);
-    line-height:1.04;
+    font-size:clamp(2.2rem, 5.4vw, 3.8rem);
+    line-height:1.08;
     margin-bottom:1.4rem;
   }
   .hero h1 em{
@@ -161,7 +167,7 @@
   .hero p.lede{
     font-size:1.05rem;
     color:#3a352c;
-    max-width:46ch;
+    max-width:52ch;
     margin-bottom:2rem;
   }
 
@@ -319,12 +325,12 @@
     transform:rotateX(0deg);
   }
   .flip-card blockquote{
-    font-family:'Fraunces', serif;
+    font-family:'Space Grotesk', sans-serif;
     font-weight:500;
     font-style:italic;
     font-size:clamp(1.3rem, 3vw, 1.9rem);
     line-height:1.45;
-    max-width:46ch;
+    max-width:48ch;
   }
   .flip-card blockquote .accent{
     color:#9fd9c4;
@@ -387,7 +393,7 @@
   }
   .product-row:first-child{ border-top:1px solid var(--line); }
   .product-row.coming-soon{
-    opacity:0.6;
+    opacity:0.55;
   }
   @media (max-width:760px){
     .product-row{ grid-template-columns:1fr; gap:0.8rem; }
@@ -412,6 +418,30 @@
     color:var(--ledger);
   }
   .product-row.coming-soon .product-tagline{ color:var(--grey); }
+
+  .fig-diagram{
+    margin-top:0.9rem;
+    border:1px solid var(--line);
+    border-radius:4px;
+    background:#fff;
+    padding:0.6rem;
+    max-width:240px;
+  }
+  .fig-diagram svg{ width:100%; height:auto; display:block; }
+  .fig-diagram .fig-cap{
+    font-family:'Inter', sans-serif;
+    font-size:0.65rem; letter-spacing:0.08em; text-transform:uppercase;
+    color:var(--grey); text-align:center; margin-top:0.5rem;
+  }
+  .fig-frame{ fill:none; stroke:var(--line); stroke-width:1; stroke-dasharray:3 5; }
+  .fig-axis{ stroke:var(--line); stroke-width:1; }
+  .fig-dashed{ stroke:var(--grey); stroke-width:1; stroke-dasharray:4 4; }
+  .fig-curve{ fill:none; stroke:var(--ledger); stroke-width:1.8; }
+  .fig-shade{ fill:rgba(196,57,43,0.14); stroke:none; }
+  .fig-label{
+    font-family:'Inter', sans-serif; font-size:9.5px; fill:var(--grey);
+    letter-spacing:0.06em; text-transform:uppercase;
+  }
   .product-desc p{
     color:#544f44;
     font-size:0.96rem;
@@ -497,12 +527,15 @@
 
   .mechanism{
     display:grid;
-    grid-template-columns:repeat(3, 1fr);
+    grid-template-columns:repeat(4, 1fr);
     gap:1px;
     background:var(--line);
     border:1px solid var(--line);
   }
-  @media (max-width:800px){
+  @media (max-width:1000px){
+    .mechanism{ grid-template-columns:repeat(2, 1fr); }
+  }
+  @media (max-width:560px){
     .mechanism{ grid-template-columns:1fr; }
   }
   .step{
@@ -518,8 +551,8 @@
     margin-bottom:1.2rem;
     display:block;
   }
-  .step h3{ font-size:1.25rem; margin-bottom:0.6rem; }
-  .step p{ color:#544f44; font-size:0.95rem; }
+  .step h3{ font-size:1.15rem; margin-bottom:0.6rem; }
+  .step p{ color:#544f44; font-size:0.92rem; }
   .step .tag{
     margin-top:1.2rem;
     font-family:'Inter', sans-serif;
@@ -555,12 +588,12 @@
   .team-grid{
     display:grid;
     grid-template-columns:repeat(2, 1fr);
-    gap:1.25rem;
-    max-width:75%;
-    margin:0 auto;
+    gap:1px;
+    background:var(--line);
+    border:1px solid var(--line);
   }
   @media (max-width:700px){
-    .team-grid{ grid-template-columns:1fr; max-width:100%; }
+    .team-grid{ grid-template-columns:1fr; }
   }
 
   .team-card{
@@ -633,7 +666,7 @@
     transition: max-height .45s ease, opacity .35s ease, margin-top .45s ease;
   }
   .team-card:hover .team-bio{
-    max-height:220px;
+    max-height:260px;
     opacity:1;
   }
   .team-card:hover .team-cursor-hint{ opacity:0; }
@@ -643,21 +676,21 @@
 
   @media (max-width:700px){
     /* on touch devices, show bios always */
-    .team-bio{ max-height:220px; opacity:1; margin-top:0.9rem; }
+    .team-bio{ max-height:260px; opacity:1; margin-top:0.9rem; }
     .team-cursor-hint{ display:none; }
     .team-overlay{ background:linear-gradient(180deg, rgba(14,20,16,0) 10%, rgba(14,20,16,0.94) 100%); }
   }
 
   /* ===== FAQ ===== */
   .section-title-block{
-    align-self:flex-start;
-    font-family:'Inter', sans-serif;
-    font-weight:600;
-    font-size:0.72rem;
-    letter-spacing:0.18em;
-    text-transform:uppercase;
-    color:var(--grey);
-    margin-bottom:0.2rem;
+    display:inline-block;
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    font-size:clamp(2.2rem, 6vw, 3.2rem);
+    padding-bottom:0.35rem;
+    margin-bottom:0.8rem;
+    line-height:1.15;
+    border-bottom:2px solid var(--stamp);
   }
   .faq-tabs{
     display:flex;
@@ -768,12 +801,61 @@
     padding-top:1.5rem;
   }
   .footer-bottom a{ text-decoration:none; color:#9fd9c4; }
+
+  .footer-sub{
+    font-family:'Inter', sans-serif;
+    font-size:0.92rem;
+    color:#c9c4b4;
+    max-width:42ch;
+    margin-top:0.7rem;
+    line-height:1.6;
+  }
+
+  /* ===== Flip-digit reveal ===== */
+  .flip-number{
+    display:inline-flex;
+    align-items:center;
+    gap:2px;
+    font-weight:700;
+    color:var(--ledger);
+    margin:0 0.05em;
+    vertical-align:middle;
+  }
+  .flip-number .static-char{
+    font-family:'Inter', sans-serif;
+    color:var(--ledger);
+  }
+  .flip-digit{
+    position:relative;
+    display:inline-block;
+    width:0.66em;
+    height:1.15em;
+    overflow:hidden;
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:2px;
+    vertical-align:middle;
+  }
+  .flip-digit .digit-strip{
+    display:flex;
+    flex-direction:column;
+    transition: transform 0.45s cubic-bezier(.3,.85,.35,1);
+    will-change: transform;
+  }
+  .flip-digit .digit-strip span{
+    height:1.15em;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:'Inter', sans-serif;
+  }
+
 </style>
 </head>
 <body>
 
 <header>
-  <div class="wordmark">Precursory<span class="mark"><span class="dash"></span><span class="dot"></span></span></div>
+  <div class="wordmark"><span class="word-text">Precursory</span><span class="mark"><span class="dash"></span><span class="dot"></span></span></div>
   <nav>
     <a class="nav-link" href="#products">products</a>
     <a class="nav-link" href="#mechanism">mechanism</a>
@@ -786,12 +868,14 @@
 <section class="hero">
   <div>
     <div class="eyebrow"><span class="label">Precursory · MGA</span></div>
-    <h1>Parametric insurance<br>for <em>supply chain volatility</em>.</h1>
+    <h1>Volatility happens. <em>Your margin</em> shouldn't.</h1>
     <p class="lede">
-      Freight rates swing. Fuel spikes. Margins compress overnight. Precursory
-      writes parametric guarantees against the volatility that's structurally
-      built into supply chains — so a bad quarter for the market doesn't have
-      to mean a bad quarter for you.
+      By the time volatility shows up in your numbers, it already has a
+      name: last quarter. The shock happened weeks ago. The number just
+      arrived. A geopolitical event. A fuel spike. A run of tender
+      rejections nobody caught in time. Each one quiet enough to ignore —
+      until together, they're the reason this quarter's margin came in
+      short.
     </p>
     <div class="hero-ctas">
       <a class="btn btn-primary" href="#products">See our products</a>
@@ -885,38 +969,39 @@
     <div class="flip-stage">
       <div class="flip-card active" data-quote="0">
         <blockquote>
-          Fuel surcharges are supposed to pass volatility through. In practice,
-          the lag between the spike and the surcharge update is where margin
-          quietly disappears.
-          <span class="accent">We insure that lag.</span>
+          Precursory tracks two layers at once — macro signals like fuel,
+          freight rates, and demand shocks, and micro signals like detention,
+          layover, and TONU. One model, built on your historical baseline and
+          updated in real time.
+          <span class="accent">Two layers. One picture.</span>
         </blockquote>
-        <div class="quote-attr">Fuel Price Volatility</div>
+        <div class="quote-attr">The View</div>
       </div>
 
       <div class="flip-card" data-quote="1">
         <blockquote>
-          Energy solved margin volatility with index-based derivatives — and
-          accepted basis risk as the cost of not seeing inside the plant.
-          <span class="accent">We can see inside the brokerage.</span>
+          That model doesn't just flag volatility coming — it sets a floor.
+          If your realized margin falls below it, the gap is paid out
+          automatically, from your own data.
+          <span class="accent">Zero basis risk.</span>
         </blockquote>
-        <div class="quote-attr">Brokerage Margin Volatility</div>
+        <div class="quote-attr">The Guarantee</div>
       </div>
 
       <div class="flip-card" data-quote="2">
         <blockquote>
-          Detention, layover, and TONU don't show up in the rate sheet — they
-          show up in the actuals, three weeks later, as a number nobody
-          budgeted for.
-          <span class="accent">We cap that number before it lands.</span>
+          That volatility doesn't stay abstract for long — it shows up in
+          your margin, your costs, your exposure.
+          <span class="accent">This is where Precursory steps in.</span>
         </blockquote>
-        <div class="quote-attr">Accessorial Cost Volatility</div>
+        <div class="quote-attr">The Shift</div>
       </div>
     </div>
 
-    <div class="flip-controls" role="tablist" aria-label="Volatility examples">
-      <button class="flip-dot active" data-index="0" aria-label="Show quote 1"></button>
-      <button class="flip-dot" data-index="1" aria-label="Show quote 2"></button>
-      <button class="flip-dot" data-index="2" aria-label="Show quote 3"></button>
+    <div class="flip-controls" role="tablist" aria-label="How Precursory protects you">
+      <button class="flip-dot active" data-index="0" aria-label="Show statement 1"></button>
+      <button class="flip-dot" data-index="1" aria-label="Show statement 2"></button>
+      <button class="flip-dot" data-index="2" aria-label="Show statement 3"></button>
     </div>
   </div>
 </div>
@@ -924,11 +1009,11 @@
 <section class="section" id="products" data-index="§ 01 — PRODUCTS">
   <div class="section-head">
     <div class="section-title-block">Products</div>
-    <h2>Guarantees against the volatility you already live with.</h2>
+    <h2>Stop absorbing the volatility you've been pricing around.</h2>
     <p>
-      Each product targets a specific source of supply chain volatility —
-      priced parametrically, triggered by data you already generate, and
-      paid out without a claims fight.
+      Whatever the source — your network, the macro market, or the gap
+      between the two — Precursory turns it into a defined guarantee. Priced
+      from your data. Triggered by your data. Paid out without a claims fight.
     </p>
   </div>
 
@@ -938,15 +1023,28 @@
       <div class="product-name">
         <h3>Minimum Margin Guarantee</h3>
         <div class="product-tagline">Margin insurance · Brokerages</div>
+        <div class="fig-diagram">
+          <svg viewBox="0 0 320 180" width="320" height="180" role="img" aria-label="Diagram showing margin dipping below a floor line, with the gap shaded and labeled as the payout.">
+            <rect x="4" y="4" width="312" height="172" class="fig-frame"/>
+            <line x1="30" y1="150" x2="300" y2="150" class="fig-axis"/>
+            <line x1="30" y1="20" x2="30" y2="150" class="fig-axis"/>
+            <line x1="30" y1="100" x2="300" y2="100" class="fig-dashed"/>
+            <text x="296" y="93" text-anchor="end" class="fig-label">FLOOR</text>
+            <path d="M30,60 C 80,55 110,70 140,110 C 160,135 190,140 220,95 C 250,60 280,70 300,65" class="fig-curve"/>
+            <path d="M140,110 C160,135 190,140 190,100 L140,100 Z" class="fig-shade"/>
+            <text x="165" y="166" text-anchor="middle" class="fig-label">PAYOUT GAP</text>
+          </svg>
+          <div class="fig-cap">Margin vs. floor</div>
+        </div>
       </div>
       <div class="product-desc">
         <p>
-          Guarantees that a brokerage's quarterly portfolio average margin
-          won't fall below a defined floor — triggered by TMS-verified
+          Your portfolio margin won't fall below a floor you can plan around
+          — no matter what the market does, guaranteed by TMS-verified
           load-level data, with zero basis risk. If realized margin dips
           below the floor, the gap is paid out automatically.
         </p>
-        <div class="product-status">Live · pilot pricing $2.00/load</div>
+
       </div>
     </div>
 
@@ -955,28 +1053,41 @@
       <div class="product-name">
         <h3>Accessorial Cost Guarantee</h3>
         <div class="product-tagline">Expense insurance · Shippers</div>
+        <div class="fig-diagram">
+          <svg viewBox="0 0 320 180" width="320" height="180" role="img" aria-label="Diagram showing accessorial cost rising above a cap line, with the excess shaded and labeled as reimbursed.">
+            <rect x="4" y="4" width="312" height="172" class="fig-frame"/>
+            <line x1="30" y1="150" x2="300" y2="150" class="fig-axis"/>
+            <line x1="30" y1="20" x2="30" y2="150" class="fig-axis"/>
+            <line x1="30" y1="90" x2="300" y2="90" class="fig-dashed"/>
+            <text x="296" y="83" text-anchor="end" class="fig-label">CAP</text>
+            <path d="M30,120 C 80,118 110,100 140,60 C 160,35 190,30 220,75 C 250,110 280,110 300,105" class="fig-curve"/>
+            <path d="M140,60 C160,35 190,30 190,90 L140,90 Z" class="fig-shade"/>
+            <text x="165" y="24" text-anchor="middle" class="fig-label">REIMBURSED</text>
+          </svg>
+          <div class="fig-cap">Accessorial cost vs. cap</div>
+        </div>
       </div>
       <div class="product-desc">
         <p>
-          Caps a shipper's exposure to accessorial costs — detention,
-          layover, TONU, and other fees that spike unpredictably and erode
-          freight budgets. Verified against shipment-level data, so payouts
-          track real exposure rather than an industry average.
+          Detention, layover, and TONU stop being the number that blows up
+          your freight budget after the rate's already locked in — capped
+          against your shipment-level accessorial spend, verified directly
+          from your data. If realized accessorial spend exceeds the cap, the
+          excess is reimbursed automatically.
         </p>
-        <div class="product-status">Design partner pilots underway</div>
+
       </div>
     </div>
 
     <div class="product-row coming-soon">
       <div class="product-id">P-03<br>—</div>
       <div class="product-name">
-        <h3>Rate Volatility Guarantee</h3>
-        <div class="product-tagline">Coming soon</div>
+        <h3>Coming soon</h3>
       </div>
       <div class="product-desc">
         <p>
-          A parametric guarantee against freight rate swings — for shippers
-          and brokers exposed to spot market volatility on key lanes.
+          A parametric guarantee against freight rate volatility — for
+          shippers and brokers exposed to spot market movement on key lanes.
         </p>
         <div class="product-status">In development</div>
       </div>
@@ -987,11 +1098,12 @@
 <section class="section" id="mechanism" data-index="§ 02 — MECHANISM">
   <div class="section-head">
     <div class="section-title-block">How It Works</div>
-    <h2>From your operational data to a payout — by product.</h2>
+    <h2>From your operational data to a payout.</h2>
     <p>
-      Every Precursory product follows the same shape: real operational data
-      in, a verified calculation, and an automatic payout if you cross the
-      line. The data source and the trigger change by product.
+      Every Precursory product follows the same shape: your history sets the
+      floor, real-time data tracks where you stand, predictive signals price
+      the guarantee ahead of the disruption — and if you cross the line, the
+      gap is paid automatically.
     </p>
     <div class="mech-tabs" role="tablist">
       <button class="mech-tab active" role="tab" aria-selected="true" data-target="mmg">MMG</button>
@@ -1004,30 +1116,36 @@
     <div class="mech-panel active" id="panel-mmg">
       <div class="mechanism">
         <div class="step">
-          <span class="step-num">01 / TMS DATA</span>
-          <h3>Load-level feed</h3>
-          <p>Your TMS streams revenue and cost data for every load — automatically, with no manual reporting.</p>
+          <span class="step-num">01 / HISTORICAL</span>
+          <h3>Your floor, from your own margin history</h3>
+          <p>TMS-verified load-level revenue and cost data establishes your portfolio's baseline margin — the floor your guarantee is built around.</p>
+          <div class="tag">Not an industry benchmark</div>
+        </div>
+        <div class="step">
+          <span class="step-num">02 / REAL-TIME</span>
+          <h3>Portfolio margin, tracked continuously</h3>
+          <p>Your TMS streams revenue and cost data for every load, automatically. We compute your realized quarterly portfolio average margin — the same number you already track internally.</p>
           <div class="tag">Mastery · McLeod integrations live</div>
         </div>
         <div class="step">
-          <span class="step-num">02 / MARGIN CALC</span>
-          <h3>Portfolio margin, verified</h3>
-          <p>We compute your realized quarterly portfolio average margin directly from that data — the same number you already track internally.</p>
-          <div class="tag">Zero basis risk by construction</div>
+          <span class="step-num">03 / PREDICTIVE</span>
+          <h3>Compression modeled before the close</h3>
+          <p>Macro signals (fuel, freight rates, demand shocks) and micro signals (lane performance, accessorial trends) weight into pricing — so the guarantee reflects pressure on your book before it appears in the quarterly numbers.</p>
+          <div class="tag">Priced ahead of the disruption</div>
         </div>
         <div class="step">
-          <span class="step-num">03 / FLOOR & PAYOUT</span>
-          <h3>Indemnity, automatically</h3>
-          <p>If your realized margin falls below the agreed floor, the gap is paid out — no claims adjuster, no dispute over whose number is right.</p>
+          <span class="step-num">04 / PAYOUT</span>
+          <h3>Settled, automatically</h3>
+          <p>If realized portfolio margin falls below the agreed floor, the gap is paid out — no claims adjuster, no dispute over whose number is right.</p>
           <div class="tag">Settled from your own ledger</div>
         </div>
       </div>
 
       <div class="formula">
-        <span class="label">Pricing</span>
+        <span class="label">Your number</span>
         <div class="formula-eq">
-          Rate = <span class="const">$2.00</span> ×
-          ( <span class="var">Avg Load Revenue</span> / <span class="const">$2,000</span> benchmark )
+          Your floor: <span class="flip-number" data-value="11.4%"></span>.
+          Set from your data, not an industry average.
         </div>
       </div>
     </div>
@@ -1035,29 +1153,36 @@
     <div class="mech-panel" id="panel-acg">
       <div class="mechanism">
         <div class="step">
-          <span class="step-num">01 / SHIPMENT DATA</span>
-          <h3>Accessorial feed</h3>
+          <span class="step-num">01 / HISTORICAL</span>
+          <h3>Your cap, from your own cost distribution</h3>
+          <p>Detention, layover, and TONU history at the shipment level establishes the cap — reflecting your real accessorial exposure.</p>
+          <div class="tag">Not a generic industry rate</div>
+        </div>
+        <div class="step">
+          <span class="step-num">02 / REAL-TIME</span>
+          <h3>Accessorial spend, captured as it's billed</h3>
           <p>Detention, layover, and TONU charges are captured at the shipment level as they're billed — straight from your TMS or accounting system.</p>
           <div class="tag">No manual claims paperwork</div>
         </div>
         <div class="step">
-          <span class="step-num">02 / EXPOSURE CALC</span>
-          <h3>Accessorial spend, verified</h3>
-          <p>We compute your realized accessorial cost against the agreed cap — using the same shipment data your team already reconciles.</p>
-          <div class="tag">Tracks real exposure, not an industry average</div>
+          <span class="step-num">03 / PREDICTIVE</span>
+          <h3>Spikes flagged before the invoice lands</h3>
+          <p>Signals like dock throughput, capacity tightness, and demand shocks weight into your exposure model — flagging accessorial spikes across your network before they hit your books.</p>
+          <div class="tag">Modeled across your network</div>
         </div>
         <div class="step">
-          <span class="step-num">03 / CAP & REIMBURSEMENT</span>
-          <h3>Reimbursement, automatically</h3>
-          <p>If accessorial spend exceeds the cap, the excess is reimbursed — settled directly from verified shipment data.</p>
+          <span class="step-num">04 / REIMBURSEMENT</span>
+          <h3>Settled, automatically</h3>
+          <p>If realized accessorial spend exceeds the agreed cap, the excess is reimbursed — calculated directly from verified shipment data.</p>
           <div class="tag">Settled from your own ledger</div>
         </div>
       </div>
 
       <div class="formula">
-        <span class="label">Coverage</span>
+        <span class="label">Your number</span>
         <div class="formula-eq">
-          Reimbursement = <span class="var">Realized Accessorial Cost</span> − <span class="const">Agreed Cap</span>
+          Your cap: <span class="flip-number" data-value="$220"></span>/load.
+          Set from your data, not an industry average.
         </div>
       </div>
     </div>
@@ -1083,9 +1208,12 @@
           <div class="team-cursor-hint">hover for bio</div>
         </div>
         <p class="team-bio">
-          Led product for driver incentives and pricing at Uber and Amazon —
-          building real-time supply and demand systems that priced risk at
-          the load level, every day, at scale.
+          Built driver incentive systems at Uber and Amazon — a form of
+          pseudo-insurance that guaranteed the right number of drivers were
+          in the right place at the right time, orchestrated through both
+          predictive and real-time triggers. He brings that same
+          incentive-as-guarantee logic to Precursory's parametric insurance
+          model.
         </p>
       </div>
     </div>
@@ -1101,9 +1229,13 @@
           <div class="team-cursor-hint">hover for bio</div>
         </div>
         <p class="team-bio">
-          Previously led technology for USXpress's brokerage operation —
-          the shipper-integration and TMS work that makes Precursory's
-          zero-basis-risk data pipeline possible.
+          Built predictive and real-time systems for pricing and capacity
+          across supply chain operations, with deep experience integrating
+          into complex enterprise systems where security and reliability are
+          non-negotiable. He brings that same systems thinking to
+          Precursory — building the data infrastructure that lets policies
+          trigger and settle directly against a brokerage's live operational
+          data.
         </p>
       </div>
     </div>
@@ -1279,8 +1411,15 @@
 <footer id="contact">
   <div class="footer-inner">
     <div class="footer-top">
-      <h2>Ready to cap your volatility?</h2>
-      <a class="btn btn-primary" href="mailto:mohan@precursory.ai" style="background:var(--paper); color:var(--ink); border-color:var(--paper);">Talk to us</a>
+      <div>
+        <h2>Ready to know your number?</h2>
+        <p class="footer-sub">
+          Send us your historical load-level margin or accessorial cost
+          data — we'll calculate your floor, your cap, and your premium,
+          specific to your book.
+        </p>
+      </div>
+      <a class="btn btn-primary" href="mailto:mohan@precursory.ai?subject=Get%20my%20floor%2Fcap%20and%20premium" style="background:var(--paper); color:var(--ink); border-color:var(--paper);">Send your data</a>
     </div>
     <div class="footer-bottom">
       <span>Precursory Technologies, Inc. — San Francisco</span>
@@ -1324,7 +1463,7 @@
     });
   });
 
-  // Flipboard quote rotation
+  // Flipboard statement rotation
   (function(){
     const cards = document.querySelectorAll('.flip-card');
     const dots = document.querySelectorAll('.flip-dot');
@@ -1358,6 +1497,83 @@
     }
   })();
 
+  // Flip-digit number reveal
+  (function(){
+    const containers = document.querySelectorAll('.flip-number');
+    if(!containers.length) return;
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function buildDigit(target){
+      const wrap = document.createElement('span');
+      wrap.className = 'flip-digit';
+      const strip = document.createElement('span');
+      strip.className = 'digit-strip';
+      for(let i=0;i<10;i++){
+        const s = document.createElement('span');
+        s.textContent = i;
+        strip.appendChild(s);
+      }
+      wrap.appendChild(strip);
+      if(prefersReduced){
+        strip.style.transition = 'none';
+        strip.style.transform = `translateY(-${target * 1.15}em)`;
+      }
+      return { wrap, strip, target };
+    }
+
+    containers.forEach(container => {
+      const value = container.dataset.value || '';
+      container.innerHTML = '';
+      const digits = [];
+      value.split('').forEach(ch => {
+        if(/[0-9]/.test(ch)){
+          const d = buildDigit(parseInt(ch,10));
+          container.appendChild(d.wrap);
+          digits.push(d);
+        } else {
+          const span = document.createElement('span');
+          span.className = 'static-char';
+          span.textContent = ch;
+          container.appendChild(span);
+        }
+      });
+      container._flipDigits = digits;
+    });
+
+    if(prefersReduced) return;
+
+    function spin(container){
+      (container._flipDigits || []).forEach((d, i) => {
+        let ticks = 10 + i * 3;
+        let count = 0;
+        const interval = setInterval(() => {
+          const r = Math.floor(Math.random() * 10);
+          d.strip.style.transition = 'none';
+          d.strip.style.transform = `translateY(-${r * 1.15}em)`;
+          count++;
+          if(count >= ticks){
+            clearInterval(interval);
+            requestAnimationFrame(() => {
+              d.strip.style.transition = 'transform 0.45s cubic-bezier(.3,.85,.35,1)';
+              d.strip.style.transform = `translateY(-${d.target * 1.15}em)`;
+            });
+          }
+        }, 55);
+      });
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if(entry.isIntersecting){
+          spin(entry.target);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.6 });
+
+    containers.forEach(c => observer.observe(c));
+  })();
+
   // Disruption grid flashing
   (function(){
     const cells = document.querySelectorAll('.d-cell');
@@ -1369,12 +1585,10 @@
       const idx = Math.floor(Math.random() * cells.length);
       const cell = cells[idx];
       cell.classList.remove('flash');
-      // force reflow to restart animation
       void cell.offsetWidth;
       cell.classList.add('flash');
     }
 
-    // initial staggered flashes
     setTimeout(flashRandom, 600);
     setTimeout(flashRandom, 1400);
 
