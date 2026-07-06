@@ -16,6 +16,8 @@
     --stamp:#C4392B;
     --grey:#8A8475;
     --line:#D9D4C7;
+    --line-mid:#C8C3B5;
+    --bg-raised:#F3F0E8;
     --max:1080px;
   }
 
@@ -524,6 +526,156 @@
   }
   .section-head h2{ font-size:clamp(1.6rem, 3.5vw, 2.4rem); max-width:26ch; }
   .section-head p{ color:#544f44; max-width:50ch; }
+
+  /* ===== Your Number (interactive tier selector) ===== */
+  .your-number{ margin-top:clamp(2rem, 5vw, 3rem); }
+  .your-number .label{ display:block; margin-bottom:0.9rem; }
+  .your-number .yn-title{
+    font-family:'Space Grotesk', sans-serif;
+    font-size:clamp(1.25rem, 3vw, 1.6rem);
+    font-weight:700; letter-spacing:-0.01em;
+    margin-bottom:0.4rem;
+    max-width:26ch;
+  }
+  .your-number .yn-sub{
+    color:var(--grey); font-size:0.95rem;
+    margin-bottom:1.6rem; max-width:52ch;
+  }
+  .your-number .top-block{
+    border:1px solid var(--line);
+    border-radius:6px;
+    overflow:hidden;
+    margin-bottom:1px;
+    background:#fff;
+  }
+  .your-number .stat-row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    border-bottom:1px solid var(--line);
+    min-height:110px;
+  }
+  .your-number .stat-cell{
+    background:#fff;
+    padding:1.4rem 1.6rem;
+    display:flex; flex-direction:column; gap:0.25rem;
+    justify-content:center;
+  }
+  .your-number .stat-cell:first-child{ border-right:1px solid var(--line); }
+  .your-number .stat-lbl{
+    font-size:0.65rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--grey);
+  }
+  .your-number .stat-val{
+    font-family:'Space Grotesk', sans-serif;
+    font-size:clamp(1.8rem, 4vw, 2.4rem);
+    font-weight:700; letter-spacing:-0.01em;
+    color:var(--stamp); line-height:1.1;
+  }
+  .your-number .stat-val.animating{ animation:yn-pop 0.3s ease; }
+  @keyframes yn-pop{
+    0%{ opacity:0; transform:translateY(5px); }
+    100%{ opacity:1; transform:translateY(0); }
+  }
+  .your-number .stat-note{ font-size:0.78rem; color:var(--grey); }
+
+  .your-number .example-block{
+    padding:1.1rem 1.6rem;
+    background:var(--bg-raised);
+    display:flex; flex-direction:column; gap:0;
+  }
+  .your-number .example-lbl{
+    font-size:0.65rem; letter-spacing:0.14em; text-transform:uppercase;
+    color:var(--grey); margin-bottom:0.75rem;
+  }
+  .your-number .example-lines{ display:flex; flex-direction:column; gap:0.35rem; }
+  .your-number .ex-line{
+    display:flex; justify-content:space-between; align-items:baseline;
+    font-size:0.85rem; gap:1rem;
+  }
+  .your-number .ex-line .el{ color:var(--grey); }
+  .your-number .ex-line .ev{
+    font-family:'Space Grotesk', sans-serif; font-weight:700;
+    color:var(--ink); font-size:0.9rem;
+    transition:color 0.2s;
+  }
+  .your-number .ex-line .ev.stamp{ color:var(--stamp); }
+  .your-number .ex-line.total{
+    border-top:1px solid var(--line); margin-top:0.4rem; padding-top:0.5rem;
+  }
+  .your-number .ex-line.total .el{ font-weight:600; color:var(--ink); font-size:0.88rem; }
+  .your-number .ex-line.total .ev{ font-size:1rem; color:var(--stamp); }
+  .your-number .ev.animating{ animation:yn-pop 0.3s ease; }
+
+  .your-number .tier-grid{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:1px;
+    background:var(--line);
+    border:1px solid var(--line);
+    border-top:none;
+    border-radius:0 0 6px 6px;
+    overflow:hidden;
+  }
+  @media (max-width:640px){
+    .your-number .tier-grid{ grid-template-columns:repeat(2, 1fr); }
+  }
+  .your-number .tier-col{
+    background:#fff;
+    padding:1.3rem 1.1rem 1.2rem;
+    cursor:pointer;
+    display:flex; flex-direction:column; gap:0.4rem;
+    position:relative;
+    transition:background 0.18s ease;
+    border-top:3px solid transparent;
+  }
+  .your-number .tier-col:hover{ background:rgba(196,57,43,0.02); }
+  .your-number .tier-col.active{
+    background:rgba(196,57,43,0.04);
+    border-top-color:var(--stamp);
+  }
+  .your-number .tier-badge{
+    font-size:0.58rem; letter-spacing:0.1em; text-transform:uppercase;
+    padding:0.12rem 0.4rem; border-radius:2px; font-weight:600;
+    font-family:'Inter', sans-serif; display:inline-flex; align-self:flex-start;
+  }
+  .your-number .tier-badge.free{ background:rgba(196,57,43,0.1); color:var(--stamp); }
+  .your-number .tier-badge.paid{ background:rgba(45,90,74,0.1); color:var(--ledger); }
+  .your-number .tier-name{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700; font-size:0.9rem; color:var(--ink);
+    line-height:1.2; transition:color 0.18s;
+  }
+  .your-number .tier-col.active .tier-name{ color:var(--stamp); }
+  .your-number .tier-desc{ font-size:0.72rem; color:var(--grey); line-height:1.4; }
+  .your-number .tier-bar-track{
+    height:3px; background:var(--line); border-radius:2px;
+    overflow:hidden; margin-top:0.6rem;
+  }
+  .your-number .tier-bar-fill{
+    height:100%; background:var(--line-mid); border-radius:2px;
+    transition:background 0.18s ease;
+  }
+  .your-number .tier-col.active .tier-bar-fill{ background:var(--stamp); }
+  .your-number .tier-floor-preview{
+    font-family:'Space Grotesk', sans-serif;
+    font-size:0.82rem; font-weight:700;
+    color:var(--line-mid); margin-top:0.3rem;
+    transition:color 0.18s;
+  }
+  .your-number .tier-col.active .tier-floor-preview{ color:var(--stamp); }
+
+  .your-number .cycle-dots{
+    display:flex; gap:5px; align-items:center; margin-top:1.1rem;
+  }
+  .your-number .cycle-dot{
+    width:18px; height:2px; background:var(--line);
+    border-radius:2px; position:relative; overflow:hidden; cursor:pointer;
+  }
+  .your-number .cycle-dot::after{
+    content:''; position:absolute; inset:0; background:var(--stamp);
+    transform:scaleX(0); transform-origin:left;
+  }
+  .your-number .cycle-dot.active::after{ transform:scaleX(1); transition:transform 3s linear; }
+  .your-number .cycle-hint{ font-size:0.65rem; color:var(--grey); letter-spacing:0.06em; margin-left:6px; }
 
   .mechanism{
     display:grid;
@@ -1141,12 +1293,115 @@
         </div>
       </div>
 
-      <div class="formula">
+      <div class="your-number">
         <span class="label">Your number</span>
-        <div class="formula-eq">
-          Your floor: <span class="flip-number" data-value="11.4%"></span>.
-          Set from your data, not an industry average.
+        <h3 class="yn-title">Know your floor before you commit.</h3>
+        <p class="yn-sub">Pick the tier that fits your book — or start with a free diagnostic and upgrade when you're ready.</p>
+
+        <!-- TOP BLOCK -->
+        <div class="top-block">
+
+          <!-- Stats -->
+          <div class="stat-row">
+            <div class="stat-cell">
+              <div class="stat-lbl">Your premium</div>
+              <div class="stat-val" id="stat-premium">$0<span style="font-size:1rem;font-weight:500;">/load</span></div>
+              <div class="stat-note" id="stat-premium-note">No commitment · no card</div>
+            </div>
+            <div class="stat-cell">
+              <div class="stat-lbl">Your floor</div>
+              <div class="stat-val" id="stat-floor">50%</div>
+              <div class="stat-note" id="stat-floor-note">of your average margin</div>
+            </div>
+          </div>
+
+          <!-- Example -->
+          <div class="example-block">
+            <div class="example-lbl">Example · $150/load average margin</div>
+            <div class="example-lines">
+              <div class="ex-line">
+                <span class="el">Average margin / load</span>
+                <span class="ev">$150</span>
+              </div>
+              <div class="ex-line">
+                <span class="el">Guaranteed floor</span>
+                <span class="ev stamp animating" id="ex-floor">$75/load</span>
+              </div>
+              <div class="ex-line">
+                <span class="el">Premium cost</span>
+                <span class="ev" id="ex-premium">$0/load</span>
+              </div>
+              <div class="ex-line total">
+                <span class="el">Protected margin after premium</span>
+                <span class="ev" id="ex-protected">$75/load</span>
+              </div>
+            </div>
+          </div>
+
         </div>
+
+        <!-- TIER COLUMNS -->
+        <div class="tier-grid">
+
+          <div class="tier-col active"
+            data-premium="$0" data-premium-suffix="/load"
+            data-premium-note="No commitment · no card"
+            data-floor="50%" data-floor-note="of your average margin"
+            data-ex-floor="75" data-ex-premium="0">
+            <span class="tier-badge free">Free</span>
+            <div class="tier-name">Diagnostic</div>
+            <div class="tier-desc">CV — Variable</div>
+            <div class="tier-bar-track"><div class="tier-bar-fill" style="width:12%"></div></div>
+            <div class="tier-floor-preview">50% floor</div>
+          </div>
+
+          <div class="tier-col"
+            data-premium="$3" data-premium-suffix="/load"
+            data-premium-note="Flat rate · all loads"
+            data-floor="79–86%" data-floor-note="of your average margin"
+            data-ex-floor="123" data-ex-premium="3">
+            <span class="tier-badge paid">Paid</span>
+            <div class="tier-name">Stable Variance</div>
+            <div class="tier-desc">CV 12–18%</div>
+            <div class="tier-bar-track"><div class="tier-bar-fill" style="width:35%"></div></div>
+            <div class="tier-floor-preview">79–86% floor</div>
+          </div>
+
+          <div class="tier-col"
+            data-premium="$3" data-premium-suffix="/load"
+            data-premium-note="Flat rate · all loads"
+            data-floor="71–79%" data-floor-note="of your average margin"
+            data-ex-floor="112" data-ex-premium="3">
+            <span class="tier-badge paid">Paid</span>
+            <div class="tier-name">Moderate Variance</div>
+            <div class="tier-desc">CV 18–24%</div>
+            <div class="tier-bar-track"><div class="tier-bar-fill" style="width:58%"></div></div>
+            <div class="tier-floor-preview">71–79% floor</div>
+          </div>
+
+          <div class="tier-col"
+            data-premium="$3" data-premium-suffix="/load"
+            data-premium-note="Flat rate · all loads"
+            data-floor="62–71%" data-floor-note="of your average margin"
+            data-ex-floor="99" data-ex-premium="3">
+            <span class="tier-badge paid">Paid</span>
+            <div class="tier-name">High Variance</div>
+            <div class="tier-desc">CV 24–30%</div>
+            <div class="tier-bar-track"><div class="tier-bar-fill" style="width:80%"></div></div>
+            <div class="tier-floor-preview">62–71% floor</div>
+          </div>
+
+        </div>
+
+        <!-- DOTS -->
+        <div class="cycle-dots">
+          <div class="cycle-dot active" data-dot="0"></div>
+          <div class="cycle-dot" data-dot="1"></div>
+          <div class="cycle-dot" data-dot="2"></div>
+          <div class="cycle-dot" data-dot="3"></div>
+          <span class="cycle-hint" id="cycle-hint">Click any tier to pause</span>
+        </div>
+
       </div>
     </div>
 
@@ -1593,6 +1848,84 @@
     setTimeout(flashRandom, 1400);
 
     setInterval(flashRandom, 1300);
+  })();
+
+  // Your Number — tier cycling
+  (function(){
+    const root = document.querySelector('.your-number');
+    if(!root) return;
+
+    const cols = root.querySelectorAll('.tier-col');
+    const dots = root.querySelectorAll('.cycle-dot');
+    if(!cols.length) return;
+
+    const statPremium     = document.getElementById('stat-premium');
+    const statPremiumNote = document.getElementById('stat-premium-note');
+    const statFloor       = document.getElementById('stat-floor');
+    const statFloorNote   = document.getElementById('stat-floor-note');
+    const exFloor         = document.getElementById('ex-floor');
+    const exPremium       = document.getElementById('ex-premium');
+    const exProtected     = document.getElementById('ex-protected');
+    const cycleHint       = document.getElementById('cycle-hint');
+
+    let current = 0, timer = null, paused = false;
+
+    function anim(el){
+      el.classList.remove('animating');
+      void el.offsetWidth;
+      el.classList.add('animating');
+    }
+
+    function activate(i){
+      cols.forEach((c, idx) => c.classList.toggle('active', idx === i));
+      dots.forEach((d, idx) => {
+        d.classList.remove('active');
+        if(idx === i){ void d.offsetWidth; d.classList.add('active'); }
+      });
+
+      const col = cols[i];
+      const floor      = parseFloat(col.dataset.exFloor);
+      const premium    = parseFloat(col.dataset.exPremium);
+      const protected_ = floor - premium;
+
+      anim(statPremium);
+      statPremium.innerHTML = col.dataset.premium +
+        '<span style="font-size:1rem;font-weight:500;">' + col.dataset.premiumSuffix + '</span>';
+      statPremiumNote.textContent = col.dataset.premiumNote;
+
+      anim(statFloor);
+      statFloor.textContent = col.dataset.floor;
+      statFloorNote.textContent = col.dataset.floorNote;
+
+      anim(exFloor);
+      exFloor.textContent = '$' + floor + '/load';
+      exPremium.textContent = '$' + premium + '/load';
+      exProtected.textContent = '$' + protected_ + '/load';
+
+      current = i;
+    }
+
+    function startTimer(){
+      clearInterval(timer);
+      timer = setInterval(() => activate((current + 1) % cols.length), 3000);
+    }
+
+    function togglePause(i){
+      if(!paused){
+        paused = true; clearInterval(timer);
+        cycleHint.textContent = 'Click any tier to resume';
+      } else {
+        paused = false; startTimer();
+        cycleHint.textContent = 'Click any tier to pause';
+      }
+      activate(i);
+    }
+
+    cols.forEach((col, i) => col.addEventListener('click', () => togglePause(i)));
+    dots.forEach((dot, i) => dot.addEventListener('click', () => togglePause(i)));
+
+    activate(0);
+    startTimer();
   })();
 </script>
 
