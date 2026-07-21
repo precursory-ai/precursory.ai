@@ -1,1952 +1,783 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Precursory — Margin Protection for Freight Brokerages</title>
-<meta name="description" content="Volatility happens. Your margin shouldn't. Precursory is margin protection for freight brokerages — we monitor the macro and micro signals that erode margin and pay out when they hit." />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Precursory — Performance Insurance for the Autonomy Economy</title>
+<meta name="description" content="Precursory is performance insurance for AI agents. We stress-test your agent, insure the performance warranty in your customer contracts, and pay out when it misses — so your pilots reach production." />
 <link rel="canonical" href="https://precursory.ai/" />
 
 <!-- Open Graph — iMessage, email, Slack, LinkedIn, Facebook -->
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://precursory.ai/" />
 <meta property="og:site_name" content="Precursory" />
-<meta property="og:title" content="Precursory — Margin Protection for Freight Brokerages" />
-<meta property="og:description" content="Volatility happens. Your margin shouldn't. Precursory is margin protection for freight brokerages — we monitor the macro and micro signals that erode margin and pay out when they hit." />
+<meta property="og:title" content="Precursory — Performance Insurance for the Autonomy Economy" />
+<meta property="og:description" content="Performance insurance for AI agents. We stress-test your agent, insure the warranty in your customer contracts, and pay out when it misses." />
 <meta property="og:image" content="https://precursory.ai/assets/og-preview.png" />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
-<meta property="og:image:alt" content="Precursory — Margin Protection for Freight Brokerages" />
+<meta property="og:image:alt" content="Precursory — Performance Insurance for the Autonomy Economy" />
 
 <!-- Twitter / X -->
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="Precursory — Margin Insurance for Freight Brokerages" />
-<meta name="twitter:description" content="Volatility happens. Your margin shouldn't. Precursory is margin insurance for freight brokerages." />
+<meta name="twitter:title" content="Precursory — Performance Insurance for the Autonomy Economy" />
+<meta name="twitter:description" content="Performance insurance for AI agents. We stress-test, insure the warranty in your contracts, and pay out when it misses." />
 <meta name="twitter:image" content="https://precursory.ai/assets/og-preview.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Sora:wght@300;400;500;600&family=Space+Mono:wght@400;700&family=Fraunces:ital,wght@1,500&display=swap" rel="stylesheet">
 <style>
   :root{
-    --ink:#0E1410;
-    --paper:#FAFAF8;
-    --ledger:#2D5A4A;
-    --ledger-soft:#3E7464;
-    --stamp:#C4392B;
-    --grey:#8A8475;
-    --line:#D9D4C7;
-    --line-mid:#C8C3B5;
-    --bg-raised:#F3F0E8;
-    --max:1080px;
+    --bg:#f7f4ec;
+    --ink:#14140f;
+    --ink-dim:#6b6a5e;
+    --accent:#c4392b;
+    --line:#dcd7c9;
   }
-
   *{box-sizing:border-box; margin:0; padding:0;}
-
   html{scroll-behavior:smooth;}
-
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important;}
+  }
+  html{ background:var(--bg); }
   body{
-    background-color:#FAFAF8;
-    background-image:
-      linear-gradient(to right, rgba(45,90,74,0.025) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(45,90,74,0.025) 1px, transparent 1px);
-    background-size: 32px 32px, 32px 32px;
-    background-attachment: fixed;
+    background:var(--bg);
     color:var(--ink);
-    font-family:'Inter', sans-serif;
-    font-size:16px;
-    line-height:1.6;
+    font-family:'Sora', sans-serif;
+    font-weight:300;
+    line-height:1.55;
     -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+    position:relative;
   }
-
-  ::selection{ background:var(--stamp); color:var(--paper); }
-
-  a{ color:inherit; }
-
-  .label{
-    font-family:'Inter', sans-serif;
-    font-size:0.72rem;
-    letter-spacing:0.18em;
-    text-transform:uppercase;
-    color:var(--grey);
+  .page{
+    min-height:100vh;
+    background-color:var(--bg);
+    background-image:
+      linear-gradient(rgba(20,20,15,0.041) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(20,20,15,0.041) 1px, transparent 1px);
+    background-size:66px 66px;
+    color:var(--ink);
   }
-
-  h1, h2, h3{
+  h1,h2,h3{
     font-family:'Space Grotesk', sans-serif;
-    font-weight:600;
+    font-weight:700;
     letter-spacing:-0.01em;
   }
+  .mono{ font-family:'Space Mono', monospace; }
+  a{ color:inherit; text-decoration:none; }
+  img{max-width:100%; display:block;}
+  :focus-visible{ outline:2px solid var(--accent); outline-offset:3px; }
 
-  /* ===== Header ===== */
-  header{
+  .wrap{ max-width:1120px; margin:0 auto; padding:0 24px; }
+
+  /* ---------- NAV ---------- */
+  header.nav{
     position:sticky; top:0; z-index:50;
-    display:flex; align-items:center; justify-content:space-between;
-    padding:1.4rem clamp(1.5rem, 5vw, 4rem);
-    background:rgba(250,250,248,0.85);
-    backdrop-filter:blur(8px);
+    background:rgba(247,244,236,0.88);
+    backdrop-filter:blur(10px);
     border-bottom:1px solid var(--line);
-    gap:1rem;
   }
-  .wordmark{
-    font-family:'Sora', sans-serif;
-    font-weight:600;
-    font-size:1.2rem;
-    letter-spacing:0.04em;
-    display:flex; align-items:center; gap:0.55rem;
+  .nav-inner{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 24px;
+    max-width:1120px; margin:0 auto;
   }
-  .mark{
+  .logo{ display:flex; align-items:baseline; gap:10px; }
+  .logo-mark{
     position:relative;
-    display:inline-flex;
-    align-items:center;
-    width:14px;
-    height:1.3em;
+    display:inline-flex; align-items:center;
+    width:15px; height:24px; flex:none;
+    animation:blink 1.1s step-end infinite;
   }
-  .mark .dash{
-    position:absolute;
-    left:0;
-    bottom:0;
-    width:4px;
-    height:0.95em;
-    background:var(--stamp);
-    border-radius:1px;
+  .logo-mark .dash{
+    position:absolute; left:0; bottom:0;
+    width:4px; height:18px;
+    background:var(--accent); border-radius:1px;
   }
-  .mark .dot{
-    position:absolute;
-    top:0.18em;
-    left:5px;
-    width:6px;
-    height:6px;
-    border-radius:50%;
-    background:var(--stamp);
+  .logo-mark .dot{
+    position:absolute; top:2px; left:5px;
+    width:7px; height:7px; border-radius:50%;
+    background:var(--accent);
   }
-  nav{
-    display:flex; gap:2rem; align-items:center;
-    overflow-x:auto;
-    scrollbar-width:none;
-    -ms-overflow-style:none;
+  @media (prefers-reduced-motion: reduce){
+    .logo-mark{ animation:none; }
   }
-  nav::-webkit-scrollbar{ display:none; }
-  nav a{
-    font-family:'Inter', sans-serif;
-    font-size:0.78rem;
-    letter-spacing:0.08em;
-    text-transform:uppercase;
-    text-decoration:none;
-    color:var(--ink);
-    opacity:0.7;
-    transition:opacity .15s ease;
-    white-space:nowrap;
-    flex-shrink:0;
+  .logo-word{
+    font-family:'Space Grotesk', sans-serif; font-weight:600; font-size:16px; letter-spacing:-0.01em;
+    line-height:1.1;
   }
-  nav a:hover{ opacity:1; }
-  .nav-cta{
-    border:1px solid var(--ink);
-    padding:0.5rem 1.1rem;
+  .logo-word small{
+    display:block; font-family:'Space Mono', monospace; font-weight:400; font-size:9px; letter-spacing:0.18em; color:var(--ink-dim); margin-top:2px;
+  }
+  .mini-mark{
+    position:relative;
+    top:-2px;
+    display:inline-flex; align-items:center;
+    width:11px; height:18px; flex:none;
+    animation:blink 1.1s step-end infinite;
+  }
+  .mini-mark .m-dash{
+    position:absolute; left:0; bottom:0;
+    width:3px; height:13px;
+    background:var(--accent); border-radius:1px;
+  }
+  .mini-mark .m-dot{
+    position:absolute; top:1px; left:4px;
+    width:5px; height:5px; border-radius:50%;
+    background:var(--accent);
+  }
+  @media (prefers-reduced-motion: reduce){
+    .mini-mark{ animation:none; }
+  }
+  .nav-links{ display:flex; align-items:center; gap:28px; }
+  .nav-links a{
+    font-family:'Space Mono', monospace; font-size:12.5px; color:var(--ink-dim);
+    letter-spacing:0.02em;
+  }
+  .nav-links a:hover{ color:var(--accent); }
+  .nav-right{ display:flex; align-items:center; gap:16px; }
+  .btn{
+    font-family:'Space Mono', monospace;
+    font-size:13px;
+    letter-spacing:0.02em;
+    padding:10px 18px;
     border-radius:2px;
-    opacity:1 !important;
+    display:inline-flex; align-items:center; gap:8px;
+    white-space:nowrap;
+    transition:background .15s ease, color .15s ease, border-color .15s ease;
+    cursor:pointer;
   }
-  .nav-cta:hover{ background:var(--ink); color:var(--paper); }
-
-  @media (max-width: 720px){
-    nav{ flex:1; gap:1.2rem; justify-content:flex-start; }
+  .btn-outline{
+    border:1px solid var(--ink);
+    color:var(--ink);
+    background:transparent;
   }
+  .btn-outline:hover{ background:var(--ink); color:var(--bg); }
+  .btn-solid{
+    background:var(--ink); color:var(--bg); border:1px solid var(--ink);
+  }
+  .btn-solid:hover{ background:transparent; color:var(--ink); }
+  .menu-btn{
+    display:none; flex-direction:column; gap:4px; background:none; border:none; cursor:pointer; padding:8px;
+  }
+  .menu-btn span{ width:20px; height:1.5px; background:var(--ink); display:block; }
 
-  /* ===== Hero ===== */
+  /* ---------- HERO ---------- */
   .hero{
-    max-width:var(--max);
-    margin:0 auto;
-    padding:clamp(3rem, 8vw, 6rem) clamp(1.5rem, 5vw, 4rem) clamp(2rem, 6vw, 4rem);
-    display:grid;
-    grid-template-columns: 1.1fr 1fr;
-    gap:clamp(2rem, 6vw, 5rem);
-    align-items:center;
+    padding:88px 0 64px;
+    border-bottom:1px solid var(--line);
+    position:relative;
   }
-  @media (max-width: 880px){
-    .hero{ grid-template-columns:1fr; padding-top:3rem; }
-  }
-
   .eyebrow{
-    display:flex; align-items:center; gap:0.6rem;
-    margin-bottom:1.4rem;
+    font-family:'Space Mono', monospace;
+    font-size:12px;
+    letter-spacing:0.16em;
+    color:var(--ink-dim);
+    text-transform:uppercase;
+    display:flex; align-items:center; gap:10px;
+    margin-bottom:22px;
   }
-  .eyebrow::before{
-    content:'';
-    width:28px; height:1px;
-    background:var(--stamp);
-    display:inline-block;
-  }
-
   .hero h1{
-    font-size:clamp(2.2rem, 5.4vw, 3.8rem);
-    line-height:1.08;
-    margin-bottom:1.4rem;
+    font-size:clamp(34px, 6vw, 64px);
+    line-height:1.04;
+    max-width:820px;
+    color:var(--ink);
   }
   .hero h1 em{
+    font-family:'Fraunces', serif;
     font-style:italic;
-    color:var(--ledger);
-  }
-
-  .hero p.lede{
-    font-size:1.05rem;
-    color:#3a352c;
-    max-width:52ch;
-    margin-bottom:2rem;
-  }
-
-  .hero-ctas{ display:flex; gap:0.9rem; flex-wrap:wrap; }
-  .btn{
-    font-family:'Inter', sans-serif;
-    font-size:0.8rem;
-    letter-spacing:0.06em;
-    text-transform:uppercase;
-    text-decoration:none;
-    padding:0.85rem 1.5rem;
-    border-radius:2px;
-    display:inline-block;
-    transition:all .15s ease;
-  }
-  .btn-primary{
-    background:var(--ink); color:var(--paper);
-    border:1px solid var(--ink);
-  }
-  .btn-primary:hover{ background:var(--ledger); border-color:var(--ledger); }
-  .btn-ghost{
-    border:1px solid var(--ink);
-    color:var(--ink);
-  }
-  .btn-ghost:hover{ background:var(--ink); color:var(--paper); }
-
-  /* ===== Hero disruption grid ===== */
-  .disruption-card{
-    background:#fff;
-    border:1px solid var(--line);
-    border-radius:4px;
-    padding:1.5rem 1.5rem 1.4rem;
-    box-shadow:0 30px 60px -30px rgba(14,20,16,0.25);
-  }
-  .disruption-head{
-    display:flex; justify-content:space-between; align-items:flex-start;
-    margin-bottom:1.2rem;
-  }
-  .disruption-grid{
-    display:grid;
-    grid-template-columns:repeat(4, 1fr);
-    grid-template-rows:repeat(3, 1fr);
-    gap:0.6rem;
-    aspect-ratio: 4 / 3;
-  }
-  .d-cell{
-    position:relative;
-    border:1px solid var(--line);
-    border-radius:3px;
-    background:var(--paper);
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    gap:0.4rem;
-    padding:0.5rem;
-    overflow:hidden;
-  }
-  .d-cell .d-icon{
-    width:22px; height:22px;
-    color:var(--ledger);
-    transition: color 0.3s ease;
-  }
-  .d-cell .d-label{
-    font-family:'Inter', sans-serif;
-    font-size:0.6rem;
-    letter-spacing:0.06em;
-    text-transform:uppercase;
-    color:var(--grey);
-    text-align:center;
-    line-height:1.3;
-  }
-  .d-cell .d-scale{
-    position:absolute;
-    top:6px; right:6px;
-    font-family:'Inter', sans-serif;
-    font-size:0.55rem;
-    letter-spacing:0.08em;
-    text-transform:uppercase;
-    color:var(--grey);
-    opacity:0.6;
-  }
-  .d-cell.flash{
-    animation: cell-flash 1.6s ease-out;
-  }
-  .d-cell.flash .d-icon{ color:var(--stamp); }
-  .d-cell.flash::before{
-    content:'';
-    position:absolute;
-    inset:0;
-    background:var(--stamp);
-    opacity:0;
-    animation: cell-flash-bg 1.6s ease-out;
-  }
-  @keyframes cell-flash-bg{
-    0%{ opacity:0.16; }
-    100%{ opacity:0; }
-  }
-  @keyframes cell-flash{
-    0%{ border-color:var(--stamp); }
-    60%{ border-color:var(--stamp); }
-    100%{ border-color:var(--line); }
-  }
-  @media (prefers-reduced-motion: reduce){
-    .d-cell.flash, .d-cell.flash::before{ animation:none; }
-  }
-
-  .disruption-legend{
-    display:flex; gap:1.6rem; margin-top:1rem; flex-wrap:wrap;
-    font-family:'Inter', sans-serif; font-size:0.7rem; color:var(--grey);
-  }
-  .disruption-legend span{ display:flex; align-items:center; gap:0.4rem; }
-  .disruption-legend .dotc{
-    width:8px; height:8px; border-radius:50%;
-    display:inline-block;
-  }
-  .disruption-legend .dotc.macro{ background:var(--stamp); }
-  .disruption-legend .dotc.micro{ background:var(--ledger); }
-
-
-  .chart-title{ font-family:'Inter', sans-serif; font-size:0.75rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--grey); }
-  .chart-sub{ font-family:'Inter', sans-serif; font-size:0.7rem; color:var(--grey); margin-top:0.2rem; }
-
-  /* ===== Quote flipboard ===== */
-  .quote-band{
-    border-top:1px solid var(--line);
-    border-bottom:1px solid var(--line);
-    background:var(--ink);
-    color:var(--paper);
-    overflow:hidden;
-  }
-  .quote-inner{
-    max-width:var(--max);
-    margin:0 auto;
-    padding:clamp(3rem, 7vw, 5rem) clamp(1.5rem, 5vw, 4rem);
-  }
-
-  .flip-stage{
-    position:relative;
-    min-height:clamp(11rem, 22vw, 13rem);
-  }
-  .flip-card{
-    position:absolute;
-    inset:0;
-    opacity:0;
-    visibility:hidden;
-    transform:rotateX(-90deg);
-    transform-origin:center top;
-    transition: transform 0.6s cubic-bezier(.5,0,.2,1), opacity 0.3s ease;
-  }
-  .flip-card.active{
-    position:relative;
-    opacity:1;
-    visibility:visible;
-    transform:rotateX(0deg);
-  }
-  .flip-card blockquote{
-    font-family:'Space Grotesk', sans-serif;
     font-weight:500;
-    font-style:italic;
-    font-size:clamp(1.3rem, 3vw, 1.9rem);
-    line-height:1.45;
-    max-width:48ch;
+    color:var(--accent);
   }
-  .flip-card blockquote .accent{
-    color:#9fd9c4;
-    font-style:normal;
-  }
-  .flip-card .quote-attr{
-    margin-top:1.5rem;
-    font-family:'Inter', sans-serif;
-    font-size:0.75rem;
-    letter-spacing:0.1em;
-    text-transform:uppercase;
-    color:#8fa89e;
-  }
-
-  @media (prefers-reduced-motion: reduce){
-    .flip-card{ transition:none; }
-  }
-
-  .flip-controls{
-    display:flex;
-    gap:0.6rem;
-    margin-top:2rem;
-  }
-  .flip-dot{
-    width:28px; height:3px;
-    background:#2a3530;
-    border:none;
-    cursor:pointer;
-    border-radius:1px;
-    padding:0;
-    position:relative;
-    overflow:hidden;
-  }
-  .flip-dot::after{
-    content:'';
-    position:absolute;
-    inset:0;
-    background:#9fd9c4;
-    transform:scaleX(0);
-    transform-origin:left center;
-    transition:transform 0.2s ease;
-  }
-  .flip-dot.active::after{
-    transform:scaleX(1);
-    transition:transform 6s linear;
-  }
-
-  /* ===== Products ===== */
-  .products-list{
-    display:flex;
-    flex-direction:column;
-  }
-  .product-row{
-    display:grid;
-    grid-template-columns: 90px 1fr 1.4fr;
-    gap:2rem;
-    padding:2.2rem 0;
-    border-bottom:1px solid var(--line);
-    align-items:start;
-  }
-  .product-row:first-child{ border-top:1px solid var(--line); }
-  .product-row.coming-soon{
-    opacity:0.55;
-  }
-  @media (max-width:760px){
-    .product-row{ grid-template-columns:1fr; gap:0.8rem; }
-  }
-  .product-id{
-    font-family:'Inter', sans-serif;
-    font-size:0.75rem;
-    letter-spacing:0.1em;
-    color:var(--stamp);
-    padding-top:0.2rem;
-  }
-  .product-row.coming-soon .product-id{ color:var(--grey); }
-  .product-name{
-    display:flex; flex-direction:column; gap:0.4rem;
-  }
-  .product-name h3{ font-size:1.5rem; }
-  .product-tagline{
-    font-family:'Inter', sans-serif;
-    font-size:0.72rem;
-    letter-spacing:0.08em;
-    text-transform:uppercase;
-    color:var(--ledger);
-  }
-  .product-row.coming-soon .product-tagline{ color:var(--grey); }
-
-  .fig-diagram{
-    margin-top:0.9rem;
-    border:1px solid var(--line);
-    border-radius:4px;
-    background:#fff;
-    padding:0.6rem;
-    max-width:240px;
-  }
-  .fig-diagram svg{ width:100%; height:auto; display:block; }
-  .fig-diagram .fig-cap{
-    font-family:'Inter', sans-serif;
-    font-size:0.65rem; letter-spacing:0.08em; text-transform:uppercase;
-    color:var(--grey); text-align:center; margin-top:0.5rem;
-  }
-  .fig-frame{ fill:none; stroke:var(--line); stroke-width:1; stroke-dasharray:3 5; }
-  .fig-axis{ stroke:var(--line); stroke-width:1; }
-  .fig-dashed{ stroke:var(--grey); stroke-width:1; stroke-dasharray:4 4; }
-  .fig-curve{ fill:none; stroke:var(--ledger); stroke-width:1.8; }
-  .fig-shade{ fill:rgba(196,57,43,0.14); stroke:none; }
-  .fig-label{
-    font-family:'Inter', sans-serif; font-size:9.5px; fill:var(--grey);
-    letter-spacing:0.06em; text-transform:uppercase;
-  }
-  .product-desc p{
-    color:#544f44;
-    font-size:0.96rem;
-    max-width:55ch;
-  }
-  .product-status{
-    margin-top:0.9rem;
-    font-family:'Inter', sans-serif;
-    font-size:0.7rem;
-    letter-spacing:0.06em;
-    text-transform:uppercase;
-    color:var(--grey);
-    display:flex; align-items:center; gap:0.5rem;
-  }
-  .product-status::before{
-    content:'';
-    width:6px; height:6px; border-radius:50%;
-    background:var(--ledger);
+  .typed-headline{ display:block; }
+  .typed-out{ display:inline; }
+  .type-cursor{
     display:inline-block;
+    width:0.11em;
+    height:0.85em;
+    background:var(--accent);
+    margin-left:2px;
+    vertical-align:-0.08em;
+    animation:blink 1s step-end infinite;
   }
-  .product-row.coming-soon .product-status::before{ background:var(--grey); }
-
-  /* ===== Mechanism tabs / flip ===== */
-  .mech-tabs{
-    display:flex;
-    gap:0.5rem;
-    margin-top:1.4rem;
+  .type-cursor.done{
+    animation:blink 1s step-end 3, fade-out 0.4s ease 3s forwards;
   }
-  .mech-tab{
-    font-family:'Inter', sans-serif;
-    font-size:0.75rem;
-    letter-spacing:0.1em;
-    text-transform:uppercase;
-    padding:0.6rem 1.2rem;
-    border:1px solid var(--line);
-    border-radius:2px;
-    background:transparent;
-    color:var(--grey);
-    cursor:pointer;
-    transition: all .15s ease;
-  }
-  .mech-tab:hover{ border-color:var(--ink); color:var(--ink); }
-  .mech-tab.active{
-    background:var(--ink);
-    border-color:var(--ink);
-    color:var(--paper);
-  }
-
-  .mech-panels{
-    position:relative;
-    perspective:1600px;
-  }
-  .mech-panel{
-    display:none;
-  }
-  .mech-panel.active{
-    display:block;
-    animation: flip-in 0.5s cubic-bezier(.2,.7,.3,1);
-    transform-origin: left center;
-  }
-  @keyframes flip-in{
-    from{ opacity:0; transform: rotateY(-8deg) translateX(-12px); }
-    to{ opacity:1; transform: rotateY(0) translateX(0); }
-  }
+  @keyframes fade-out{ to{ opacity:0; } }
   @media (prefers-reduced-motion: reduce){
-    .mech-panel.active{ animation:none; }
+    .type-cursor{ display:none; }
   }
+  .hero p.lead{
+    margin-top:24px;
+    max-width:600px;
+    font-size:18px;
+    color:var(--ink-dim);
+    font-weight:300;
+  }
+  .hero-ctas{ margin-top:34px; display:flex; gap:14px; flex-wrap:wrap; }
 
-
-  .section{
-    max-width:var(--max);
-    margin:0 auto;
-    padding:clamp(3.5rem, 8vw, 6rem) clamp(1.5rem, 5vw, 4rem);
-    position:relative;
-    border-top:1px solid var(--line);
-  }
-  .section-head{
-    margin-bottom:clamp(2rem, 5vw, 3.5rem);
-    display:flex; flex-direction:column; gap:0.8rem;
-  }
-  .section-head h2{ font-size:clamp(1.6rem, 3.5vw, 2.4rem); max-width:26ch; }
-  .section-head p{ color:#544f44; max-width:50ch; }
-
-  /* ===== Your Number (interactive tier selector) ===== */
-  .your-number{ margin-top:clamp(2rem, 5vw, 3rem); }
-  .your-number .label{ display:block; margin-bottom:0.9rem; }
-  .your-number .yn-title{
-    font-family:'Space Grotesk', sans-serif;
-    font-size:clamp(1.25rem, 3vw, 1.6rem);
-    font-weight:700; letter-spacing:-0.01em;
-    margin-bottom:0.4rem;
-    max-width:26ch;
-  }
-  .your-number .yn-sub{
-    color:var(--grey); font-size:0.95rem;
-    margin-bottom:1.6rem; max-width:52ch;
-  }
-  .your-number .top-block{
-    border:1px solid var(--line);
+  /* ---------- TERMINAL ---------- */
+  .terminal{
+    margin-top:64px;
+    background:#08080a;
+    border:1px solid #232227;
     border-radius:6px;
     overflow:hidden;
-    margin-bottom:1px;
-    background:#fff;
+    box-shadow:0 40px 80px -30px rgba(0,0,0,0.6);
   }
-  .your-number .stat-row{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    border-bottom:1px solid var(--line);
-    min-height:110px;
+  .terminal-bar{
+    display:flex; align-items:center; gap:8px;
+    padding:12px 16px;
+    border-bottom:1px solid #232227;
+    background:#0d0d10;
   }
-  .your-number .stat-cell{
-    background:#fff;
-    padding:1.4rem 1.6rem;
-    display:flex; flex-direction:column; gap:0.25rem;
-    justify-content:center;
+  .dot{ width:10px; height:10px; border-radius:50%; }
+  .dot.red{ background:#ff5f57; }
+  .dot.yellow{ background:#febc2e; }
+  .dot.green{ background:#28c840; }
+  .terminal-title{
+    font-family:'Space Mono', monospace; font-size:12px; color:#9a988e; margin-left:8px;
   }
-  .your-number .stat-cell:first-child{ border-right:1px solid var(--line); }
-  .your-number .stat-lbl{
-    font-size:0.65rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--grey);
+  .terminal-body{
+    padding:26px 22px 30px;
+    font-family:'Space Mono', monospace;
+    font-size:13.5px;
+    line-height:1.9;
   }
-  .your-number .stat-val{
+  .t-line{ color:#9a988e; }
+  .t-phase{
+    color:var(--accent); font-weight:700; margin-top:18px; display:block;
+  }
+  .t-phase:first-child{ margin-top:0; }
+  .t-check{ color:#b4f03e; }
+  .t-check::before{ content:'✓ '; }
+  .cursor{
+    display:inline-block; width:7px; height:14px; background:#b4f03e;
+    animation:blink 1s step-end infinite; vertical-align:-2px; margin-left:2px;
+  }
+  @keyframes blink{ 50%{ opacity:0; } }
+
+  .product-pull{
+    margin-top:26px;
+    max-width:620px;
     font-family:'Space Grotesk', sans-serif;
-    font-size:clamp(1.8rem, 4vw, 2.4rem);
-    font-weight:700; letter-spacing:-0.01em;
-    color:var(--stamp); line-height:1.1;
-  }
-  .your-number .stat-val.animating{ animation:yn-pop 0.3s ease; }
-  @keyframes yn-pop{
-    0%{ opacity:0; transform:translateY(5px); }
-    100%{ opacity:1; transform:translateY(0); }
-  }
-  .your-number .stat-note{ font-size:0.78rem; color:var(--grey); }
-
-  .your-number .example-block{
-    padding:1.1rem 1.6rem;
-    background:var(--bg-raised);
-    display:flex; flex-direction:column; gap:0;
-  }
-  .your-number .example-lbl{
-    font-size:0.65rem; letter-spacing:0.14em; text-transform:uppercase;
-    color:var(--grey); margin-bottom:0.75rem;
-  }
-  .your-number .example-lines{ display:flex; flex-direction:column; gap:0.35rem; }
-  .your-number .ex-line{
-    display:flex; justify-content:space-between; align-items:baseline;
-    font-size:0.85rem; gap:1rem;
-  }
-  .your-number .ex-line .el{ color:var(--grey); }
-  .your-number .ex-line .ev{
-    font-family:'Space Grotesk', sans-serif; font-weight:700;
-    color:var(--ink); font-size:0.9rem;
-    transition:color 0.2s;
-  }
-  .your-number .ex-line .ev.stamp{ color:var(--stamp); }
-  .your-number .ex-line.total{
-    border-top:1px solid var(--line); margin-top:0.4rem; padding-top:0.5rem;
-  }
-  .your-number .ex-line.total .el{ font-weight:600; color:var(--ink); font-size:0.88rem; }
-  .your-number .ex-line.total .ev{ font-size:1rem; color:var(--stamp); }
-  .your-number .ev.animating{ animation:yn-pop 0.3s ease; }
-
-  .your-number .tier-grid{
-    display:grid;
-    grid-template-columns:repeat(4, 1fr);
-    gap:1px;
-    background:var(--line);
-    border:1px solid var(--line);
-    border-top:none;
-    border-radius:0 0 6px 6px;
-    overflow:hidden;
-  }
-  @media (max-width:640px){
-    .your-number .tier-grid{ grid-template-columns:repeat(2, 1fr); }
-  }
-  .your-number .tier-col{
-    background:#fff;
-    padding:1.3rem 1.1rem 1.2rem;
-    cursor:pointer;
-    display:flex; flex-direction:column; gap:0.4rem;
-    position:relative;
-    transition:background 0.18s ease;
-    border-top:3px solid transparent;
-  }
-  .your-number .tier-col:hover{ background:rgba(196,57,43,0.02); }
-  .your-number .tier-col.active{
-    background:rgba(196,57,43,0.04);
-    border-top-color:var(--stamp);
-  }
-  .your-number .tier-badge{
-    font-size:0.58rem; letter-spacing:0.1em; text-transform:uppercase;
-    padding:0.12rem 0.4rem; border-radius:2px; font-weight:600;
-    font-family:'Inter', sans-serif; display:inline-flex; align-self:flex-start;
-  }
-  .your-number .tier-badge.free{ background:rgba(196,57,43,0.1); color:var(--stamp); }
-  .your-number .tier-badge.paid{ background:rgba(45,90,74,0.1); color:var(--ledger); }
-  .your-number .tier-name{
-    font-family:'Space Grotesk', sans-serif;
-    font-weight:700; font-size:0.9rem; color:var(--ink);
-    line-height:1.2; transition:color 0.18s;
-  }
-  .your-number .tier-col.active .tier-name{ color:var(--stamp); }
-  .your-number .tier-desc{ font-size:0.72rem; color:var(--grey); line-height:1.4; }
-  .your-number .tier-bar-track{
-    height:3px; background:var(--line); border-radius:2px;
-    overflow:hidden; margin-top:0.6rem;
-  }
-  .your-number .tier-bar-fill{
-    height:100%; background:var(--line-mid); border-radius:2px;
-    transition:background 0.18s ease;
-  }
-  .your-number .tier-col.active .tier-bar-fill{ background:var(--stamp); }
-  .your-number .tier-floor-preview{
-    font-family:'Space Grotesk', sans-serif;
-    font-size:0.82rem; font-weight:700;
-    color:var(--line-mid); margin-top:0.3rem;
-    transition:color 0.18s;
-  }
-  .your-number .tier-col.active .tier-floor-preview{ color:var(--stamp); }
-
-  .your-number .cycle-dots{
-    display:flex; gap:5px; align-items:center; margin-top:1.1rem;
-  }
-  .your-number .cycle-dot{
-    width:18px; height:2px; background:var(--line);
-    border-radius:2px; position:relative; overflow:hidden; cursor:pointer;
-  }
-  .your-number .cycle-dot::after{
-    content:''; position:absolute; inset:0; background:var(--stamp);
-    transform:scaleX(0); transform-origin:left;
-  }
-  .your-number .cycle-dot.active::after{ transform:scaleX(1); transition:transform 3s linear; }
-  .your-number .cycle-hint{ font-size:0.65rem; color:var(--grey); letter-spacing:0.06em; margin-left:6px; }
-
-  .mechanism{
-    display:grid;
-    grid-template-columns:repeat(4, 1fr);
-    gap:1px;
-    background:var(--line);
-    border:1px solid var(--line);
-  }
-  @media (max-width:1000px){
-    .mechanism{ grid-template-columns:repeat(2, 1fr); }
-  }
-  @media (max-width:560px){
-    .mechanism{ grid-template-columns:1fr; }
-  }
-  .step{
-    background:var(--paper);
-    padding:2rem;
-    position:relative;
-  }
-  .step-num{
-    font-family:'Inter', sans-serif;
-    font-size:0.75rem;
-    color:var(--stamp);
-    letter-spacing:0.1em;
-    margin-bottom:1.2rem;
-    display:block;
-  }
-  .step h3{ font-size:1.15rem; margin-bottom:0.6rem; }
-  .step p{ color:#544f44; font-size:0.92rem; }
-  .step .tag{
-    margin-top:1.2rem;
-    font-family:'Inter', sans-serif;
-    font-size:0.7rem;
-    letter-spacing:0.06em;
-    color:var(--grey);
-    display:flex; align-items:center; gap:0.5rem;
-  }
-  .step .tag::before{ content:'→'; color:var(--ledger); }
-
-  /* ===== Formula block ===== */
-  .formula{
-    margin-top:clamp(2rem, 5vw, 3rem);
-    border:1px solid var(--line);
-    border-radius:4px;
-    padding:1.8rem 2rem;
-    background:#fff;
-    display:flex;
-    flex-wrap:wrap;
-    align-items:center;
-    gap:1.2rem 2.5rem;
-  }
-  .formula .label{ width:100%; }
-  .formula-eq{
-    font-family:'Inter', sans-serif;
-    font-size:clamp(0.95rem, 2.4vw, 1.25rem);
+    font-weight:600;
+    font-size:clamp(19px, 2.4vw, 24px);
+    line-height:1.35;
     color:var(--ink);
+    border-left:2px solid var(--accent);
+    padding-left:18px;
   }
-  .formula-eq .var{ color:var(--ledger); }
-  .formula-eq .const{ color:var(--stamp); }
 
-  /* ===== Team ===== */
+  /* ---------- HOW-IT-WORKS CTA ---------- */
+  .split-cta{ margin-top:34px; display:inline-flex; }
+
+  /* ---------- TERMINAL REVEAL ---------- */
+  .terminal-body > span{
+    display:block;
+    opacity:0;
+    transform:translateY(4px);
+    transition:opacity .3s ease, transform .3s ease;
+  }
+  .terminal-body > span.shown{
+    opacity:1; transform:none;
+  }
+  @media (prefers-reduced-motion: reduce){
+    .terminal-body > span{ opacity:1; transform:none; transition:none; }
+  }
+
+  /* ---------- STAT SOURCE / FOLLOW ---------- */
+  .stat-source{
+    display:block; margin-top:10px;
+    font-family:'Space Mono', monospace; font-size:11px; letter-spacing:0.04em;
+    color:var(--ink-dim); opacity:0.75; text-transform:uppercase;
+  }
+  .stat-follow{ margin-top:32px; }
+
+  .type-heading{ display:block; }
+  .type-heading-text{ display:inline; }
+  .type-cursor2{
+    display:inline-block;
+    width:0.09em;
+    height:0.8em;
+    background:var(--accent);
+    margin-left:3px;
+    vertical-align:-0.05em;
+    animation:blink 1s step-end infinite;
+  }
+  .type-cursor2.done{
+    animation:blink 1s step-end 2, fade-out 0.4s ease 2s forwards;
+  }
+  @media (prefers-reduced-motion: reduce){
+    .type-cursor2{ display:none; }
+  }
+
+  /* ---------- SECTION SHELLS ---------- */
+  section{ padding:88px 0; }
+  .section-band{ background:transparent; border-bottom:1px solid var(--line); }
+  .kicker{
+    font-family:'Space Mono', monospace; font-size:12px; letter-spacing:0.2em; text-transform:uppercase;
+    color:var(--ink-dim); margin-bottom:16px;
+    display:flex; align-items:center; gap:14px;
+  }
+  h2.section-title{
+    font-size:clamp(26px, 4vw, 40px);
+    max-width:640px;
+    margin-bottom:16px;
+  }
+  p.section-sub{
+    max-width:620px;
+    color:var(--ink-dim);
+    font-size:16px;
+  }
+
+  /* ---------- STATS ---------- */
+  .stat-grid{
+    margin-top:48px;
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:16px;
+  }
+  .stat-card{
+    border:1px solid var(--line);
+    background:var(--bg);
+    padding:30px 26px;
+  }
+  .stat-num{
+    font-family:'Space Grotesk', sans-serif; font-weight:700; font-size:clamp(38px,5vw,52px);
+    color:var(--accent); line-height:1;
+  }
+  .stat-label{ margin-top:14px; font-size:14.5px; color:var(--ink-dim); max-width:220px; }
+
+  /* ---------- PROCESS ---------- */
+  .process{
+    margin-top:56px;
+    display:flex; flex-direction:column;
+  }
+  .process-row{
+    display:grid;
+    grid-template-columns:90px 1fr;
+    gap:28px;
+    padding:32px 0;
+    border-top:1px solid var(--line);
+    align-items:start;
+  }
+  .process-row:last-child{ border-bottom:1px solid var(--line); }
+  .process-num{
+    font-family:'Space Mono', monospace; font-size:14px; color:var(--accent);
+    display:flex; align-items:flex-start; gap:8px;
+  }
+  .process-num .ring{
+    width:38px; height:38px; border:1px solid var(--accent); border-radius:50%;
+    display:flex; align-items:center; justify-content:center; font-size:13px;
+  }
+  .process-body h3{ font-size:21px; margin-bottom:8px; }
+  .process-body p{ color:var(--ink-dim); font-size:15px; max-width:640px; }
+
+  /* ---------- QUOTE ---------- */
+  .quote-block{
+    max-width:760px;
+  }
+  .quote-mark{
+    font-family:'Space Grotesk', sans-serif; font-size:64px; color:var(--accent); line-height:1; margin-bottom:8px;
+  }
+  blockquote{
+    font-family:'Space Grotesk', sans-serif; font-weight:500;
+    font-size:clamp(20px, 2.6vw, 27px); line-height:1.4; color:var(--ink);
+  }
+  .quote-attr{
+    margin-top:22px; font-family:'Space Mono', monospace; font-size:13px; color:var(--ink-dim);
+  }
+  .quote-attr strong{ color:var(--accent); font-weight:500; }
+
+  /* ---------- TEAM ---------- */
   .team-grid{
+    margin-top:48px;
     display:grid;
     grid-template-columns:repeat(2, 1fr);
     gap:1px;
     background:var(--line);
     border:1px solid var(--line);
   }
-  @media (max-width:700px){
-    .team-grid{ grid-template-columns:1fr; }
-  }
-
-  .team-card{
-    position:relative;
-    aspect-ratio: 4 / 5;
+  .team-card{ background:var(--bg); padding:34px 30px; }
+  .team-avatar{
+    width:84px; height:84px; border-radius:50%;
+    border:1px solid var(--accent);
     overflow:hidden;
-    background:var(--ink);
-    cursor:pointer;
+    margin-bottom:20px;
   }
-  .team-card img{
-    width:100%; height:100%;
-    object-fit:cover;
-    display:block;
+  .team-avatar img{
+    width:100%; height:100%; object-fit:cover; display:block;
     filter:grayscale(1) contrast(1.05);
-    transform:scale(1.02);
-    transition:transform .6s ease, filter .6s ease;
   }
-  .team-card:hover img{
-    transform:scale(1.06);
-    filter:grayscale(0.4) contrast(1.05);
-  }
-
-  .team-overlay{
-    position:absolute;
-    inset:0;
-    display:flex;
-    flex-direction:column;
-    justify-content:flex-end;
-    padding:1.8rem;
-    background:linear-gradient(180deg, rgba(14,20,16,0) 35%, rgba(14,20,16,0.92) 100%);
-  }
-
-  .team-name-row{
-    display:flex;
-    align-items:baseline;
-    justify-content:space-between;
-    gap:1rem;
-  }
-  .team-card h3{
-    color:var(--paper);
-    font-size:1.4rem;
-    margin-bottom:0.15rem;
-  }
+  .team-card h3{ font-size:19px; margin-bottom:4px; }
   .team-role{
-    font-family:'Inter', sans-serif;
-    font-size:0.72rem;
-    letter-spacing:0.12em;
-    text-transform:uppercase;
-    color:#9fd9c4;
+    font-family:'Space Mono', monospace; font-size:12px; color:var(--accent); margin-bottom:16px;
   }
-  .team-cursor-hint{
-    font-family:'Inter', sans-serif;
-    font-size:0.68rem;
-    letter-spacing:0.1em;
-    text-transform:uppercase;
-    color:#8fa89e;
-    opacity:0.85;
-    flex-shrink:0;
-  }
+  .team-card p{ color:var(--ink-dim); font-size:14.5px; }
 
-  .team-bio{
-    color:#d8d4c8;
-    font-size:0.92rem;
-    line-height:1.55;
-    max-width:42ch;
-    margin-top:0.9rem;
-    max-height:0;
-    opacity:0;
-    overflow:hidden;
-    transition: max-height .45s ease, opacity .35s ease, margin-top .45s ease;
+  /* ---------- CTA / NEWSLETTER ---------- */
+  .cta-box{
+    margin-top:40px;
+    border:1px solid var(--accent);
+    padding:26px 24px;
+    display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap;
   }
-  .team-card:hover .team-bio{
-    max-height:260px;
-    opacity:1;
+  .cta-box .cta-left{ display:flex; align-items:center; gap:14px; }
+  .cta-box svg{ flex:none; color:var(--accent); }
+  .cta-box p{ font-family:'Space Mono', monospace; font-size:14px; color:var(--accent); }
+  .btn-accent{
+    background:var(--accent); color:var(--bg); border:1px solid var(--accent);
   }
-  .team-card:hover .team-cursor-hint{ opacity:0; }
-  .team-card:hover .team-overlay{
-    background:linear-gradient(180deg, rgba(14,20,16,0) 10%, rgba(14,20,16,0.94) 100%);
-  }
+  .btn-accent:hover{ background:transparent; color:var(--accent); }
 
-  @media (max-width:700px){
-    /* on touch devices, show bios always */
-    .team-bio{ max-height:260px; opacity:1; margin-top:0.9rem; }
-    .team-cursor-hint{ display:none; }
-    .team-overlay{ background:linear-gradient(180deg, rgba(14,20,16,0) 10%, rgba(14,20,16,0.94) 100%); }
-  }
-
-  /* ===== FAQ ===== */
-  .section-title-block{
-    display:inline-block;
-    font-family:'Space Grotesk', sans-serif;
-    font-weight:700;
-    font-size:clamp(2.2rem, 6vw, 3.2rem);
-    padding-bottom:0.35rem;
-    margin-bottom:0.8rem;
-    line-height:1.15;
-    border-bottom:2px solid var(--stamp);
-  }
-  .faq-tabs{
-    display:flex;
-    gap:0.5rem;
-    margin-bottom:2rem;
-    flex-wrap:wrap;
-  }
-  .faq-tab{
-    font-family:'Inter', sans-serif;
-    font-size:0.75rem;
-    letter-spacing:0.1em;
-    text-transform:uppercase;
-    padding:0.6rem 1.2rem;
-    border:1px solid var(--line);
-    border-radius:2px;
-    background:transparent;
-    color:var(--grey);
-    cursor:pointer;
-    transition: all .15s ease;
-  }
-  .faq-tab:hover{ border-color:var(--ink); color:var(--ink); }
-  .faq-tab.active{
-    background:var(--ink);
-    border-color:var(--ink);
-    color:var(--paper);
-  }
-  .faq-panel{
-    display:none;
-  }
-  .faq-panel.active{
-    display:block;
-  }
-  .faq-list{
-    border-top:1px solid var(--line);
-  }
-  .faq-item{
-    border-bottom:1px solid var(--line);
-  }
-  .faq-q{
-    width:100%;
-    text-align:left;
-    background:none;
-    border:none;
-    cursor:pointer;
-    padding:1.6rem 0;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:1rem;
-    font-family:'Inter', sans-serif;
-    font-weight:500;
-    font-size:1.15rem;
-    color:var(--ink);
-  }
-  .faq-q .icon{
-    font-family:'Inter', sans-serif;
-    font-weight:400;
-    font-size:1.6rem;
-    line-height:1;
-    color:var(--stamp);
-    flex-shrink:0;
-    transition:transform .25s ease;
-  }
-  .faq-item.open .faq-q .icon{ transform:rotate(45deg); }
-  .faq-a{
-    max-height:0;
-    overflow:hidden;
-    transition:max-height .3s ease;
-  }
-  .faq-a-inner{
-    padding-bottom:1.6rem;
-    color:#544f44;
-    max-width:60ch;
-    font-size:0.95rem;
-  }
-  .faq-item.open .faq-a{ max-height:300px; }
-
-  /* ===== Footer / contact ===== */
-  footer{
-    border-top:1px solid var(--line);
-    background:var(--ink);
-    color:var(--paper);
-  }
+  /* ---------- FOOTER ---------- */
+  footer{ padding:56px 0 40px; }
   .footer-inner{
-    max-width:var(--max);
-    margin:0 auto;
-    padding:clamp(3rem, 7vw, 5rem) clamp(1.5rem, 5vw, 4rem);
-    display:flex;
-    flex-direction:column;
-    gap:2rem;
+    display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:24px;
   }
-  .footer-top{
-    display:flex; justify-content:space-between; align-items:flex-end; gap:2rem; flex-wrap:wrap;
-  }
-  .footer-top h2{
-    color:var(--paper);
-    font-size:clamp(1.8rem, 4vw, 2.6rem);
-    max-width:16ch;
-  }
-  .footer-bottom{
-    display:flex; justify-content:space-between; align-items:center;
-    flex-wrap:wrap; gap:1rem;
-    font-family:'Inter', sans-serif;
-    font-size:0.72rem;
-    letter-spacing:0.05em;
-    color:#8fa89e;
-    border-top:1px solid #2a3530;
-    padding-top:1.5rem;
-  }
-  .footer-bottom a{ text-decoration:none; color:#9fd9c4; }
+  .footer-links{ display:flex; gap:22px; flex-wrap:wrap; }
+  .footer-links a{ font-family:'Space Mono', monospace; font-size:12.5px; color:var(--ink-dim); }
+  .footer-links a:hover{ color:var(--accent); }
+  .footer-copy{ font-family:'Space Mono', monospace; font-size:11.5px; color:var(--ink-dim); margin-top:26px; }
+  .build-tag{ opacity:0.55; margin-left:10px; }
 
-  .footer-sub{
-    font-family:'Inter', sans-serif;
-    font-size:0.92rem;
-    color:#c9c4b4;
-    max-width:42ch;
-    margin-top:0.7rem;
-    line-height:1.6;
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width:760px){
+    .menu-btn{ display:flex; }
+    .nav-links{
+      display:none;
+      position:absolute; top:100%; left:0; right:0;
+      flex-direction:column; align-items:flex-start; gap:0;
+      background:rgba(247,244,236,0.98);
+      border-bottom:1px solid var(--line);
+      padding:8px 24px 18px;
+    }
+    header.nav.open .nav-links{ display:flex; }
+    .nav-links a{ padding:12px 0; width:100%; font-size:14px; }
+    .team-grid{ grid-template-columns:1fr; }
+    .stat-grid{ grid-template-columns:1fr 1fr; }
+    .process-row{ grid-template-columns:1fr; gap:14px; }
+    .cta-box{ flex-direction:column; align-items:flex-start; }
   }
-
-  /* ===== Flip-digit reveal ===== */
-  .flip-number{
-    display:inline-flex;
-    align-items:center;
-    gap:2px;
-    font-weight:700;
-    color:var(--ledger);
-    margin:0 0.05em;
-    vertical-align:middle;
+  @media (max-width:520px){
+    .stat-grid{ grid-template-columns:1fr; }
+    .nav-right .btn-outline span.full{ display:none; }
   }
-  .flip-number .static-char{
-    font-family:'Inter', sans-serif;
-    color:var(--ledger);
-  }
-  .flip-digit{
-    position:relative;
-    display:inline-block;
-    width:0.66em;
-    height:1.15em;
-    overflow:hidden;
-    background:#fff;
-    border:1px solid var(--line);
-    border-radius:2px;
-    vertical-align:middle;
-  }
-  .flip-digit .digit-strip{
-    display:flex;
-    flex-direction:column;
-    transition: transform 0.45s cubic-bezier(.3,.85,.35,1);
-    will-change: transform;
-  }
-  .flip-digit .digit-strip span{
-    height:1.15em;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-family:'Inter', sans-serif;
-  }
-
 </style>
 </head>
 <body>
+<div class="page">
 
-<header>
-  <div class="wordmark"><span class="word-text">Precursory</span><span class="mark"><span class="dash"></span><span class="dot"></span></span></div>
-  <nav>
-    <a class="nav-link" href="#products">products</a>
-    <a class="nav-link" href="#mechanism">mechanism</a>
-    <a class="nav-link" href="#team">team</a>
-    <a class="nav-link" href="#faq">faq</a>
-    <a class="nav-cta" href="#contact">talk to us</a>
-  </nav>
+<header class="nav">
+  <div class="nav-inner">
+    <a class="logo" href="#top">
+      <div class="logo-mark" title="406.0 MHz"><span class="dash"></span><span class="dot"></span></div>
+      <div class="logo-word">PRECURSORY<small>TECHNOLOGIES, INC.</small></div>
+    </a>
+    <nav class="nav-links" id="primary-nav" aria-label="Primary">
+      <a href="#product">Product</a>
+      <a href="#how-split">How it works</a>
+      <a href="#technology">Technology</a>
+      <a href="#team">Team</a>
+    </nav>
+    <div class="nav-right">
+      <a class="btn btn-outline" href="mailto:contact@precursory.ai?subject=Insuring%20our%20performance%20warranty"><span class="full">Get your agent covered</span><span class="mono">→</span></a>
+      <button class="menu-btn" aria-label="Menu" aria-controls="primary-nav" aria-expanded="false"><span></span><span></span><span></span></button>
+    </div>
+  </div>
 </header>
 
-<section class="hero">
-  <div>
-    <div class="eyebrow"><span class="label">Precursory · MGA</span></div>
-    <h1>Volatility happens. <em>Your margin</em> shouldn't.</h1>
-    <p class="lede">
-      By the time volatility shows up in your numbers, it already has a
-      name: last quarter. The shock happened weeks ago. The number just
-      arrived. A geopolitical event. A fuel spike. A run of tender
-      rejections nobody caught in time. Each one quiet enough to ignore —
-      until together, they're the reason this quarter's margin came in
-      short.
-    </p>
-    <div class="hero-ctas">
-      <a class="btn btn-primary" href="#products">See our products</a>
-      <a class="btn btn-ghost" href="#mechanism">How it works</a>
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap">
+      <div class="eyebrow"><span class="mini-mark" aria-hidden="true"><span class="m-dash"></span><span class="m-dot"></span></span>Performance insurance · Built for AI agents</div>
+      <h1 class="typed-headline" aria-label="Your agent's performance, insured.">
+        <span class="typed-out"><span class="typed-plain" data-text="Your agent&#8217;s performance, "></span><em class="typed-em" data-text="insured."></em></span><span class="type-cursor" aria-hidden="true"></span>
+      </h1>
+      <p class="lead">Your agents book loads, negotiate rates, and vet carriers. Your buyers keep asking the same question: who pays when one gets it wrong? Now you have an answer.</p>
+      <div class="hero-ctas">
+        <a class="btn btn-solid" href="#how-split">See how it works</a>
+        <a class="btn btn-outline" href="#technology">How we underwrite</a>
+      </div>
+
     </div>
-  </div>
+  </section>
 
-  <div class="disruption-card">
-    <div class="disruption-head">
-      <div>
-        <div class="chart-title">Disruption Feed</div>
-        <div class="chart-sub">macro &amp; micro signals · live</div>
-      </div>
-      <div class="chart-sub" style="text-align:right;">12 sources<br>monitored</div>
-    </div>
+  <!-- PROBLEM -->
+  <section class="section-band">
+    <div class="wrap">
+      <div class="kicker"><span class="mini-mark" aria-hidden="true"><span class="m-dash"></span><span class="m-dot"></span></span>// The Gap</div>
+      <h2 class="section-title type-heading" aria-label="No policy stands behind the machine."><span class="type-heading-text" data-text="No policy stands behind the machine."></span><span class="type-cursor2" aria-hidden="true"></span></h2>
+      <p class="section-sub">Motor, marine, aviation — nothing this industry runs on scaled until insurance stood behind it. Autonomy is at the same gate. When your agent underperforms while working exactly as designed, there's no negligence, no liability, no covered loss — and your buyer knows it. That's why the deal stalls at pilot.</p>
 
-    <div class="disruption-grid">
-      <div class="d-cell" data-cell="0">
-        <span class="d-scale">macro</span>
-        <svg class="d-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 17h20M4 17V9l4-3 4 3v8M12 17V6l4-2 4 2v11"/></svg>
-        <span class="d-label">Port congestion</span>
-      </div>
-      <div class="d-cell" data-cell="1">
-        <span class="d-scale">macro</span>
-        <svg class="d-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 18 0 9 9 0 1 0-18 0Z"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>
-        <span class="d-label">Geopolitical risk</span>
-      </div>
-      <div class="d-cell" data-cell="2">
-        <span class="d-scale">macro</span>
-        <svg class="d-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M17 18a4 4 0 0 0 0-8 5 5 0 0 0-9.6-1.5A4.5 4.5 0 0 0 7 18h10Z"/><path d="M8 21l1-2M12 22l1-2M16 21l1-2"/></svg>
-        <span class="d-label">Weather event</span>
-      </div>
-      <div class="d-cell" data-cell="3">
-        <span class="d-scale">macro</span>
-        <svg class="d-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17h2l2-5h10l2 5h2M7 17v2M17 17v2"/><circle cx="7" cy="19" r="1.2"/><circle cx="17" cy="19" r="1.2"/><path d="M3 17V9a2 2 0 0 1 2-2h2"/></svg>
-        <span class="d-label">Fuel price spike</span>
-      </div>
-
-      <div class="d-cell" data-cell="4">
-        <span class="d-scale">micro</span>
-        <svg class="d-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4l2.5 2.5"/><circle cx="12" cy="12" r="9"/></svg>
-        <span class="d-label">Detention at dock</span>
-      </div>
-      <div class="d-cell" data-cell="5">
-        <span class="d-scale">micro</span>
-        <svg class="d-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18M3 6h18M3 18h18"/><circle cx="9" cy="6" r="1.4" fill="currentColor" stroke="none"/><circle cx="15" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="9" cy="18" r="1.4" fill="currentColor" stroke="none"/></svg>
-        <span class="d-label">Lane rate swing</span>
-      </div>
-      <div class="d-cell" data-cell="6">
-        <span class="d-scale">micro</span>
-        <svg class="d-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l3-3 3 2 4-5"/></svg>
-        <span class="d-label">Margin compression</span>
-      </div>
-      <div class="d-cell" data-cell="7">
-        <span class="d-scale">micro</span>
-        <svg class="d-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="1.5"/><path d="M3 9h18M8 4v14"/></svg>
-        <span class="d-label">TONU / cancellation</span>
-      </div>
-
-      <div class="d-cell" data-cell="8">
-        <span class="d-scale">macro</span>
-        <svg class="d-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2-7 4 14 2-7h6"/></svg>
-        <span class="d-label">Demand shock</span>
-      </div>
-      <div class="d-cell" data-cell="9">
-        <span class="d-scale">micro</span>
-        <svg class="d-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1"/></svg>
-        <span class="d-label">Layover delay</span>
-      </div>
-      <div class="d-cell" data-cell="10">
-        <span class="d-scale">macro</span>
-        <svg class="d-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-        <span class="d-label">Capacity crunch</span>
-      </div>
-      <div class="d-cell" data-cell="11">
-        <span class="d-scale">micro</span>
-        <svg class="d-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M5 12l4-4M5 12l4 4M19 12l-4-4M19 12l-4 4"/></svg>
-        <span class="d-label">Accessorial spike</span>
-      </div>
-    </div>
-
-    <div class="disruption-legend">
-      <span><i class="dotc macro"></i> Macro disruption</span>
-      <span><i class="dotc micro"></i> Micro / load-level</span>
-    </div>
-  </div>
-</section>
-
-<div class="quote-band">
-  <div class="quote-inner">
-    <div class="flip-stage">
-      <div class="flip-card active" data-quote="0">
-        <blockquote>
-          Precursory tracks two layers at once — macro signals like fuel,
-          freight rates, and demand shocks, and micro signals like detention,
-          layover, and TONU. One model, built on your historical baseline and
-          updated in real time.
-          <span class="accent">Two layers. One picture.</span>
-        </blockquote>
-        <div class="quote-attr">The View</div>
-      </div>
-
-      <div class="flip-card" data-quote="1">
-        <blockquote>
-          That model doesn't just flag volatility coming — it sets a floor.
-          If your realized margin falls below it, the gap is paid out
-          automatically, from your own data.
-          <span class="accent">Zero basis risk.</span>
-        </blockquote>
-        <div class="quote-attr">The Protection</div>
-      </div>
-
-      <div class="flip-card" data-quote="2">
-        <blockquote>
-          That volatility doesn't stay abstract for long — it shows up in
-          your margin, your costs, your exposure.
-          <span class="accent">This is where Precursory steps in.</span>
-        </blockquote>
-        <div class="quote-attr">The Shift</div>
-      </div>
-    </div>
-
-    <div class="flip-controls" role="tablist" aria-label="How Precursory protects you">
-      <button class="flip-dot active" data-index="0" aria-label="Show statement 1"></button>
-      <button class="flip-dot" data-index="1" aria-label="Show statement 2"></button>
-      <button class="flip-dot" data-index="2" aria-label="Show statement 3"></button>
-    </div>
-  </div>
-</div>
-
-<section class="section" id="products" data-index="§ 01 — PRODUCTS">
-  <div class="section-head">
-    <div class="section-title-block">Products</div>
-    <h2>Stop absorbing the volatility you've been pricing around.</h2>
-    <p>
-      Whatever the source — your network, the macro market, or the gap
-      between the two — Precursory turns it into defined protection. Priced
-      from your data. Triggered by your data. Paid out without a claims fight.
-    </p>
-  </div>
-
-  <div class="products-list">
-    <div class="product-row">
-      <div class="product-id">P-01<br>MFP</div>
-      <div class="product-name">
-        <h3>Margin Floor Protection</h3>
-        <div class="product-tagline">Margin insurance · Brokerages</div>
-        <div class="fig-diagram">
-          <svg viewBox="0 0 320 180" width="320" height="180" role="img" aria-label="Diagram showing margin dipping below a floor line, with the gap shaded and labeled as the payout.">
-            <rect x="4" y="4" width="312" height="172" class="fig-frame"/>
-            <line x1="30" y1="150" x2="300" y2="150" class="fig-axis"/>
-            <line x1="30" y1="20" x2="30" y2="150" class="fig-axis"/>
-            <line x1="30" y1="100" x2="300" y2="100" class="fig-dashed"/>
-            <text x="296" y="93" text-anchor="end" class="fig-label">FLOOR</text>
-            <path d="M30,60 C 80,55 110,70 140,110 C 160,135 190,140 220,95 C 250,60 280,70 300,65" class="fig-curve"/>
-            <path d="M140,110 C160,135 190,140 190,100 L140,100 Z" class="fig-shade"/>
-            <text x="165" y="166" text-anchor="middle" class="fig-label">PAYOUT GAP</text>
-          </svg>
-          <div class="fig-cap">Margin vs. floor</div>
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-num">40%+</div>
+          <div class="stat-label">of agentic AI projects predicted to be cancelled by 2027 over cost, value, or risk concerns<span class="stat-source">Gartner</span></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">95%</div>
+          <div class="stat-label">of generative AI pilots show no measurable P&amp;L return<span class="stat-source">MIT Project NANDA, 2025</span></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">88%</div>
+          <div class="stat-label">of enterprise AI pilots — across every category — never reach production<span class="stat-source">IDC / Lenovo, 2025</span></div>
         </div>
       </div>
-      <div class="product-desc">
-        <p>
-          Your portfolio margin won't fall below a floor you can plan around
-          — no matter what the market does, protected by TMS-verified
-          load-level data, with zero basis risk. If realized margin dips
-          below the floor, the gap is paid out automatically.
-        </p>
-
-      </div>
+      <p class="section-sub stat-follow">Your model isn't the problem. The problem is that nobody will vouch for it — so your pilots stay pilots. An insured warranty changes the math for the person signing.</p>
     </div>
+  </section>
 
-    <div class="product-row">
-      <div class="product-id">P-02<br>ACP</div>
-      <div class="product-name">
-        <h3>Accessorial Cost Protection</h3>
-        <div class="product-tagline">Expense insurance · Shippers</div>
-        <div class="fig-diagram">
-          <svg viewBox="0 0 320 180" width="320" height="180" role="img" aria-label="Diagram showing accessorial cost rising above a cap line, with the excess shaded and labeled as reimbursed.">
-            <rect x="4" y="4" width="312" height="172" class="fig-frame"/>
-            <line x1="30" y1="150" x2="300" y2="150" class="fig-axis"/>
-            <line x1="30" y1="20" x2="30" y2="150" class="fig-axis"/>
-            <line x1="30" y1="90" x2="300" y2="90" class="fig-dashed"/>
-            <text x="296" y="83" text-anchor="end" class="fig-label">CAP</text>
-            <path d="M30,120 C 80,118 110,100 140,60 C 160,35 190,30 220,75 C 250,110 280,110 300,105" class="fig-curve"/>
-            <path d="M140,60 C160,35 190,30 190,90 L140,90 Z" class="fig-shade"/>
-            <text x="165" y="24" text-anchor="middle" class="fig-label">REIMBURSED</text>
-          </svg>
-          <div class="fig-cap">Accessorial cost vs. cap</div>
-        </div>
-      </div>
-      <div class="product-desc">
-        <p>
-          Detention, layover, and TONU stop being the number that blows up
-          your freight budget after the rate's already locked in — capped
-          against your shipment-level accessorial spend, verified directly
-          from your data. If realized accessorial spend exceeds the cap, the
-          excess is reimbursed automatically.
-        </p>
+  <!-- PRODUCT -->
+  <section class="section-band" id="product">
+    <div class="wrap">
+      <div class="kicker"><span class="mini-mark" aria-hidden="true"><span class="m-dash"></span><span class="m-dot"></span></span>// The Product</div>
+      <h2 class="section-title type-heading" aria-label="A performance warranty for AI agents."><span class="type-heading-text" data-text="A performance warranty for AI agents."></span><span class="type-cursor2" aria-hidden="true"></span></h2>
+      <p class="section-sub">Your contracts already promise performance — service credits, refunds, the right to walk away. A promise is worth what's behind it. We insure your obligation to pay: when your agent misses what it warranted, you make your customer whole, and we reimburse you. Your customer buys nothing, files nothing — and stops hesitating.</p>
+      <p class="product-pull">The warranty moves off your balance sheet and into your pitch.</p>
 
-      </div>
     </div>
+  </section>
 
-    <div class="product-row coming-soon">
-      <div class="product-id">P-03<br>—</div>
-      <div class="product-name">
-        <h3>Coming soon</h3>
-      </div>
-      <div class="product-desc">
-        <p>
-          Parametric protection against freight rate volatility — for
-          shippers and brokers exposed to spot market movement on key lanes.
-        </p>
-        <div class="product-status">In development</div>
-      </div>
-    </div>
-  </div>
-</section>
+  <!-- HOW IT WORKS -->
+  <section class="section-band" id="how-split">
+    <div class="wrap">
+      <div class="kicker"><span class="mini-mark" aria-hidden="true"><span class="m-dash"></span><span class="m-dot"></span></span>// How it works</div>
+      <h2 class="section-title type-heading" aria-label="Warranty your performance. We carry the risk."><span class="type-heading-text" data-text="Warranty your performance. We carry the risk."></span><span class="type-cursor2" aria-hidden="true"></span></h2>
 
-<section class="section" id="mechanism" data-index="§ 02 — MECHANISM">
-  <div class="section-head">
-    <div class="section-title-block">How It Works</div>
-    <h2>From your operational data to a payout.</h2>
-    <p>
-      Every Precursory product follows the same shape: your history sets the
-      floor, real-time data tracks where you stand, predictive signals price
-      the protection ahead of the disruption — and if you cross the line, the
-      gap is paid automatically.
-    </p>
-    <div class="mech-tabs" role="tablist">
-      <button class="mech-tab active" role="tab" aria-selected="true" data-target="mfp">MFP</button>
-      <button class="mech-tab" role="tab" aria-selected="false" data-target="acp">ACP</button>
-    </div>
-  </div>
-
-  <div class="mech-panels">
-
-    <div class="mech-panel active" id="panel-mfp">
-      <div class="mechanism">
-        <div class="step">
-          <span class="step-num">01 / HISTORICAL</span>
-          <h3>Your floor, from your own margin history</h3>
-          <p>TMS-verified load-level revenue and cost data establishes your portfolio's baseline margin — the floor your protection is built around.</p>
-          <div class="tag">Not an industry benchmark</div>
-        </div>
-        <div class="step">
-          <span class="step-num">02 / REAL-TIME</span>
-          <h3>Portfolio margin, tracked continuously</h3>
-          <p>Your TMS streams revenue and cost data for every load, automatically. We compute your realized quarterly portfolio average margin — the same number you already track internally.</p>
-          <div class="tag">Mastery · McLeod integrations live</div>
-        </div>
-        <div class="step">
-          <span class="step-num">03 / PREDICTIVE</span>
-          <h3>Compression modeled before the close</h3>
-          <p>Macro signals (fuel, freight rates, demand shocks) and micro signals (lane performance, accessorial trends) weight into pricing — so the protection reflects pressure on your book before it appears in the quarterly numbers.</p>
-          <div class="tag">Priced ahead of the disruption</div>
-        </div>
-        <div class="step">
-          <span class="step-num">04 / PAYOUT</span>
-          <h3>Settled, automatically</h3>
-          <p>If realized portfolio margin falls below the agreed floor, the gap is paid out — no claims adjuster, no dispute over whose number is right.</p>
-          <div class="tag">Settled from your own ledger</div>
-        </div>
-      </div>
-
-      <div class="your-number">
-        <span class="label">Your number</span>
-        <h3 class="yn-title">Know your floor before you commit.</h3>
-        <p class="yn-sub">Pick the tier that fits your book — or start with a free diagnostic and upgrade when you're ready.</p>
-
-        <!-- TOP BLOCK -->
-        <div class="top-block">
-
-          <!-- Stats -->
-          <div class="stat-row">
-            <div class="stat-cell">
-              <div class="stat-lbl">Your premium</div>
-              <div class="stat-val" id="stat-premium">$0<span style="font-size:1rem;font-weight:500;">/load</span></div>
-              <div class="stat-note" id="stat-premium-note">No commitment · no card</div>
-            </div>
-            <div class="stat-cell">
-              <div class="stat-lbl">Your floor</div>
-              <div class="stat-val" id="stat-floor">50%</div>
-              <div class="stat-note" id="stat-floor-note">of your average margin</div>
-            </div>
+      <div class="process">
+        <div class="process-row">
+          <div class="process-num"><div class="ring">01</div></div>
+          <div class="process-body">
+            <h3>We test your agent</h3>
+            <p>Our stress-test suite probes your agent for the failure modes that actually cost freight money — stale rates locked mid-negotiation, phantom accessorials approved, lapsed carrier authority missed, orders booked after cancellation. Coverage is priced on how your agent really performs, not on a questionnaire.</p>
           </div>
-
-          <!-- Example -->
-          <div class="example-block">
-            <div class="example-lbl">Example · $150/load average margin</div>
-            <div class="example-lines">
-              <div class="ex-line">
-                <span class="el">Average margin / load</span>
-                <span class="ev">$150</span>
-              </div>
-              <div class="ex-line">
-                <span class="el">Protection floor</span>
-                <span class="ev stamp animating" id="ex-floor">$75/load</span>
-              </div>
-              <div class="ex-line">
-                <span class="el">Premium cost</span>
-                <span class="ev" id="ex-premium">$0/load</span>
-              </div>
-              <div class="ex-line total">
-                <span class="el">Protected margin after premium</span>
-                <span class="ev" id="ex-protected">$75/load</span>
-              </div>
-            </div>
+        </div>
+        <div class="process-row">
+          <div class="process-num"><div class="ring">02</div></div>
+          <div class="process-body">
+            <h3>You warranty your performance</h3>
+            <p>You put a defined performance warranty in your customer contract — real penalties for a missed SLA, not best-effort language. We insure your obligation to pay it. Your warranty becomes a selling point instead of a balance-sheet risk.</p>
           </div>
-
         </div>
-
-        <!-- TIER COLUMNS -->
-        <div class="tier-grid">
-
-          <div class="tier-col active"
-            data-premium="$0" data-premium-suffix="/load"
-            data-premium-note="No commitment · no card"
-            data-floor="50%" data-floor-note="of your average margin"
-            data-ex-floor="75" data-ex-premium="0">
-            <span class="tier-badge free">Free</span>
-            <div class="tier-name">Diagnostic</div>
-            <div class="tier-desc">CV — Variable</div>
-            <div class="tier-bar-track"><div class="tier-bar-fill" style="width:12%"></div></div>
-            <div class="tier-floor-preview">50% floor</div>
+        <div class="process-row">
+          <div class="process-num"><div class="ring">03</div></div>
+          <div class="process-body">
+            <h3>When it misses, you're covered</h3>
+            <p>When a warranted miss happens, you pay your customer and we reimburse you. Claims verify against the customer's operational data, and you retain a share of every claim — so the incentive to perform stays yours, and your buyers know it.</p>
           </div>
-
-          <div class="tier-col"
-            data-premium="$3" data-premium-suffix="/load"
-            data-premium-note="Flat rate · all loads"
-            data-floor="79–86%" data-floor-note="of your average margin"
-            data-ex-floor="123" data-ex-premium="3">
-            <span class="tier-badge paid">Paid</span>
-            <div class="tier-name">Stable Variance</div>
-            <div class="tier-desc">CV 12–18%</div>
-            <div class="tier-bar-track"><div class="tier-bar-fill" style="width:35%"></div></div>
-            <div class="tier-floor-preview">79–86% floor</div>
-          </div>
-
-          <div class="tier-col"
-            data-premium="$3" data-premium-suffix="/load"
-            data-premium-note="Flat rate · all loads"
-            data-floor="71–79%" data-floor-note="of your average margin"
-            data-ex-floor="112" data-ex-premium="3">
-            <span class="tier-badge paid">Paid</span>
-            <div class="tier-name">Moderate Variance</div>
-            <div class="tier-desc">CV 18–24%</div>
-            <div class="tier-bar-track"><div class="tier-bar-fill" style="width:58%"></div></div>
-            <div class="tier-floor-preview">71–79% floor</div>
-          </div>
-
-          <div class="tier-col"
-            data-premium="$3" data-premium-suffix="/load"
-            data-premium-note="Flat rate · all loads"
-            data-floor="62–71%" data-floor-note="of your average margin"
-            data-ex-floor="99" data-ex-premium="3">
-            <span class="tier-badge paid">Paid</span>
-            <div class="tier-name">High Variance</div>
-            <div class="tier-desc">CV 24–30%</div>
-            <div class="tier-bar-track"><div class="tier-bar-fill" style="width:80%"></div></div>
-            <div class="tier-floor-preview">62–71% floor</div>
-          </div>
-
         </div>
-
-        <!-- DOTS -->
-        <div class="cycle-dots">
-          <div class="cycle-dot active" data-dot="0"></div>
-          <div class="cycle-dot" data-dot="1"></div>
-          <div class="cycle-dot" data-dot="2"></div>
-          <div class="cycle-dot" data-dot="3"></div>
-          <span class="cycle-hint" id="cycle-hint">Click any tier to pause</span>
-        </div>
-
       </div>
+      <a class="btn btn-solid split-cta" href="mailto:contact@precursory.ai?subject=Insuring%20our%20performance%20warranty">Get your agent covered</a>
     </div>
+  </section>
 
-    <div class="mech-panel" id="panel-acp">
-      <div class="mechanism">
-        <div class="step">
-          <span class="step-num">01 / HISTORICAL</span>
-          <h3>Your cap, from your own cost distribution</h3>
-          <p>Detention, layover, and TONU history at the shipment level establishes the cap — reflecting your real accessorial exposure.</p>
-          <div class="tag">Not a generic industry rate</div>
-        </div>
-        <div class="step">
-          <span class="step-num">02 / REAL-TIME</span>
-          <h3>Accessorial spend, captured as it's billed</h3>
-          <p>Detention, layover, and TONU charges are captured at the shipment level as they're billed — straight from your TMS or accounting system.</p>
-          <div class="tag">No manual claims paperwork</div>
-        </div>
-        <div class="step">
-          <span class="step-num">03 / PREDICTIVE</span>
-          <h3>Spikes flagged before the invoice lands</h3>
-          <p>Signals like dock throughput, capacity tightness, and demand shocks weight into your exposure model — flagging accessorial spikes across your network before they hit your books.</p>
-          <div class="tag">Modeled across your network</div>
-        </div>
-        <div class="step">
-          <span class="step-num">04 / REIMBURSEMENT</span>
-          <h3>Settled, automatically</h3>
-          <p>If realized accessorial spend exceeds the agreed cap, the excess is reimbursed — calculated directly from verified shipment data.</p>
-          <div class="tag">Settled from your own ledger</div>
-        </div>
-      </div>
+  <!-- TECHNOLOGY -->
+  <section class="section-band" id="technology">
+    <div class="wrap">
+      <div class="kicker"><span class="mini-mark" aria-hidden="true"><span class="m-dash"></span><span class="m-dot"></span></span>// Technology</div>
+      <h2 class="section-title type-heading" aria-label="Underwriting built on evidence, not estimates."><span class="type-heading-text" data-text="Underwriting built on evidence, not estimates."></span><span class="type-cursor2" aria-hidden="true"></span></h2>
+      <p class="section-sub">We don't rate this risk from a form. We test your agent before we cover it, watch it while it runs, and verify every claim against the customer's own operational data. That independence is what makes your warranty credible to the buyers you're selling to.</p>
 
-      <div class="formula">
-        <span class="label">Your number</span>
-        <div class="formula-eq">
-          Your cap: <span class="flip-number" data-value="$220"></span>/load.
-          Set from your data, not an industry average.
+      <div class="terminal" >
+        <div class="terminal-bar">
+          <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+          <span class="terminal-title">coverage lifecycle</span>
+        </div>
+        <div class="terminal-body">
+          <span class="t-line">$ initiating coverage on agent v2.3.1...</span>
+
+          <span class="t-phase">PHASE 01 — TEST</span>
+          <span class="t-line">Probing stale-rate locks, phantom accessorials, lapsed carrier authority...</span>
+          <span class="t-line">Booking against canceled orders, corrupted TMS fields, missed escalations...</span>
+          <span class="t-line t-check">Priced on how the agent actually fails</span>
+
+          <span class="t-phase">PHASE 02 — MONITOR</span>
+          <span class="t-line">Reading the customer's TMS and telematics data...</span>
+          <span class="t-line">Coverage locked to the tested model version...</span>
+          <span class="t-line t-check">Coverage in force</span>
+
+          <span class="t-phase">PHASE 03 — PAY</span>
+          <span class="t-line">Verifying the claim against the customer's operational data...</span>
+          <span class="t-line">Not the vendor's account of what happened...</span>
+          <span class="t-line t-check">Claim paid<span class="cursor"></span></span>
         </div>
       </div>
     </div>
+  </section>
 
-  </div>
-</section>
+  <!-- QUOTE -->
+  <section class="section-band">
+    <div class="wrap">
+      <div class="quote-block">
+        <div class="quote-mark">&ldquo;</div>
+        <blockquote>An agent locked thirty loads on a stale rate in a moving market — every booking looked clean, and the margin loss only showed up at settlement. That's why we're starting to require performance warranties from our AI vendors.</blockquote>
+        <div class="quote-attr"><strong>COO</strong> — freight carrier, design partner</div>
+      </div>
+    </div>
+  </section>
 
-<section class="section" id="team" data-index="§ 03 — TEAM">
-  <div class="section-head">
-    <div class="section-title-block">Team</div>
-    <h2>Operators who've sat inside the ecosystem.</h2>
-  </div>
+  <!-- TEAM -->
+  <section class="section-band" id="team">
+    <div class="wrap">
+      <div class="kicker"><span class="mini-mark" aria-hidden="true"><span class="m-dash"></span><span class="m-dot"></span></span>// Team</div>
+      <h2 class="section-title type-heading" aria-label="We've run the systems we now insure."><span class="type-heading-text" data-text="We&#8217;ve run the systems we now insure."></span><span class="type-cursor2" aria-hidden="true"></span></h2>
 
-  <div class="team-grid">
-    <div class="team-card">
-      <img src="assets/mo.jpg" alt="Mohan Krishnamurthy" />
-      <div class="team-overlay">
-        <div class="team-name-row">
-          <div>
-            <h3>Mohan Krishnamurthy</h3>
-            <div class="team-role">CEO &amp; Co-Founder</div>
-          </div>
-          <div class="team-cursor-hint">hover for bio</div>
+      <div class="team-grid">
+        <div class="team-card">
+          <div class="team-avatar"><img src="assets/mo.jpg" width="84" height="84" loading="lazy" decoding="async" alt="Mohan Krishnamurthy"></div>
+          <h3>Mohan Krishnamurthy</h3>
+          <div class="team-role">CEO &amp; CO-FOUNDER</div>
+          <p>Uber and Amazon alum with a PhD in optimization. Built the driver-incentive systems that used predictive and real-time signals to keep supply where it needed to be — and saw firsthand how both systems and people learn to game an incentive. That's the lens he brings to pricing and paying out a performance warranty correctly.</p>
         </div>
-        <p class="team-bio">
-          Built driver incentive systems at Uber and Amazon — a form of
-          pseudo-insurance that guaranteed the right number of drivers were
-          in the right place at the right time, orchestrated through both
-          predictive and real-time triggers. He brings that same
-          incentive-as-guarantee logic to Precursory's parametric insurance
-          model.
-        </p>
-      </div>
-    </div>
-
-    <div class="team-card">
-      <img src="assets/austin.jpg" alt="Austin Kinney" />
-      <div class="team-overlay">
-        <div class="team-name-row">
-          <div>
-            <h3>Austin Kinney</h3>
-            <div class="team-role">CTO &amp; Co-Founder</div>
-          </div>
-          <div class="team-cursor-hint">hover for bio</div>
+        <div class="team-card">
+          <div class="team-avatar"><img src="assets/austin.jpg" width="84" height="84" loading="lazy" decoding="async" alt="Austin Kinney"></div>
+          <h3>Austin Kinney</h3>
+          <div class="team-role">CTO &amp; CO-FOUNDER</div>
+          <p>Previously ran the technology team for a freight brokerage, and has spent his career building adversarial models and red-teaming systems. He built Precursory's stress-test suite — the same infrastructure that probes an agent for failure modes before we're willing to insure it.</p>
         </div>
-        <p class="team-bio">
-          Built predictive and real-time systems for pricing and capacity
-          across supply chain operations, with deep experience integrating
-          into complex enterprise systems where security and reliability are
-          non-negotiable. He brings that same systems thinking to
-          Precursory — building the data infrastructure that lets policies
-          trigger and settle directly against a brokerage's live operational
-          data.
-        </p>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<section class="section" id="faq" data-index="§ 04 — FAQ">
-  <div class="section-head">
-    <div class="section-title-block">FAQs</div>
-  </div>
+  <!-- CTA -->
+  <section class="section-band">
+    <div class="wrap">
+      <div class="kicker"><span class="mini-mark" aria-hidden="true"><span class="m-dash"></span><span class="m-dot"></span></span>// Get covered</div>
+      <h2 class="section-title type-heading" aria-label="Coverage for a risk no one's insured before."><span class="type-heading-text" data-text="Coverage for a risk no one&#8217;s insured before."></span><span class="type-cursor2" aria-hidden="true"></span></h2>
+      <p class="section-sub">If you're putting AI agents into production freight workflows, we'd like to talk. This policy doesn't exist anywhere else yet — we're writing it with the vendors who'll carry it.</p>
 
-  <div class="faq-tabs" role="tablist">
-    <button class="faq-tab active" role="tab" aria-selected="true" data-target="general">General</button>
-    <button class="faq-tab" role="tab" aria-selected="false" data-target="mfp">MFP</button>
-    <button class="faq-tab" role="tab" aria-selected="false" data-target="acp">ACP</button>
-  </div>
-
-  <div class="faq-panel active" id="faq-panel-general">
-    <div class="faq-list">
-      <div class="faq-item open">
-        <button class="faq-q">What is Precursory?
-          <span class="icon">+</span></button>
-        <div class="faq-a"><div class="faq-a-inner">
-          Precursory is an MGA building parametric insurance products for the
-          freight logistics supply chain — protects that pay out
-          automatically when a defined operational threshold is breached,
-          based on data you already generate.
-        </div></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q">How is this different from a hedge or index-based product?
-          <span class="icon">+</span></button>
-        <div class="faq-a"><div class="faq-a-inner">
-          Hedges settle against an external index and carry basis risk.
-          Precursory's products settle against your own verified operational
-          data, so there's no gap between what's insured and what actually
-          happened in your business.
-        </div></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q">What's Precursory's role — broker, MGA, carrier?
-          <span class="icon">+</span></button>
-        <div class="faq-a"><div class="faq-a-inner">
-          Precursory operates as a Managing General Agent, underwriting and
-          administering policies on behalf of capacity partners. We're
-          pursuing Lloyd's Coverholder status to bring these products to
-          market with A-rated capacity.
-        </div></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q">What data do I need to share, and is it secure?
-          <span class="icon">+</span></button>
-        <div class="faq-a"><div class="faq-a-inner">
-          Whatever your TMS or accounting system already produces at the load
-          or shipment level — no new reporting process. We integrate directly
-          with systems like Mastery and McLeod, and data is used only to
-          calculate your coverage.
-        </div></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q">How fast are payouts settled?
-          <span class="icon">+</span></button>
-        <div class="faq-a"><div class="faq-a-inner">
-          Once the trigger condition is met, payout is calculated
-          automatically from your verified data — no claims adjuster, no
-          manual review. Settlement timelines are defined in your policy.
-        </div></div>
+      <div class="cta-box">
+        <div class="cta-left">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="4" width="20" height="16" rx="1"/><path d="m2 6 10 7 10-7"/></svg>
+          <p>Get your agent covered</p>
+        </div>
+        <a class="btn btn-accent" href="mailto:contact@precursory.ai?subject=Insuring%20our%20performance%20warranty">Contact us <span class="mono">→</span></a>
       </div>
     </div>
-  </div>
+  </section>
 
-  <div class="faq-panel" id="faq-panel-mfp">
-    <div class="faq-list">
-      <div class="faq-item open">
-        <button class="faq-q">What does MFP actually protect?
-          <span class="icon">+</span></button>
-        <div class="faq-a"><div class="faq-a-inner">
-          MFP protects your portfolio's realized margin over a policy
-          period won't fall below an agreed floor — and if it does, the gap
-          is paid out automatically.
-        </div></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q">What exactly triggers a payout?
-          <span class="icon">+</span></button>
-        <div class="faq-a"><div class="faq-a-inner">
-          Your TMS-reported portfolio average margin falling below the floor
-          defined in your policy, calculated from the same load-level data
-          your team already tracks internally.
-        </div></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q">How is the floor set?
-          <span class="icon">+</span></button>
-        <div class="faq-a"><div class="faq-a-inner">
-          The floor is set based on your historical margin performance and
-          book composition, so it reflects your actual risk profile rather
-          than an industry-wide average.
-        </div></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q">Does this cover one bad load, or my whole portfolio?
-          <span class="icon">+</span></button>
-        <div class="faq-a"><div class="faq-a-inner">
-          MFP is portfolio-level protection — it's designed to protect
-          against systemic margin compression across your book, not isolated
-          load-level losses.
-        </div></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q">What causes margin volatility that MFP protects against?
-          <span class="icon">+</span></button>
-        <div class="faq-a"><div class="faq-a-inner">
-          Fuel price swings, freight rate softening, and demand shocks are
-          common drivers — anything that compresses the spread between what
-          you bill and what you pay, market-wide.
-        </div></div>
-      </div>
-    </div>
-  </div>
+</main>
 
-  <div class="faq-panel" id="faq-panel-acp">
-    <div class="faq-list">
-      <div class="faq-item open">
-        <button class="faq-q">What does ACP actually protect?
-          <span class="icon">+</span></button>
-        <div class="faq-a"><div class="faq-a-inner">
-          ACP caps your exposure to accessorial costs — detention, layover,
-          TONU, and similar fees — so that if realized costs exceed an
-          agreed cap, the excess is reimbursed.
-        </div></div>
+<footer class="section-band">
+  <div class="wrap">
+    <div class="footer-inner">
+      <div class="logo">
+        <div class="logo-mark" title="406.0 MHz"><span class="dash"></span><span class="dot"></span></div>
+        <div class="logo-word">PRECURSORY<small>TECHNOLOGIES, INC.</small></div>
       </div>
-      <div class="faq-item">
-        <button class="faq-q">What costs does ACP cover?
-          <span class="icon">+</span></button>
-        <div class="faq-a"><div class="faq-a-inner">
-          Detention, layover, TONU, and other accessorial fees that show up
-          in shipment-level billing — costs that spike unpredictably and
-          erode freight budgets after the rate is locked in.
-        </div></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q">How is the cap set?
-          <span class="icon">+</span></button>
-        <div class="faq-a"><div class="faq-a-inner">
-          The cap is set based on your historical accessorial cost
-          distribution, so it reflects your real exposure rather than a
-          generic industry benchmark.
-        </div></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q">Is this a claims process?
-          <span class="icon">+</span></button>
-        <div class="faq-a"><div class="faq-a-inner">
-          No. Reimbursement is calculated directly from verified shipment
-          data once realized cost exceeds the cap — no adjuster, no separate
-          claims filing.
-        </div></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q">Who is ACP designed for — shippers or brokers?
-          <span class="icon">+</span></button>
-        <div class="faq-a"><div class="faq-a-inner">
-          ACP is primarily designed for shippers managing accessorial cost
-          exposure across their freight spend, though brokers managing
-          accessorial pass-through can also use it.
-        </div></div>
+      <div class="footer-links">
+        <a href="mailto:contact@precursory.ai">contact@precursory.ai</a>
+        <a href="#top">Back to top</a>
+        <a href="#product">Product</a>
+        <a href="#how-split">How it works</a>
       </div>
     </div>
-  </div>
-</section>
-
-<footer id="contact">
-  <div class="footer-inner">
-    <div class="footer-top">
-      <div>
-        <h2>Ready to know your number?</h2>
-        <p class="footer-sub">
-          Send us your historical load-level margin or accessorial cost
-          data — we'll calculate your floor, your cap, and your premium,
-          specific to your book.
-        </p>
-      </div>
-      <a class="btn btn-primary" href="https://app.precursory.ai/information/signup" style="background:var(--paper); color:var(--ink); border-color:var(--paper);">Send your data</a>
-    </div>
-    <div class="footer-bottom">
-      <span>Precursory Technologies, Inc. — San Francisco</span>
-    </div>
+    <div class="footer-copy">© 2026 Precursory Technologies, Inc. <span class="build-tag">v3.5</span></div>
   </div>
 </footer>
 
 <script>
-  document.querySelectorAll('.faq-item').forEach(item => {
-    item.querySelector('.faq-q').addEventListener('click', () => {
-      const isOpen = item.classList.contains('open');
-      const group = item.closest('.faq-panel') || document;
-      group.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
-      if(!isOpen) item.classList.add('open');
-    });
-  });
+(function(){
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  document.querySelectorAll('.faq-tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      const target = tab.dataset.target;
-      document.querySelectorAll('.faq-tab').forEach(t => {
-        t.classList.toggle('active', t === tab);
-        t.setAttribute('aria-selected', t === tab ? 'true' : 'false');
-      });
-      document.querySelectorAll('.faq-panel').forEach(p => {
-        p.classList.toggle('active', p.id === 'faq-panel-' + target);
-      });
-    });
-  });
-
-  document.querySelectorAll('.mech-tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      const target = tab.dataset.target;
-      document.querySelectorAll('.mech-tab').forEach(t => {
-        t.classList.toggle('active', t === tab);
-        t.setAttribute('aria-selected', t === tab ? 'true' : 'false');
-      });
-      document.querySelectorAll('.mech-panel').forEach(p => {
-        p.classList.toggle('active', p.id === 'panel-' + target);
-      });
-    });
-  });
-
-  // Flipboard statement rotation
-  (function(){
-    const cards = document.querySelectorAll('.flip-card');
-    const dots = document.querySelectorAll('.flip-dot');
-    let current = 0;
-    let timer;
-
-    function show(index){
-      cards.forEach((c,i) => c.classList.toggle('active', i === index));
-      dots.forEach((d,i) => d.classList.toggle('active', i === index));
-      current = index;
-    }
-
-    function next(){
-      show((current + 1) % cards.length);
-    }
-
-    function startTimer(){
-      clearInterval(timer);
-      timer = setInterval(next, 6000);
-    }
-
-    dots.forEach((dot, i) => {
-      dot.addEventListener('click', () => {
-        show(i);
-        startTimer();
-      });
-    });
-
-    if(cards.length > 1){
-      startTimer();
-    }
-  })();
-
-  // Flip-digit number reveal
-  (function(){
-    const containers = document.querySelectorAll('.flip-number');
-    if(!containers.length) return;
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    function buildDigit(target){
-      const wrap = document.createElement('span');
-      wrap.className = 'flip-digit';
-      const strip = document.createElement('span');
-      strip.className = 'digit-strip';
-      for(let i=0;i<10;i++){
-        const s = document.createElement('span');
-        s.textContent = i;
-        strip.appendChild(s);
-      }
-      wrap.appendChild(strip);
-      if(prefersReduced){
-        strip.style.transition = 'none';
-        strip.style.transform = `translateY(-${target * 1.15}em)`;
-      }
-      return { wrap, strip, target };
-    }
-
-    containers.forEach(container => {
-      const value = container.dataset.value || '';
-      container.innerHTML = '';
-      const digits = [];
-      value.split('').forEach(ch => {
-        if(/[0-9]/.test(ch)){
-          const d = buildDigit(parseInt(ch,10));
-          container.appendChild(d.wrap);
-          digits.push(d);
-        } else {
-          const span = document.createElement('span');
-          span.className = 'static-char';
-          span.textContent = ch;
-          container.appendChild(span);
+  /* ----- Shared helpers ----- */
+  // Type `text` into `el` one character at a time, then call onDone.
+  function typeInto(el, text, speed, onDone){
+    var i = 0;
+    (function step(){
+      el.textContent = text.slice(0, i);
+      i++;
+      if (i <= text.length) setTimeout(step, speed);
+      else if (onDone) onDone();
+    })();
+  }
+  // Run `cb` once, the first time `target` scrolls into view. Falls back to
+  // running immediately when the target is missing or IntersectionObserver is
+  // unsupported. Guarding a null target avoids observe(null) throwing.
+  function onceInView(target, threshold, cb){
+    if (!target) return;
+    if (!('IntersectionObserver' in window)) { cb(); return; }
+    var played = false;
+    var obs = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting && !played) {
+          played = true;
+          cb();
+          obs.disconnect();
         }
       });
-      container._flipDigits = digits;
+    }, { threshold: threshold });
+    obs.observe(target);
+  }
+
+  /* ----- Mobile nav toggle ----- */
+  var nav = document.querySelector('header.nav');
+  var menuBtn = nav && nav.querySelector('.menu-btn');
+  if (nav && menuBtn) {
+    var setMenu = function(open){
+      nav.classList.toggle('open', open);
+      menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    };
+    menuBtn.addEventListener('click', function(){
+      setMenu(!nav.classList.contains('open'));
     });
+    nav.querySelectorAll('.nav-links a').forEach(function(a){
+      a.addEventListener('click', function(){ setMenu(false); });
+    });
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape') setMenu(false);
+    });
+  }
 
-    if(prefersReduced) return;
-
-    function spin(container){
-      (container._flipDigits || []).forEach((d, i) => {
-        let ticks = 10 + i * 3;
-        let count = 0;
-        const interval = setInterval(() => {
-          const r = Math.floor(Math.random() * 10);
-          d.strip.style.transition = 'none';
-          d.strip.style.transform = `translateY(-${r * 1.15}em)`;
-          count++;
-          if(count >= ticks){
-            clearInterval(interval);
-            requestAnimationFrame(() => {
-              d.strip.style.transition = 'transform 0.45s cubic-bezier(.3,.85,.35,1)';
-              d.strip.style.transform = `translateY(-${d.target * 1.15}em)`;
-            });
-          }
-        }, 55);
+  /* ----- Hero: typed headline ----- */
+  var typedPlain = document.querySelector('.typed-plain');
+  var typedEm = document.querySelector('.typed-em');
+  var typeCursor = document.querySelector('.type-cursor');
+  if (typedPlain && typedEm) {
+    var plainText = typedPlain.getAttribute('data-text') || '';
+    var emText = typedEm.getAttribute('data-text') || '';
+    if (reduced) {
+      typedPlain.textContent = plainText;
+      typedEm.textContent = emText;
+    } else {
+      typeInto(typedPlain, plainText, 32, function(){
+        typeInto(typedEm, emText, 32, function(){
+          if (typeCursor) typeCursor.classList.add('done');
+        });
       });
     }
+  }
 
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if(entry.isIntersecting){
-          spin(entry.target);
-          observer.unobserve(entry.target);
-        }
+  /* ----- Section headings: type out on scroll into view ----- */
+  document.querySelectorAll('.type-heading-text').forEach(function(el){
+    var cursor = el.parentElement.querySelector('.type-cursor2');
+    var text = el.getAttribute('data-text') || '';
+    if (reduced) { el.textContent = text; return; }
+    onceInView(el.closest('h2'), 0.4, function(){
+      typeInto(el, text, 26, function(){ if (cursor) cursor.classList.add('done'); });
+    });
+  });
+
+  /* ----- Terminal: line-by-line reveal on scroll into view ----- */
+  var termLines = document.querySelectorAll('.terminal-body > span');
+  if (reduced) {
+    termLines.forEach(function(l){ l.classList.add('shown'); });
+  } else {
+    onceInView(document.querySelector('.terminal'), 0.25, function(){
+      termLines.forEach(function(line, i){
+        setTimeout(function(){ line.classList.add('shown'); }, 260 * i);
       });
-    }, { threshold: 0.6 });
+    });
+  }
 
-    containers.forEach(c => observer.observe(c));
-  })();
-
-  // Disruption grid flashing
-  (function(){
-    const cells = document.querySelectorAll('.d-cell');
-    if(!cells.length) return;
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if(prefersReduced) return;
-
-    function flashRandom(){
-      const idx = Math.floor(Math.random() * cells.length);
-      const cell = cells[idx];
-      cell.classList.remove('flash');
-      void cell.offsetWidth;
-      cell.classList.add('flash');
-    }
-
-    setTimeout(flashRandom, 600);
-    setTimeout(flashRandom, 1400);
-
-    setInterval(flashRandom, 1300);
-  })();
-
-  // Your Number — tier cycling
-  (function(){
-    const root = document.querySelector('.your-number');
-    if(!root) return;
-
-    const cols = root.querySelectorAll('.tier-col');
-    const dots = root.querySelectorAll('.cycle-dot');
-    if(!cols.length) return;
-
-    const statPremium     = document.getElementById('stat-premium');
-    const statPremiumNote = document.getElementById('stat-premium-note');
-    const statFloor       = document.getElementById('stat-floor');
-    const statFloorNote   = document.getElementById('stat-floor-note');
-    const exFloor         = document.getElementById('ex-floor');
-    const exPremium       = document.getElementById('ex-premium');
-    const exProtected     = document.getElementById('ex-protected');
-    const cycleHint       = document.getElementById('cycle-hint');
-
-    let current = 0, timer = null, paused = false;
-
-    function anim(el){
-      el.classList.remove('animating');
-      void el.offsetWidth;
-      el.classList.add('animating');
-    }
-
-    function activate(i){
-      cols.forEach((c, idx) => c.classList.toggle('active', idx === i));
-      dots.forEach((d, idx) => {
-        d.classList.remove('active');
-        if(idx === i){ void d.offsetWidth; d.classList.add('active'); }
-      });
-
-      const col = cols[i];
-      const floor      = parseFloat(col.dataset.exFloor);
-      const premium    = parseFloat(col.dataset.exPremium);
-      const protected_ = floor - premium;
-
-      anim(statPremium);
-      statPremium.innerHTML = col.dataset.premium +
-        '<span style="font-size:1rem;font-weight:500;">' + col.dataset.premiumSuffix + '</span>';
-      statPremiumNote.textContent = col.dataset.premiumNote;
-
-      anim(statFloor);
-      statFloor.textContent = col.dataset.floor;
-      statFloorNote.textContent = col.dataset.floorNote;
-
-      anim(exFloor);
-      exFloor.textContent = '$' + floor + '/load';
-      exPremium.textContent = '$' + premium + '/load';
-      exProtected.textContent = '$' + protected_ + '/load';
-
-      current = i;
-    }
-
-    function startTimer(){
-      clearInterval(timer);
-      timer = setInterval(() => activate((current + 1) % cols.length), 3000);
-    }
-
-    function togglePause(i){
-      if(!paused){
-        paused = true; clearInterval(timer);
-        cycleHint.textContent = 'Click any tier to resume';
-      } else {
-        paused = false; startTimer();
-        cycleHint.textContent = 'Click any tier to pause';
-      }
-      activate(i);
-    }
-
-    cols.forEach((col, i) => col.addEventListener('click', () => togglePause(i)));
-    dots.forEach((dot, i) => dot.addEventListener('click', () => togglePause(i)));
-
-    activate(0);
-    startTimer();
-  })();
+})();
 </script>
-
+</div>
 </body>
 </html>
